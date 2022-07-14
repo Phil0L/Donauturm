@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.pl.donauturm.drinksmenu.view.preferences.color.ColorPreference
+        android:id="@+id/item_back_color"
+        android:key="item_back_color"
+        android:summary="Set the background color of the item group"
+        android:title="Background Color"
+        app:colorShape="circle"
+        app:iconSpaceReserved="false" />
+
+    <SeekBarPreference
+        android:id="@+id/item_corner_radius"
+        android:max="100"
+        app:defaultValue="0"
+        app:iconSpaceReserved="false"
+        app:key="item_corner_radius"
+        app:min="0"
+        app:showSeekBarValue="true"
+        app:summary="Set the corner radius of the background color"
+        app:title="Corner radius" />
+
+</PreferenceScreen>

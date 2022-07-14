@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_coordinator"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".controller.drinkmenu.drinksedit.DrinksMenuEditorActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.pl.donauturm.drinksmenu.view.layouts.PreviewHolder
+            android:id="@+id/preview_holder"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/preview_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitStart"
+                app:srcCompat="@drawable/png_background" />
+        </com.pl.donauturm.drinksmenu.view.layouts.PreviewHolder>
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="80dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/preview_holder"
+            app:srcCompat="@drawable/ic_arrow_down" />
+
+        <ImageView
+            android:id="@+id/generated_menu"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:padding="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/cancel_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView3"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/png_background" />
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:paddingHorizontal="32dp"
+            android:text="  SAVE  "
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cancel_button" />
+
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:paddingHorizontal="32dp"
+            android:text="CANCEL"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/save_button"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/bottom_sheet_container"
+        layout="@layout/sheet_item_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:behavior_hideable="true"
+        app:layout_behavior="@string/bottom_sheet_behavior" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

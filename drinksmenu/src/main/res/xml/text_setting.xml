@@ -1,0 +1,12 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        android:id="@+id/item_name"
+        android:key="item_name"
+        android:singleLine="true"
+        android:summary="Define the text of this view"
+        android:title="Text"
+        app:iconSpaceReserved="false" />
+
+</PreferenceScreen>

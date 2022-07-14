@@ -1,0 +1,11 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <com.pl.donauturm.drinksmenu.view.preferences.drink.DrinkPreference
+        android:id="@+id/item_drink"
+        android:key="item_drink"
+        android:summary="Choose the drink that is displayed"
+        android:title="Select drink"
+        app:iconSpaceReserved="false" />
+
+</PreferenceScreen>

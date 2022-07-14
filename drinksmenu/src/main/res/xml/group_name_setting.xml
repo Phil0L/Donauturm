@@ -1,0 +1,12 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <EditTextPreference
+        android:id="@+id/item_name"
+        android:key="item_name"
+        android:singleLine="true"
+        android:summary="Set the name of this group"
+        android:title="Groupname"
+        app:iconSpaceReserved="false" />
+
+</PreferenceScreen>

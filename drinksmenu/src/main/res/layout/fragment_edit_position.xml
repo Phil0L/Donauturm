@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/pos_box"
+        android:layout_width="100dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_min="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/vec_item_group_border" />
+
+    <ImageView
+        android:id="@+id/pos_arrow_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/pos_edit_top"
+        app:layout_constraintEnd_toEndOf="@+id/pos_edit_top"
+        app:layout_constraintStart_toStartOf="@+id/pos_edit_top"
+        app:srcCompat="@drawable/ic_arrow_up" />
+
+    <EditText
+        android:id="@+id/pos_edit_top"
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="40dp"
+        android:layout_height="30dp"
+        android:background="@drawable/vec_edit_text_box"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:singleLine="true"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/pos_box"
+        app:layout_constraintEnd_toEndOf="@+id/pos_box"
+        app:layout_constraintStart_toStartOf="@+id/pos_box"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="100" />
+
+    <ImageView
+        android:id="@+id/pos_arrow_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="@+id/pos_edit_top"
+        app:layout_constraintStart_toStartOf="@+id/pos_edit_top"
+        app:layout_constraintTop_toBottomOf="@+id/pos_edit_top"
+        app:srcCompat="@drawable/ic_arrow_down" />
+
+    <ImageView
+        android:id="@+id/pos_arrow_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/pos_edit_left"
+        app:layout_constraintEnd_toStartOf="@+id/pos_edit_left"
+        app:layout_constraintTop_toTopOf="@+id/pos_edit_left"
+        app:srcCompat="@drawable/ic_arrow_left" />
+
+    <EditText
+        android:id="@+id/pos_edit_left"
+        style="@style/Widget.AppCompat.EditText"
+        android:layout_width="40dp"
+        android:layout_height="30dp"
+        android:background="@drawable/vec_edit_text_box"
+        android:ems="10"
+        android:inputType="numberDecimal"
+        android:singleLine="true"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="@+id/pos_box"
+        app:layout_constraintEnd_toStartOf="@+id/pos_box"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/pos_box"
+        tools:text="100" />
+
+    <ImageView
+        android:id="@+id/pos_arrow_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/pos_edit_left"
+        app:layout_constraintStart_toEndOf="@+id/pos_edit_left"
+        app:layout_constraintTop_toTopOf="@+id/pos_edit_left"
+        app:srcCompat="@drawable/ic_arrow_right" />
+
+    <ImageView
+        android:id="@+id/lock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_locked" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

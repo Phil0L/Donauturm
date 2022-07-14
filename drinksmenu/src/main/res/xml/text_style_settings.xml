@@ -1,0 +1,29 @@
+<PreferenceScreen xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.pl.donauturm.drinksmenu.view.preferences.color.ColorPreference
+        android:id="@+id/item_name_color"
+        android:key="item_name_color"
+        android:summary="Set the color of the text"
+        android:title="Text Color"
+        app:colorShape="circle"
+        app:iconSpaceReserved="false" />
+    <com.pl.donauturm.drinksmenu.view.preferences.font.FontPreference
+        android:id="@+id/item_name_font"
+        android:key="item_name_font"
+        android:summary="Set the font of the text"
+        android:title="Text Font"
+        app:iconSpaceReserved="false" />
+    <SeekBarPreference
+        android:id="@+id/item_name_size"
+        android:key="item_name_font_size"
+        android:max="20"
+        android:summary="Set the size of the text"
+        android:title="Text Size"
+        app:defaultValue="12"
+        app:iconSpaceReserved="false"
+        app:min="1"
+        app:showSeekBarValue="true" />
+
+</PreferenceScreen>
