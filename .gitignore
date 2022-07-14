@@ -26,5 +26,4 @@
 /fonts/proguard-rules.pro
 /fonts/src/androidTest/
 /fonts/src/test/
-/fonts/src/main/res/font/
-*.ttf
+
