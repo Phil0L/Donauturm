@@ -184,13 +184,11 @@ public class FontUtils {
 
         /* Parse fallback list (no names) */
         public static Config parse(InputStream in) throws XmlPullParserException, IOException {
-            try {
+            try (in) {
                 XmlPullParser parser = Xml.newPullParser();
                 parser.setInput(in, null);
                 parser.nextTag();
                 return readFamilies(parser);
-            } finally {
-                in.close();
             }
         }
 

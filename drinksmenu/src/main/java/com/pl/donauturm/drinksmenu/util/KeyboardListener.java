@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
  * Based on the following Stackoverflow answer:
  * http://stackoverflow.com/questions/2150078/how-to-check-visibility-of-software-keyboard-in-android
  */
-@SuppressWarnings("unused")
+
 public class KeyboardListener implements ViewTreeObserver.OnGlobalLayoutListener
 {
 
@@ -67,24 +67,6 @@ public class KeyboardListener implements ViewTreeObserver.OnGlobalLayoutListener
             prevHeight = heightDiff;
             listener.onToggleSoftKeyboard(isVisible, keyboardHeight);
         }
-    }
-
-    /**
-     * Manually toggle soft keyboard visibility
-     * @param context calling context
-     */
-    public static void toggleKeyboardVisibility(Context context)
-    {
-        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(inputMethodManager != null)
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-    }
-
-    public void toggleKeyboardVisibility()
-    {
-        InputMethodManager inputMethodManager = (InputMethodManager) callingActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(inputMethodManager != null)
-            inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
 
     public static void forceCloseKeyboard(Activity activity)
