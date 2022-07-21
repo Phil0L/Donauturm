@@ -2,3 +2,4 @@ include ':app'
 rootProject.name = "Donauturm"
 include ':drinksmenu'
 include ':fonts'
+include ':pisignageapi'
