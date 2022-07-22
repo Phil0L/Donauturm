@@ -1,7 +1,7 @@
 package com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.DrinkBottomSheet;
-import com.pl.donauturm.drinksmenu.model.Drink;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
 import com.pl.donauturm.drinksmenu.model.Font;
 import com.pl.donauturm.drinksmenu.model.Item;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;

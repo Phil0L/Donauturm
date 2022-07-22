@@ -6,8 +6,8 @@ import android.util.AttributeSet;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 
-import com.pl.donauturm.drinksmenu.model.Drink;
-import com.pl.donauturm.drinksmenu.model.DrinkRegistry;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinkRegistry;
 
 import java.util.ArrayList;
 import java.util.List;

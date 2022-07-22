@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.OptionsEditorFragment;
-import com.pl.donauturm.drinksmenu.model.Drink;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
 
 import java.util.List;
 

@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 
 public class PiSignageAPI {
 
-  String username;
-  String password;
+  protected String username;
+  protected String password;
 
   public AsyncPiSignageAPI asynchronous;
 
-  PiSignageAPI(String username, String password){
+  protected PiSignageAPI(String username, String password){
     this.username = username;
     this.password = password;
     this.asynchronous = new AsyncPiSignageAPI(this);
@@ -31,6 +31,10 @@ public class PiSignageAPI {
 
   public static Builder builder(){
     return new Builder();
+  }
+
+  public String getUsername() {
+    return username;
   }
 
   public void login(){
@@ -67,7 +71,10 @@ public class PiSignageAPI {
     new FileDeleteRequest(assetName).request();
   }
 
-
+  public void getAssetImage(String assetName, File destination){
+    String url = Request.PROTOCOL + "://" + Request.HOST + "/media/" + getUsername() + "/" + assetName;
+    new FileDownloadRequest(url, destination).request();
+  }
 
   public static class Builder {
 

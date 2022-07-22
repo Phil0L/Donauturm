@@ -43,12 +43,12 @@ import com.pl.donauturm.drinksmenu.view.views.DrinkView;
 import com.pl.donauturm.drinksmenu.view.views.ItemView;
 import com.pl.donauturm.drinksmenu.view.views.ShapeView;
 import com.pl.donauturm.drinksmenu.view.views.TextView;
-import com.pl.donauturm.drinksmenu.model.Drink;
-import com.pl.donauturm.drinksmenu.model.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.Shape;
-import com.pl.donauturm.drinksmenu.model.Text;
+import com.pl.donauturm.drinksmenu.model.content.Shape;
+import com.pl.donauturm.drinksmenu.model.content.Text;
 import com.pl.donauturm.drinksmenu.util.KeyboardListener;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -159,7 +159,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.drinks_editor_actions, menu);
+        getMenuInflater().inflate(R.menu.drinks_menu_editor_actions, menu);
         return true;
     }
 
@@ -345,6 +345,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
     }
 
     public void save(View v) {
+        drinksMenu.increaseVersion();
         Intent intent = new Intent();
         String menuString = serializer(this).toJson(drinksMenu);
         intent.putExtra("menu", menuString);

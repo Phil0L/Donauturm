@@ -2,7 +2,11 @@ package com.pl.donauturm.drinksmenu.model;
 
 import androidx.annotation.NonNull;
 
-import com.pl.donauturm.drinksmenu.util.JsonSubtype;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.Shape;
+import com.pl.donauturm.drinksmenu.model.content.Text;
+import com.pl.donauturm.drinksmenu.util.json.JsonSubtype;
 
 import java.io.Serializable;
 import java.util.Objects;

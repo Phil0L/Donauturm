@@ -1,10 +1,10 @@
 package com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.DrinkGroupBottomSheet;
-import com.pl.donauturm.drinksmenu.model.Drink;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
 import com.pl.donauturm.drinksmenu.model.Font;
 import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
 

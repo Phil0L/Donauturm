@@ -1,4 +1,6 @@
-package com.pl.donauturm.drinksmenu.model;
+package com.pl.donauturm.drinksmenu.controller.drinkmenu;
+
+import com.pl.donauturm.drinksmenu.model.content.Drink;
 
 import java.util.Set;
 

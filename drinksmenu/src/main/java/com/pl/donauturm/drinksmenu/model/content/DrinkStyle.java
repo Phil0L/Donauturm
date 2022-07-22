@@ -1,7 +1,8 @@
-package com.pl.donauturm.drinksmenu.model;
+package com.pl.donauturm.drinksmenu.model.content;
 
 import android.graphics.Color;
 
+import com.pl.donauturm.drinksmenu.model.Font;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
 
 import java.io.File;

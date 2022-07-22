@@ -1,4 +1,4 @@
-package com.pl.donauturm.drinksmenu.util;
+package com.pl.donauturm.drinksmenu.util.json;
 
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -17,6 +17,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.pl.donauturm.drinksmenu.controller.DrinksMenuAPI;
+import com.pl.donauturm.pisignageapi.requests.Request;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,6 +35,7 @@ public final class BitmapDeSerializer implements JsonSerializer<Bitmap>, JsonDes
     private boolean ignored = false;
     private boolean byteArray = false;
     private boolean localFile = false;
+    private boolean remoteFile = false;
 
     @Nullable
     private Object context;
@@ -64,6 +67,12 @@ public final class BitmapDeSerializer implements JsonSerializer<Bitmap>, JsonDes
             }
         }
 
+        //MODE: remote file
+        if (remoteFile) {
+            DrinksMenuAPI api = (DrinksMenuAPI) context;
+            return api.getBitmap(json.getAsString());
+        }
+
         return null;
     }
 
@@ -83,7 +92,8 @@ public final class BitmapDeSerializer implements JsonSerializer<Bitmap>, JsonDes
         //MODE: local file
         if (localFile){
             ContextWrapper cw = new ContextWrapper((Context) this.context);
-            File directory = cw.getDir("temp-images", Context.MODE_PRIVATE);
+
+            File directory = cw.getCacheDir();
             File file = new File(directory, UUID.randomUUID().toString() + ".png");
 
             FileOutputStream fos;
@@ -97,6 +107,28 @@ public final class BitmapDeSerializer implements JsonSerializer<Bitmap>, JsonDes
             }
         }
 
+        //MODE: remote file
+        if (remoteFile){
+            ContextWrapper cw = new ContextWrapper((Context) this.context);
+
+            File directory = cw.getCacheDir();
+            File file = new File(directory, UUID.randomUUID().toString() + ".png");
+
+            FileOutputStream fos;
+            try {
+                fos = new FileOutputStream(file);
+                src.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                fos.close();
+            } catch (Exception e) {
+                Log.e(getClass().getSimpleName(), e.getMessage(), e);
+                return null;
+            }
+            if (!(context instanceof DrinksMenuAPI)) return null;
+            DrinksMenuAPI api = (DrinksMenuAPI) this.context;
+            assert api != null;
+            api.uploadAsset(file);
+            return new JsonPrimitive(Request.PROTOCOL + "://" + Request.HOST + "/media/" + api.getUsername() + "/" + file.getName());
+        }
         return null;
     }
 
@@ -122,5 +154,11 @@ public final class BitmapDeSerializer implements JsonSerializer<Bitmap>, JsonDes
         return bds;
     }
 
-    //TODO: web, cache
+    @NonNull
+    public static BitmapDeSerializer toWeb(DrinksMenuAPI api){
+        BitmapDeSerializer bds = new BitmapDeSerializer();
+        bds.remoteFile = true;
+        bds.context = api;
+        return bds;
+    }
 }

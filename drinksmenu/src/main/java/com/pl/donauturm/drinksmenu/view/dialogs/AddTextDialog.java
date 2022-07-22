@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.Text;
+import com.pl.donauturm.drinksmenu.model.content.Text;
 
 public class AddTextDialog extends DialogFragment implements TextWatcher, DialogInterface.OnClickListener {
 

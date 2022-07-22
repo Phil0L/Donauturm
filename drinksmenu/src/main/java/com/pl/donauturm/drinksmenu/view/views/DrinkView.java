@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.Drink;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
 import com.pl.donauturm.drinksmenu.model.Item;
 
 public class DrinkView extends ItemView {

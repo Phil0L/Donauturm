@@ -21,8 +21,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.Drink;
-import com.pl.donauturm.drinksmenu.model.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
 import com.pl.donauturm.drinksmenu.model.interfaces.Group;
 import com.pl.donauturm.drinksmenu.model.Item;
 import com.pl.donauturm.drinksmenu.view.preferences.drink.DrinkDialog;

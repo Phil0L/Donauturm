@@ -1,8 +1,10 @@
-package com.pl.donauturm.drinksmenu.model;
+package com.pl.donauturm.drinksmenu.model.content;
 
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.pl.donauturm.drinksmenu.model.Font;
+import com.pl.donauturm.drinksmenu.model.Item;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Group;

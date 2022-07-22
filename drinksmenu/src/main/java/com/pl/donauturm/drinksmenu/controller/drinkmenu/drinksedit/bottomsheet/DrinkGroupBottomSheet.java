@@ -10,7 +10,7 @@ import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.e
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.OptionsEditorFragment;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.PositionEditorFragment;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.SizeEditorFragment;
-import com.pl.donauturm.drinksmenu.model.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
 
 import java.util.List;
 

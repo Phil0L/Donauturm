@@ -13,11 +13,11 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
-import com.pl.donauturm.drinksmenu.model.Drink;
-import com.pl.donauturm.drinksmenu.model.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
 import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.Shape;
-import com.pl.donauturm.drinksmenu.model.Text;
+import com.pl.donauturm.drinksmenu.model.content.Shape;
+import com.pl.donauturm.drinksmenu.model.content.Text;
 import com.pl.donauturm.drinksmenu.view.views.ItemView;
 
 import java.util.Arrays;

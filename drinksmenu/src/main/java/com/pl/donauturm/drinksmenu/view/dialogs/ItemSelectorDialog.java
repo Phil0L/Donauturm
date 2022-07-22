@@ -16,11 +16,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.Drink;
-import com.pl.donauturm.drinksmenu.model.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
 import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.Shape;
-import com.pl.donauturm.drinksmenu.model.Text;
+import com.pl.donauturm.drinksmenu.model.content.Shape;
+import com.pl.donauturm.drinksmenu.model.content.Text;
 
 import java.util.List;
 

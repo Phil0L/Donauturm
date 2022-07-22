@@ -12,9 +12,9 @@ public class PlaylistData implements Playlist {
   public String name;
   public String layout;
   public String templateName;
-  public Object videoWindow; // TODO
-  public Object zoneVideoWindow; // TODO
-  public Object schedule; // TODO
+  public Object videoWindow;
+  public Object zoneVideoWindow;
+  public Object schedule;
   public List<String> labels;
   public List<String> groupIds;
   public List<String> belongsTo;

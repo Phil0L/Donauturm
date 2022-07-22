@@ -1,4 +1,4 @@
-package com.pl.donauturm.drinksmenu.model;
+package com.pl.donauturm.drinksmenu.model.content;
 
 import android.graphics.Color;
 
@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.pl.donauturm.drinksmenu.model.Font;
+import com.pl.donauturm.drinksmenu.model.Item;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Textable;
 

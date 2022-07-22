@@ -1,4 +1,4 @@
-package com.pl.donauturm.drinksmenu.util;
+package com.pl.donauturm.drinksmenu.util.json;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;

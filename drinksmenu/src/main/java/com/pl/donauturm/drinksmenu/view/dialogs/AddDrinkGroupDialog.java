@@ -18,10 +18,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.Drink;
-import com.pl.donauturm.drinksmenu.model.DrinkGroup;
-import com.pl.donauturm.drinksmenu.model.DrinkRegistry;
-import com.pl.donauturm.drinksmenu.model.DrinkStyle;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinkRegistry;
+import com.pl.donauturm.drinksmenu.model.content.DrinkStyle;
 
 import java.util.ArrayList;
 import java.util.List;

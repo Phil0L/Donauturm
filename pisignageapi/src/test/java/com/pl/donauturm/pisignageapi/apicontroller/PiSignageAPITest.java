@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.pl.donauturm.pisignageapi.model.Asset;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,5 +34,16 @@ public class PiSignageAPITest {
         List<Asset> assets = api.getAllAssets();
         assertTrue(assets.stream().map(Asset::getName).anyMatch(an -> an.equals("img_logo_corporate.jpg")));
         api.deleteAsset("img_logo_corporate.jpg");
+    }
+
+    @Test
+    void getAssetImage() {
+        api.getAssetImage("GetraenkeKarte.jpeg", new File("C:\\Users\\phill\\Downloads\\GetraenkeKarte.jpeg"));
+    }
+
+
+    @AfterEach
+    void tearDown() {
+        api.logout();
     }
 }

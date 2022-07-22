@@ -17,9 +17,11 @@ import okhttp3.RequestBody;
 public class FileUploadRequest extends Request<File, FileUploadedMessage>{
 
   private final MultipartBody mpb;
+  protected final File file;
 
   public FileUploadRequest(@NotNull File file) {
     super(null);
+    this.file = file;
     final int i = file.getName().lastIndexOf('.');
     final String extension = file.getName().substring(i + 1);
     this.mpb = new MultipartBody.Builder().setType(MultipartBody.FORM)

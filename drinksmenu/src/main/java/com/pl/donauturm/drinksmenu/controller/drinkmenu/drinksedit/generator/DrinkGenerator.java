@@ -6,7 +6,7 @@ import android.widget.ImageView;
 import com.pl.donauturm.drinksmenu.controller.MainitemDrinksMenu;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
 import com.pl.donauturm.drinksmenu.view.views.DrinkView;
-import com.pl.donauturm.drinksmenu.model.Drink;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
 
 public class DrinkGenerator {
 

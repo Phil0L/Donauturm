@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.Text;
+import com.pl.donauturm.drinksmenu.model.content.Text;
 
 public class TextView extends ItemView {
 

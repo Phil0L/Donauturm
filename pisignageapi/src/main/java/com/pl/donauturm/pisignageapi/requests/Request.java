@@ -91,17 +91,9 @@ public abstract class Request<Q, S>{
       final ResponseBody body = response.body();
       if (body == null)
         throw new IOException("Response body is null");
-      final String responseBody = body.string();
-      Class<? extends S> resultClass = provideResultClass(responseBody);
-      logIncoming(responseBody);
-      if (resultClass != null) {
-        S re = gson.fromJson(responseBody, resultClass);
-        onResponse(re);
-        return re;
-      } else {
-        onResponse(null);
-        return null;
-      }
+      S re = parseResult(body);
+      Request.this.onResponse(re);
+      return re;
     } catch (IOException ioException) {
       ioException.printStackTrace();
       return null;
@@ -125,15 +117,10 @@ public abstract class Request<Q, S>{
         final ResponseBody body = response.body();
         if (body == null)
           throw new IOException("Response body is null");
-        final String responseBody = body.string();
-        Class<? extends S> resultClass = provideResultClass(responseBody);
-        logIncoming(responseBody);
-        if (resultClass != null) {
-          S re = gson.fromJson(responseBody, resultClass);
-          Request.this.onResponse(re);
-          if (callback != null)
-            callback.onResponse(re);
-        }
+        S re = parseResult(body);
+        Request.this.onResponse(re);
+        if (callback != null)
+          callback.onResponse(re);
       }
 
       @Override
@@ -144,17 +131,33 @@ public abstract class Request<Q, S>{
     })).start();
   }
 
+  protected S parseResult(ResponseBody response){
+    try {
+      String responseBody = response.string();
+      logIncoming(responseBody);
+      Class<? extends S> resultClass = provideResultClass(responseBody);
+      if (resultClass != null) {
+        return gson.fromJson(responseBody, resultClass);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
+  }
+
   protected void onResponse(S response){
 
   }
 
-  private void logOutgoing(){
+  protected void logOutgoing(){
     System.out.println("-# " + uri() + " <- " + method());
     if (requestMessage != null)
       System.out.println("-> " + gson.toJson(requestMessage));
+    if (this instanceof FileUploadRequest)
+        System.out.println("-> " + ((FileUploadRequest) this).file.getName());
   }
 
-  private void logIncoming(String body){
+  protected void logIncoming(String body){
     if (body != null && !body.isEmpty())
       System.out.println("<- " + body);
   }
