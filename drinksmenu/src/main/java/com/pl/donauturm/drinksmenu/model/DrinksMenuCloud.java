@@ -12,6 +12,8 @@ import com.pl.donauturm.drinksmenu.util.json.PolymorphicDeserializer;
 import com.pl.donauturm.pisignageapi.apicontroller.PiSignageAPI;
 import com.pl.donauturm.pisignageapi.requests.Request;
 
+import org.jetbrains.annotations.TestOnly;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,8 +37,26 @@ public class DrinksMenuCloud extends DrinksMenu {
         super.height = drinksMenu.height;
         super.width = drinksMenu.width;
         super.version = drinksMenu.version;
+        super.backGround = drinksMenu.backGround;
+        super.menuImage = drinksMenu.menuImage;
         this.backgroundUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + api.getUsername() + "/" + friendly(drinksMenu.name) + "Background.png";
         this.imageUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + api.getUsername() + "/" + friendly(name) + ".png";
+    }
+
+    @TestOnly
+    public DrinksMenuCloud(@NonNull DrinksMenu drinksMenu, @NonNull String username) {
+        super();
+        this.original = drinksMenu;
+        this.api = null;
+        super.name = drinksMenu.name;
+        super.items = drinksMenu.items;
+        super.height = drinksMenu.height;
+        super.width = drinksMenu.width;
+        super.version = drinksMenu.version;
+        super.backGround = drinksMenu.backGround;
+        super.menuImage = drinksMenu.menuImage;
+        this.backgroundUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + username + "/" + friendly(drinksMenu.name) + "Background.png";
+        this.imageUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + username + "/" + friendly(name) + ".png";
     }
 
     public String getBackgroundUrl() {

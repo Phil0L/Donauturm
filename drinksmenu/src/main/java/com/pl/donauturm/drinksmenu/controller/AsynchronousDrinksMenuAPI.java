@@ -10,7 +10,6 @@ import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
 import com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI;
 import com.pl.donauturm.pisignageapi.model.Asset;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -85,7 +84,9 @@ public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
         new Thread(() -> {
             DrinksMenuCloud cloudDrinksMenu = new DrinksMenuCloud(drinksMenu, synchronous);
             cloudDrinksMenu.upload(context);
-            new Handler(Looper.getMainLooper()).post(() -> cb.onData(null));
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (cb != null) cb.onData(null);
+            });
         }).start();
 
     }

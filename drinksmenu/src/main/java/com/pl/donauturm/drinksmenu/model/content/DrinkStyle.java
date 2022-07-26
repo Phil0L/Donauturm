@@ -2,6 +2,8 @@ package com.pl.donauturm.drinksmenu.model.content;
 
 import android.graphics.Color;
 
+import androidx.annotation.NonNull;
+
 import com.pl.donauturm.drinksmenu.model.Font;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
 
@@ -13,16 +15,16 @@ public class DrinkStyle implements Serializable, Drinktextable {
     private int nameSize;
     private int nameColor;
     private String nameFont;
-    private Font tempNameFont;
     private int descriptionSize;
     private int descriptionColor;
     private String descriptionFont;
-    private Font tempDescriptionFont;
     private boolean priceVisible;
     private int priceSize;
     private int priceColor;
     private String priceFont;
-    private Font tempPriceFont;
+    private transient Font tempNameFont;
+    private transient Font tempDescriptionFont;
+    private transient Font tempPriceFont;
 
     public DrinkStyle() {
         this.nameSize = 10;
@@ -147,5 +149,19 @@ public class DrinkStyle implements Serializable, Drinktextable {
     public void setPriceFont(Font font) {
         this.tempPriceFont = font;
         this.priceFont = font.getFile().getAbsolutePath();
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "DrinkStyle{" +
+                "nameSize=" + nameSize +
+                ", nameFont='" + nameFont + '\'' +
+                ", descriptionSize=" + descriptionSize +
+                ", descriptionFont='" + descriptionFont + '\'' +
+                ", priceVisible=" + priceVisible +
+                ", priceSize=" + priceSize +
+                ", priceFont='" + priceFont + '\'' +
+                '}';
     }
 }

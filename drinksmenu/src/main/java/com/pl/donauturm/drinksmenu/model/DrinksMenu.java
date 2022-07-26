@@ -53,7 +53,7 @@ public class DrinksMenu implements Serializable {
 
     public DrinksMenu(String name, Item... items) {
         this.name = name;
-        this.items = Arrays.asList(items);
+        this.items = new ArrayList<>(Arrays.asList(items));
         this.backGround = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888, true);
         this.width = 1920;
         this.height = 1080;
@@ -62,7 +62,7 @@ public class DrinksMenu implements Serializable {
 
     public DrinksMenu(String name, Context context, Item... items) {
         this.name = name;
-        this.items = Arrays.asList(items);
+        this.items = new ArrayList<>(Arrays.asList(items));
         this.backGround = BitmapFactory.decodeResource(context.getResources(), R.drawable.png_background);
         this.width = 1920;
         this.height = (int) (backGround.getHeight() * (1920f / backGround.getWidth())); // keep aspect ratio
@@ -72,7 +72,7 @@ public class DrinksMenu implements Serializable {
 
     public DrinksMenu(String name, List<Item> items, Bitmap backGround) {
         this.name = name;
-        this.items = items;
+        this.items = new ArrayList<>(items);
         this.width = 1920;
         this.height = (int) (backGround.getHeight() * (1920f / backGround.getWidth())); // keep aspect ratio
         this.backGround = Bitmap.createScaledBitmap(backGround, width, height, true);
@@ -203,6 +203,8 @@ public class DrinksMenu implements Serializable {
         return "DrinksMenu{" +
                 "name='" + name + '\'' +
                 ", items=" + items +
+                ",width=" + width +
+                ",height=" + height +
                 '}';
     }
 

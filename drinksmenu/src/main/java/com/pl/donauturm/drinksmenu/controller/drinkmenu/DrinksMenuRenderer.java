@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -17,18 +19,19 @@ import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.Dri
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.DrinkGroupGenerator;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.ShapeGenerator;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.TextGenerator;
+import com.pl.donauturm.drinksmenu.model.DrinksMenu;
+import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.Shape;
+import com.pl.donauturm.drinksmenu.model.content.Text;
 import com.pl.donauturm.drinksmenu.util.DrinksMenuCanvas;
 import com.pl.donauturm.drinksmenu.view.layouts.PreviewHolder;
 import com.pl.donauturm.drinksmenu.view.views.DrinkGroupView;
 import com.pl.donauturm.drinksmenu.view.views.DrinkView;
 import com.pl.donauturm.drinksmenu.view.views.ShapeView;
 import com.pl.donauturm.drinksmenu.view.views.TextView;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
-import com.pl.donauturm.drinksmenu.model.DrinksMenu;
-import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.content.Shape;
-import com.pl.donauturm.drinksmenu.model.content.Text;
+
 
 public class DrinksMenuRenderer {
 
@@ -55,32 +58,36 @@ public class DrinksMenuRenderer {
 
     @SuppressLint("ClickableViewAccessibility")
     public void renderFromMenu(Context context, @NonNull DrinksMenu menu, Rendered rendered) {
-        // create frame
-        PreviewHolder frameLayout = new PreviewHolder(context);
-        frameLayout.setVisibility(View.INVISIBLE);
-//        frameLayout.setLayoutParams(new ConstraintLayout.LayoutParams(menu.width, menu.height));
-        FrameLayout rootLayout = ((AppCompatActivity) context).findViewById(android.R.id.content);
-        rootLayout.addView(frameLayout, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        rootLayout.invalidate();
-        frameLayout.invalidate();
-        frameLayout.post(() -> {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            // create frame
+            PreviewHolder frameLayout = new PreviewHolder(context);
+            frameLayout.setVisibility(View.INVISIBLE);
+            frameLayout.setLayoutParams(new ConstraintLayout.LayoutParams(menu.width, menu.height));
+            FrameLayout rootLayout = ((AppCompatActivity) context).findViewById(android.R.id.content);
 
-            // wait a tick to place the frame before adding content
-            ImageView bg = addBackground(frameLayout, menu.getBackGround());
+            rootLayout.addView(frameLayout, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            rootLayout.invalidate();
+            frameLayout.invalidate();
             frameLayout.post(() -> {
-                addContent(frameLayout, menu, bg);
-                frameLayout.setVisibility(View.INVISIBLE);
-                frameLayout.post(() -> {
 
-                    // save frame a tick later
-                    Bitmap image = renderFromView(frameLayout);
-                    frameLayout.setOnTouchListener((v, event) -> {
-                        rootLayout.removeView(v);
-                        return true;
+                // wait a tick to place the frame before adding content
+                ImageView bg = addBackground(frameLayout, menu.getBackGround());
+                frameLayout.post(() -> {
+                    addContent(frameLayout, menu, bg);
+                    frameLayout.setVisibility(View.INVISIBLE);
+                    frameLayout.post(() -> {
+
+                        // save frame a tick later
+                        Bitmap image = renderFromView(frameLayout);
+                        frameLayout.setOnTouchListener((v, event) -> {
+                            rootLayout.removeView(v);
+                            return true;
+                        });
+                        rootLayout.removeView(frameLayout);
+                        menu.provideMenuImage(image);
+                        rendered.renderFinished(image);
                     });
-                    rootLayout.removeView(frameLayout);
-                    menu.provideMenuImage(image);
-                    rendered.renderFinished(image);
                 });
             });
         });

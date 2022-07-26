@@ -24,7 +24,7 @@ public class Text extends Item implements Serializable, Backgroundable, Textable
     @Nullable
     private String fontPath;
     @Nullable
-    private Font tempFont;
+    private transient Font tempFont;
 
     public Text(String name) {
         super(name);
