@@ -1,8 +1,12 @@
 package com.pl.donauturm.drinksmenu.controller.drinkmenu;
 
+import static com.pl.donauturm.drinksmenu.model.DrinksMenu.deserializer;
+import static com.pl.donauturm.drinksmenu.model.DrinksMenu.serializer;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +23,9 @@ import androidx.fragment.app.Fragment;
 
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.DrinksMenuAPI;
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
 import com.pl.donauturm.drinksmenu.controller.MainitemDrinksMenu;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
-
-import static com.pl.donauturm.drinksmenu.model.DrinksMenu.deserializer;
-import static com.pl.donauturm.drinksmenu.model.DrinksMenu.serializer;
 
 
 /**
@@ -95,8 +96,8 @@ public class DrinksMenuFragment extends Fragment {
         this.editor.launch(drinksMenu);
     }
 
-    public void cloudClicked(DrinksMenuAPI api){
-        switch (cloudState){
+    public void cloudClicked(DrinksMenuAPI api) {
+        switch (cloudState) {
             case UNKNOWN:
             case PULLING:
             case PUSHING:
@@ -111,7 +112,9 @@ public class DrinksMenuFragment extends Fragment {
 
     public void setCloudState(CloudState cloudState) {
         this.cloudState = cloudState;
-        requireActivity().invalidateOptionsMenu();
+        if (getActivity() != null)
+            getActivity().invalidateOptionsMenu();
+
     }
 
     public CloudState getCloudState() {
@@ -119,7 +122,7 @@ public class DrinksMenuFragment extends Fragment {
     }
 
 
-    void uploadDrinksMenu(DrinksMenuAPI api){
+    void uploadDrinksMenu(DrinksMenuAPI api) {
         setCloudState(CloudState.PUSHING);
         api.asynchronous.uploadDrinkMenu(drinksMenu, (v) -> setCloudState(CloudState.UP_TO_DATE));
     }
@@ -173,6 +176,19 @@ public class DrinksMenuFragment extends Fragment {
 
         CloudState(int iconResource) {
             this.iconResource = iconResource;
+        }
+    }
+
+    public static class LoadingFragment extends Fragment {
+
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            View view = inflater.inflate(R.layout.fragment_drinks_menu_page_loading, container, false);
+            ImageView animationView = view.findViewById(R.id.loading_spinner);
+            if (animationView.getDrawable() instanceof AnimatedVectorDrawable)
+                ((AnimatedVectorDrawable) animationView.getDrawable()).start();
+            return view;
         }
     }
 }

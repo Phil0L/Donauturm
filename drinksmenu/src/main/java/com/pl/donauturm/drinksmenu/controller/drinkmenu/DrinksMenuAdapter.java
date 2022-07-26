@@ -20,6 +20,9 @@ public class DrinksMenuAdapter extends FragmentStateAdapter {
     private HashMap<Integer, DrinksMenuFragment> fragmentCache;
     private List<DrinksMenu> items;
     private FragmentManager fragmentManager;
+    private boolean showALoadingFragment;
+    private long loadingId = 1000;
+    private int loadingPos = 0;
 
     public DrinksMenuAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -41,8 +44,54 @@ public class DrinksMenuAdapter extends FragmentStateAdapter {
         notifyDataSetChanged();
     }
 
+    public void addItem(DrinksMenu item){
+        this.items.add(item);
+        if (showALoadingFragment) {
+            loadingPos++;
+            loadingId = randomLong();
+            notifyFragmentChanged(items.size() - 1);
+            notifyItemInserted(items.size());
+        } else
+            notifyItemInserted(items.size() - 1);
+    }
+
+    public void removeItem(DrinksMenu item){
+        this.items.remove(item);
+        if (showALoadingFragment){
+            loadingPos--;
+            loadingId = randomLong();
+            notifyFragmentChanged(items.size());
+            notifyItemRemoved(items.size() + 1);
+        } else
+            notifyItemRemoved(items.size());
+    }
+
+    public void updateItem(DrinksMenu item){
+        int index = items.indexOf(item);
+        if (index != -1) {
+            items.set(index, item);
+            notifyItemChanged(index);
+        }
+    }
+
+    public void updateItemAt(int index, DrinksMenu item){
+        items.set(index, item);
+        notifyItemChanged(index);
+    }
+
     public List<DrinksMenu> getItems() {
         return items;
+    }
+
+    public void showALoadingFragment(boolean showALoadingFragment) {
+        this.showALoadingFragment = showALoadingFragment;
+        if (showALoadingFragment) {
+            loadingPos = items.size();
+            notifyItemInserted(items.size());
+        } else {
+            notifyItemRemoved(items.size());
+        }
+
     }
 
     public DrinksMenu getItem(int position){
@@ -52,22 +101,53 @@ public class DrinksMenuAdapter extends FragmentStateAdapter {
     }
 
     public Fragment getFragmentAt(int position){
-        DrinksMenuFragment fragment = fragmentCache.get(position);
+        Fragment fragment = fragmentManager.findFragmentByTag("f" + getItemId(position));
         if (fragment != null) return fragment;
-        return fragmentManager.findFragmentByTag("f" + getItemId(position));
+        return fragmentCache.get(position);
     }
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
+        if (showALoadingFragment && position >= items.size()) {
+            return new DrinksMenuFragment.LoadingFragment();
+        }
         DrinksMenuFragment drinksMenuFragment = DrinksMenuFragment.newInstance(items.get(position));
         fragmentCache.put(position, drinksMenuFragment);
         return drinksMenuFragment;
     }
 
     @Override
+    public long getItemId(int position) {
+        Fragment fragment = createFragment(position);
+        if (fragment instanceof DrinksMenuFragment)
+            return position;
+        return position == loadingPos ? loadingId : super.getItemId(position);
+    }
+
+    @Override
+    public boolean containsItem(long itemId) {
+        if (loadingId == itemId)
+            return true;
+        return super.containsItem(itemId);
+    }
+
+    private long randomLong() {
+        if (loadingId == 0)
+            return loadingId = 1000;
+        else return ++loadingId;
+    }
+
+    @Override
     public int getItemCount() {
-        return items.size();
+        return items.size() + (showALoadingFragment ? 1 : 0);
+    }
+
+    private void notifyFragmentChanged(int position){
+        notifyItemRemoved(position);
+        notifyItemInserted(position);
+        notifyItemChanged(position);
+
     }
 
 }

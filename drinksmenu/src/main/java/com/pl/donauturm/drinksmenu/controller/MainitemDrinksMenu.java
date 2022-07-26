@@ -1,5 +1,6 @@
 package com.pl.donauturm.drinksmenu.controller;
 
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinkMenuRegistry;
@@ -31,7 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>, MapObservable.MapObserver<String, DrinksMenu> {
+public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
+        MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy {
 
     private FragmentDrinksMenuBinding binding;
     private DrinksMenuAdapter drinksMenuAdapter;
@@ -43,11 +46,11 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
         setHasOptionsMenu(true);
         binding = FragmentDrinksMenuBinding.inflate(inflater, container, false);
         drinksMenuAdapter = new DrinksMenuAdapter(requireActivity().getSupportFragmentManager(), getLifecycle());
-        drinksMenuAdapter.setItems(new ArrayList<>(DrinkMenuRegistry.getInstance().values()));
+        drinksMenuAdapter.setItems(new ArrayList<>(DrinkMenuRegistry.getInstance().values())); //TODO: probably unnecessary
         binding.drinksMenuPager.setAdapter(drinksMenuAdapter);
         binding.drinksMenuPager.registerOnPageChangeCallback(new PageChangeListener());
         DrinkMenuRegistry.getInstance().observe(this);
-        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(binding.drinksMenuTabs, binding.drinksMenuPager, (tab, position) -> tab.setText(drinksMenuAdapter.getItem(position).getName()));
+        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(binding.drinksMenuTabs, binding.drinksMenuPager, this);
         tabLayoutMediator.attach();
         return binding.getRoot();
     }
@@ -55,21 +58,40 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         api = DrinksMenuAPI.simple("philippletschka", "S4T2x9F@yEKYnA3", getContext());
-        api.asynchronous.login(v ->
-                api.asynchronous.getAllDrinkMenusIterated(this));
+        pull();
+    }
+
+    private void pull(){
+        drinksMenuAdapter.showALoadingFragment(true);
+        api.asynchronous.getAllDrinkMenusIterated(this, list -> {
+            drinksMenuAdapter.showALoadingFragment(false);
+        });
+    }
+
+    @Override
+    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+        DrinksMenu drinksMenu = drinksMenuAdapter.getItem(position);
+        if (drinksMenu != null) {
+            tab.setText(drinksMenu.getName());
+            tab.setIcon(null);
+        }else {
+            tab.setText("");
+            if (tab.getIcon() instanceof AnimatedVectorDrawable) {
+                ((AnimatedVectorDrawable) tab.getIcon()).start();
+            }
+            tab.setIcon(R.drawable.anim_loading);
+        }
     }
 
     @Override
     public void onData(DrinksMenu data) {
         if (data == null) return;
-        requireActivity().runOnUiThread(() ->
-                DrinkMenuRegistry.getInstance().put(data.getName(), data));
+        DrinkMenuRegistry.getInstance().put(data.getName(), data);
     }
 
     @Override
     public void onAddition(int index, String source, DrinksMenu element, Map<String, DrinksMenu> map) {
-        drinksMenuAdapter.setItems(new ArrayList<>(map.values()));
-        drinksMenuAdapter.notifyItemInserted(index);
+        drinksMenuAdapter.addItem(element);
         if (element instanceof DrinksMenuCloud){
             binding.drinksMenuPager.post(() -> {
                 DrinksMenuFragment drinksMenuFragmentAt = getDrinksMenuFragmentAt(index);
@@ -82,14 +104,12 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
 
     @Override
     public void onRemoval(int index, String deletedSource, DrinksMenu deletedElement, Map<String, DrinksMenu> map) {
-        drinksMenuAdapter.setItems(new ArrayList<>(map.values()));
-        drinksMenuAdapter.notifyItemRemoved(index);
+        drinksMenuAdapter.removeItem(deletedElement);
     }
 
     @Override
     public void onUpdate(int index, String source, DrinksMenu oldElement, DrinksMenu newElement, Map<String, DrinksMenu> map) {
-        drinksMenuAdapter.setItems(new ArrayList<>(map.values()));
-        drinksMenuAdapter.notifyItemChanged(index);
+        drinksMenuAdapter.updateItemAt(index, newElement);
         if (newElement instanceof DrinksMenuCloud){
             binding.drinksMenuPager.post(() -> {
                 DrinksMenuFragment drinksMenuFragmentAt = getDrinksMenuFragmentAt(index);
@@ -126,7 +146,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
                 cloudClicked();
                 return true;
             case "Pull all Drink menus":
-                api.asynchronous.getAllDrinkMenusIterated(this);
+                pull();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

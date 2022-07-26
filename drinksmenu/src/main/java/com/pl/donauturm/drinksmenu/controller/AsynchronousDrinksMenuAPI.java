@@ -26,17 +26,17 @@ public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
         this.context = context;
     }
 
-    public void getAllDrinkMenusIterated(APICallback<DrinksMenu> cb){
-        if (!isLoggedIn()){
+    public void getAllDrinkMenusIterated(APICallback<DrinksMenu> cb) {
+        if (!isLoggedIn()) {
             login((v) -> getAllDrinkMenusIterated(cb));
             return;
         }
         super.getAllAssets(data -> {
             List<Asset> assets = data.stream().filter(a -> a.getLabels().contains("generated")).collect(Collectors.toList());
-            for (Asset asset : assets){
+            for (Asset asset : assets) {
                 AtomicReference<String> gsonData = new AtomicReference<>();
                 asset.getLabels().forEach(l -> {
-                    if (l.startsWith("data:")){
+                    if (l.startsWith("data:")) {
                         gsonData.set(l.substring(5));
                     }
                 });
@@ -52,18 +52,51 @@ public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
         });
     }
 
-    public void getAllDrinkMenus(APICallback<List<DrinksMenu>> cb){
-        if (!isLoggedIn()){
+    public void getAllDrinkMenusIterated(APICallback<DrinksMenu> cb, APICallback<List<DrinksMenu>> cdf) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        if (!isLoggedIn()) {
+            login((v) -> getAllDrinkMenusIterated(cb, cdf));
+            return;
+        }
+        super.getAllAssets(data -> {
+            List<Asset> assets = data.stream().filter(a -> a.getLabels().contains("generated")).collect(Collectors.toList());
+            List<DrinksMenu> drinksMenus = new ArrayList<>();
+            for (Asset asset : assets) {
+                AtomicReference<String> gsonData = new AtomicReference<>();
+                asset.getLabels().forEach(l -> {
+                    if (l.startsWith("data:")) {
+                        gsonData.set(l.substring(5));
+                    }
+                });
+                if (gsonData.get() == null) continue;
+                DrinksMenuCloud drinksMenuCloud = DrinksMenuCloud.deserializer().fromJson(gsonData.get(), DrinksMenuCloud.class);
+                if (drinksMenuCloud == null) continue;
+                Bitmap background = synchronous.getBitmap(drinksMenuCloud.getBackgroundUrl());
+                Bitmap image = synchronous.getBitmap(drinksMenuCloud.getImageUrl());
+                drinksMenuCloud.provideMenuImage(image);
+                drinksMenuCloud.provideBackGround(background);
+                drinksMenus.add(drinksMenuCloud);
+                if (cb != null)
+                    handler.post(() -> cb.onData(drinksMenuCloud));
+
+            }
+            if (cdf != null)
+                handler.post(() -> cdf.onData(drinksMenus));
+        });
+    }
+
+    public void getAllDrinkMenus(APICallback<List<DrinksMenu>> cb) {
+        if (!isLoggedIn()) {
             login((v) -> getAllDrinkMenus(cb));
             return;
         }
         super.getAllAssets(data -> {
             List<Asset> assets = data.stream().filter(a -> a.getLabels().contains("generated")).collect(Collectors.toList());
             List<DrinksMenu> drinksMenus = new ArrayList<>();
-            for (Asset asset : assets){
+            for (Asset asset : assets) {
                 AtomicReference<String> gsonData = new AtomicReference<>();
                 asset.getLabels().forEach(l -> {
-                    if (l.startsWith("data:")){
+                    if (l.startsWith("data:")) {
                         gsonData.set(l.substring(5));
                     }
                 });
@@ -80,7 +113,7 @@ public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
         });
     }
 
-    public void uploadDrinkMenu(DrinksMenu drinksMenu, AsyncPiSignageAPI.APICallback<Void> cb){
+    public void uploadDrinkMenu(DrinksMenu drinksMenu, AsyncPiSignageAPI.APICallback<Void> cb) {
         new Thread(() -> {
             DrinksMenuCloud cloudDrinksMenu = new DrinksMenuCloud(drinksMenu, synchronous);
             cloudDrinksMenu.upload(context);

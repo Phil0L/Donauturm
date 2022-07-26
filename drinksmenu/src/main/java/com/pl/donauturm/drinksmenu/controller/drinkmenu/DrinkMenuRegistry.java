@@ -108,7 +108,7 @@ public class DrinkMenuRegistry extends MapObservable<String, DrinksMenu> impleme
         DrinksMenu dm = DrinkMenus.get(s);
         if (dm == null) return null;
         DrinkMenus.replace(s, drinkMenu);
-        int index = Arrays.asList(DrinkMenus.keySet().toArray()).indexOf(dm);
+        int index = Arrays.asList(DrinkMenus.keySet().toArray()).indexOf(s);
         notifyUpdate(index, dm, s, drinkMenu);
         return drinkMenu;
     }
