@@ -39,7 +39,7 @@ public class DrinksMenuRenderer {
     public Bitmap renderSyncFromMenu(Context context, @NonNull DrinksMenu menu) {
         FrameLayout rootLayout = ((AppCompatActivity) context).findViewById(android.R.id.content);
         PreviewHolder frameLayout = new PreviewHolder(context);
-        frameLayout.setLayoutParams(new ConstraintLayout.LayoutParams(menu.width, menu.height));
+        frameLayout.setLayoutParams(new ConstraintLayout.LayoutParams(menu.getWidth(), menu.getHeight()));
         frameLayout.forceLayout();
         frameLayout.requestLayout();
         frameLayout.invalidate();
@@ -50,7 +50,7 @@ public class DrinksMenuRenderer {
         frameLayout.requestLayout();
         frameLayout.invalidate();
         frameLayout.setVisibility(View.VISIBLE);
-        Bitmap image = renderFromView(frameLayout, menu.width, menu.height);
+        Bitmap image = renderFromView(frameLayout, menu.getWidth(), menu.getHeight());
 
         menu.provideMenuImage(image);
         return image;
@@ -63,7 +63,7 @@ public class DrinksMenuRenderer {
             // create frame
             PreviewHolder frameLayout = new PreviewHolder(context);
             frameLayout.setVisibility(View.INVISIBLE);
-            frameLayout.setLayoutParams(new ConstraintLayout.LayoutParams(menu.width, menu.height));
+            frameLayout.setLayoutParams(new ConstraintLayout.LayoutParams(menu.getWidth(), menu.getHeight()));
             FrameLayout rootLayout = ((AppCompatActivity) context).findViewById(android.R.id.content);
 
             rootLayout.addView(frameLayout, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));

@@ -33,13 +33,12 @@ import com.pl.donauturm.drinksmenu.model.DrinksMenu;
  * Use the {@link DrinksMenuFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DrinksMenuFragment extends Fragment {
+public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoadedListener, DrinksMenu.OnCloudStateChangedListener {
 
     private Button mEditButton;
     private TextView mVersionTextView;
     private ImageView mMenuView;
     private DrinksMenu drinksMenu;
-    private CloudState cloudState = CloudState.UNKNOWN;
 
 
     public DrinksMenuFragment() {
@@ -80,15 +79,26 @@ public class DrinksMenuFragment extends Fragment {
         this.mVersionTextView = view.findViewById(R.id.drinksmenu_version);
         this.mEditButton.setOnClickListener(this::edit);
         this.mMenuView.setOnClickListener(this::reloadImage);
-        this.mMenuView.post(() -> this.reloadImage(null));
+        if (drinksMenu.isLoading()) {
+            this.mMenuView.setAlpha(0.8f);
+            this.mEditButton.setVisibility(View.GONE);
+            this.drinksMenu.onLoaded(this);
+        } else
+            this.mMenuView.post(() -> this.reloadImage(null));
+    }
+
+    public DrinksMenu getDrinksMenu() {
+        return drinksMenu;
     }
 
     @SuppressLint("SetTextI18n")
     public void reloadImage(View v) {
+        if (drinksMenu.isLoading()) return;
+        this.mVersionTextView.setText("v." + drinksMenu.getVersion());
+        this.onCloudStateChanged(drinksMenu.getCloudState());
         new DrinksMenuRenderer().renderFromMenu(getContext(), drinksMenu, bm -> {
             this.mMenuView.setImageBitmap(bm);
             this.mMenuView.postInvalidate();
-            this.mVersionTextView.setText("v." + drinksMenu.getVersion());
         });
     }
 
@@ -97,7 +107,7 @@ public class DrinksMenuFragment extends Fragment {
     }
 
     public void cloudClicked(DrinksMenuAPI api) {
-        switch (cloudState) {
+        switch (drinksMenu.getCloudState()) {
             case UNKNOWN:
             case PULLING:
             case PUSHING:
@@ -110,21 +120,26 @@ public class DrinksMenuFragment extends Fragment {
         }
     }
 
-    public void setCloudState(CloudState cloudState) {
-        this.cloudState = cloudState;
-        if (getActivity() != null)
-            getActivity().invalidateOptionsMenu();
-
-    }
-
-    public CloudState getCloudState() {
-        return cloudState;
-    }
-
 
     void uploadDrinksMenu(DrinksMenuAPI api) {
-        setCloudState(CloudState.PUSHING);
-        api.asynchronous.uploadDrinkMenu(drinksMenu, (v) -> setCloudState(CloudState.UP_TO_DATE));
+        //TODO: this needs some work
+        getDrinksMenu().setCloudState(DrinksMenu.CloudState.PUSHING);
+        api.asynchronous.uploadDrinkMenu(drinksMenu, (v) -> getDrinksMenu().setCloudState(DrinksMenu.CloudState.UP_TO_DATE));
+    }
+
+    @Override
+    public void onMenuLoaded(DrinksMenu menu) {
+        this.drinksMenu = menu;
+        this.mMenuView.post(() -> this.reloadImage(null));
+        this.mEditButton.setVisibility(View.VISIBLE);
+        this.mMenuView.setAlpha(1f);
+        this.onCloudStateChanged(drinksMenu.getCloudState());
+    }
+
+    @Override
+    public void onCloudStateChanged(DrinksMenu.CloudState state) {
+        if (getActivity() != null)
+            getActivity().invalidateOptionsMenu();
     }
 
     final ActivityResultLauncher<DrinksMenu> editor = registerForActivityResult(new ActivityResultContract<DrinksMenu, DrinksMenu>() {
@@ -150,34 +165,16 @@ public class DrinksMenuFragment extends Fragment {
         if (result != null) {
             MainitemDrinksMenu.largeLog(getClass().getSimpleName(), result);
             mMenuView.post(() -> {
-                DrinkMenuRegistry.getInstance().replace(result.getName(), result);
-                setCloudState(CloudState.READY_FOR_PUSH);
+                DrinkMenuRegistry.getInstance().put(result.getName(), result);
                 drinksMenu = result;
+                drinksMenu.setCloudState(DrinksMenu.CloudState.READY_FOR_PUSH);
+                drinksMenu.provideBackGround(drinksMenu.getBackGround()); //hack to set loading to false
                 reloadImage(null);
             });
 
         }
     });
 
-    public enum CloudState {
-        UNKNOWN(R.drawable.ic_cloud),
-        UP_TO_DATE(R.drawable.ic_cloud_done),
-        READY_FOR_PUSH(R.drawable.ic_cloud_upload),
-        PUSHING(R.drawable.ic_cloud_uploading),
-        READY_FOR_PULL(R.drawable.ic_cloud_download),
-        PULLING(R.drawable.ic_cloud_downloading),
-        NO_CONNECTION(R.drawable.ic_cloud);
-
-        private final int iconResource;
-
-        public int getIconResource() {
-            return iconResource;
-        }
-
-        CloudState(int iconResource) {
-            this.iconResource = iconResource;
-        }
-    }
 
     public static class LoadingFragment extends Fragment {
 

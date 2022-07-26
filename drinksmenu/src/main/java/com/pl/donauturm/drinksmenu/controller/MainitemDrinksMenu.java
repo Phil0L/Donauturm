@@ -1,5 +1,6 @@
 package com.pl.donauturm.drinksmenu.controller;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,6 +34,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Map;
 
+//TODO: some todos: editor:
+    // hide bottomsheet when back pressed
+    // hide bottomsheet when clicked on frame
+
 public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
         MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy {
 
@@ -63,6 +68,13 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
 
     private void pull(){
         drinksMenuAdapter.showALoadingFragment(true);
+        api.asynchronous.getAllDrinkMenusIteratedWithoutImages(this, list -> {
+            drinksMenuAdapter.showALoadingFragment(false);
+        });
+    }
+
+    private void pullAgain(){
+        drinksMenuAdapter.showALoadingFragment(true);
         api.asynchronous.getAllDrinkMenusIterated(this, list -> {
             drinksMenuAdapter.showALoadingFragment(false);
         });
@@ -76,30 +88,32 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
             tab.setIcon(null);
         }else {
             tab.setText("");
-            if (tab.getIcon() instanceof AnimatedVectorDrawable) {
-                ((AnimatedVectorDrawable) tab.getIcon()).start();
-            }
             tab.setIcon(R.drawable.anim_loading);
+            if (tab.getIcon() instanceof AnimatedVectorDrawable)
+                ((AnimatedVectorDrawable) tab.getIcon()).start();
         }
     }
 
     @Override
     public void onData(DrinksMenu data) {
         if (data == null) return;
-        DrinkMenuRegistry.getInstance().put(data.getName(), data);
+        DrinksMenu drinksMenu = DrinkMenuRegistry.getInstance().put(data.getName(), data);
+        if (drinksMenu == data && drinksMenu instanceof DrinksMenuCloud) {
+            DrinksMenuCloud menu = ((DrinksMenuCloud) drinksMenu);
+            // drinks menu is accepted
+            if (drinksMenu.getBackGround() == null) {
+                // image is not yet loaded
+                menu.setLoading();
+                Bitmap background = api.getBitmap(menu.getBackgroundUrl());
+                menu.provideBackGround(background);
+            }
+        }
     }
 
     @Override
     public void onAddition(int index, String source, DrinksMenu element, Map<String, DrinksMenu> map) {
+        element.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
         drinksMenuAdapter.addItem(element);
-        if (element instanceof DrinksMenuCloud){
-            binding.drinksMenuPager.post(() -> {
-                DrinksMenuFragment drinksMenuFragmentAt = getDrinksMenuFragmentAt(index);
-                if (drinksMenuFragmentAt != null){
-                    drinksMenuFragmentAt.setCloudState(DrinksMenuFragment.CloudState.UP_TO_DATE);
-                }
-            });
-        }
     }
 
     @Override
@@ -110,14 +124,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
     @Override
     public void onUpdate(int index, String source, DrinksMenu oldElement, DrinksMenu newElement, Map<String, DrinksMenu> map) {
         drinksMenuAdapter.updateItemAt(index, newElement);
-        if (newElement instanceof DrinksMenuCloud){
-            binding.drinksMenuPager.post(() -> {
-                DrinksMenuFragment drinksMenuFragmentAt = getDrinksMenuFragmentAt(index);
-                if (drinksMenuFragmentAt != null){
-                    drinksMenuFragmentAt.setCloudState(DrinksMenuFragment.CloudState.UP_TO_DATE);
-                }
-            });
-        }
+
     }
 
     @Override
@@ -134,7 +141,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
             cloudItem.setVisible(false);
         } else {
             cloudItem.setVisible(true);
-            cloudItem.setIcon(currentFragment.getCloudState().getIconResource());
+            cloudItem.setIcon(currentFragment.getDrinksMenu().getCloudState().getIconResource());
         }
 
     }
@@ -146,7 +153,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
                 cloudClicked();
                 return true;
             case "Pull all Drink menus":
-                pull();
+                pullAgain();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

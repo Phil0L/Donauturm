@@ -85,6 +85,34 @@ public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
         });
     }
 
+    public void getAllDrinkMenusIteratedWithoutImages(APICallback<DrinksMenu> cb, APICallback<List<DrinksMenu>> cdf) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        if (!isLoggedIn()) {
+            login((v) -> getAllDrinkMenusIterated(cb, cdf));
+            return;
+        }
+        super.getAllAssets(data -> {
+            List<Asset> assets = data.stream().filter(a -> a.getLabels().contains("generated")).collect(Collectors.toList());
+            List<DrinksMenu> drinksMenus = new ArrayList<>();
+            for (Asset asset : assets) {
+                AtomicReference<String> gsonData = new AtomicReference<>();
+                asset.getLabels().forEach(l -> {
+                    if (l.startsWith("data:")) {
+                        gsonData.set(l.substring(5));
+                    }
+                });
+                if (gsonData.get() == null) continue;
+                DrinksMenuCloud drinksMenuCloud = DrinksMenuCloud.deserializer().fromJson(gsonData.get(), DrinksMenuCloud.class);
+                if (drinksMenuCloud == null) continue;
+                drinksMenus.add(drinksMenuCloud);
+                if (cb != null)
+                    handler.post(() -> cb.onData(drinksMenuCloud));
+            }
+            if (cdf != null)
+                handler.post(() -> cdf.onData(drinksMenus));
+        });
+    }
+
     public void getAllDrinkMenus(APICallback<List<DrinksMenu>> cb) {
         if (!isLoggedIn()) {
             login((v) -> getAllDrinkMenus(cb));

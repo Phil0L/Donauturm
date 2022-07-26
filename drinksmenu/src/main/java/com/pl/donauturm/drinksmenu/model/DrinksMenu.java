@@ -27,19 +27,22 @@ import java.util.Objects;
 
 public class DrinksMenu implements Serializable {
 
-    public String name;
-    public List<Item> items;
-
-    public int width;
-    public int height;
-
-    public String version;
-
+    protected String name;
+    protected List<Item> items;
+    protected int width;
+    protected int height;
+    protected String version;
     protected Bitmap backGround;
-    @Nullable
+
     protected transient Bitmap menuImage;
 
+    private transient boolean loading = false;
+    private transient CloudState cloudState = CloudState.UNKNOWN;
+    private final transient List<OnMenuLoadedListener> onMenuLoadedListeners = new ArrayList<>();
+    private final transient List<OnCloudStateChangedListener> onCloudStateChangedListeners = new ArrayList<>();
+
     public DrinksMenu() {
+        setLoading(true);
     }
 
     public DrinksMenu(String name) {
@@ -87,6 +90,14 @@ public class DrinksMenu implements Serializable {
         return items;
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public void addItem(Item item){
         this.items.add(item);
     }
@@ -95,9 +106,48 @@ public class DrinksMenu implements Serializable {
         this.items.remove(item);
     }
 
-    @NonNull
     public Bitmap getBackGround() {
         return backGround;
+    }
+
+    public boolean isLoading() {
+        return loading;
+    }
+
+    public void setLoading() {
+        this.loading = true;
+    }
+
+    private void setLoading(boolean loading) {
+        this.loading = loading;
+        if (loading) {
+            if (onMenuLoadedListeners != null) {
+                for (OnMenuLoadedListener onMenuLoadedListener : onMenuLoadedListeners) {
+                    onMenuLoadedListener.onMenuLoaded(this);
+                }
+            }
+        }
+    }
+
+    public void onLoaded(OnMenuLoadedListener listener){
+        this.onMenuLoadedListeners.add(listener);
+    }
+
+    public CloudState getCloudState() {
+        return cloudState;
+    }
+
+    public void setCloudState(CloudState cloudState) {
+        this.cloudState = cloudState;
+        if (onCloudStateChangedListeners != null) {
+            for (OnCloudStateChangedListener onCloudStateChangedListener : onCloudStateChangedListeners) {
+                onCloudStateChangedListener.onCloudStateChanged(cloudState);
+            }
+        }
+    }
+
+    public void onCloudStateChanged(OnCloudStateChangedListener listener){
+        this.onCloudStateChangedListeners.add(listener);
     }
 
     @Nullable
@@ -126,11 +176,13 @@ public class DrinksMenu implements Serializable {
     public void provideBackGround(Bitmap bitmap){
         if (bitmap.getWidth() == 1920){
             this.backGround = bitmap;
+            if (loading) setLoading(false);
             return;
         }
         this.width = 1920;
         this.height = (int) (bitmap.getHeight() * (1920f / bitmap.getWidth())); // keep aspect ratio
         this.backGround = Bitmap.createScaledBitmap(bitmap, width, height, true);
+        if (loading) setLoading(false);
     }
 
     public List<Bitmap> getAllBitmaps(){
@@ -175,15 +227,15 @@ public class DrinksMenu implements Serializable {
      * @param other has to be another version string of the same format as this.version
      * @return true if own version is greater, false if other version is greater or equal
      */
-    public boolean isVersionGreaterThan(String other){
-        String[] v1 = version.split("\\.");
-        String[] v2 = other.split("\\.");
-        if (Integer.parseInt(v1[0]) > Integer.parseInt(v2[0])) return true;
-        if (Integer.parseInt(v1[0]) < Integer.parseInt(v2[0])) return false;
-        if (Integer.parseInt(v1[1]) > Integer.parseInt(v2[1])) return true;
-        if (Integer.parseInt(v1[1]) < Integer.parseInt(v2[1])) return false;
-        if (Integer.parseInt(v1[2]) > Integer.parseInt(v2[2])) return true;
-        if (Integer.parseInt(v1[2]) < Integer.parseInt(v2[2])) return false;
+    public boolean hasGreaterVersionThan(String other){
+        String[] self = version.split("\\.");
+        String[] some = other.split("\\.");
+        if (Integer.parseInt(self[0]) > Integer.parseInt(some[0])) return true;
+        if (Integer.parseInt(self[0]) < Integer.parseInt(some[0])) return false;
+        if (Integer.parseInt(self[1]) > Integer.parseInt(some[1])) return true;
+        if (Integer.parseInt(self[1]) < Integer.parseInt(some[1])) return false;
+        if (Integer.parseInt(self[2]) > Integer.parseInt(some[2])) return true;
+        if (Integer.parseInt(self[2]) < Integer.parseInt(some[2])) return false;
         return false;
     }
 
@@ -202,6 +254,7 @@ public class DrinksMenu implements Serializable {
     public String toString() {
         return "DrinksMenu{" +
                 "name='" + name + '\'' +
+                "version='" + version + '\'' +
                 ", items=" + items +
                 ",width=" + width +
                 ",height=" + height +
@@ -219,5 +272,33 @@ public class DrinksMenu implements Serializable {
                 .registerTypeAdapter(Item.class, new PolymorphicDeserializer<Item>())
                 .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toLocalFile(context))
                 .create();
+    }
+
+    public interface OnMenuLoadedListener{
+        void onMenuLoaded(DrinksMenu menu);
+    }
+
+    public enum CloudState {
+        UNKNOWN(R.drawable.ic_cloud),
+        UP_TO_DATE(R.drawable.ic_cloud_done),
+        READY_FOR_PUSH(R.drawable.ic_cloud_upload),
+        PUSHING(R.drawable.ic_cloud_uploading),
+        READY_FOR_PULL(R.drawable.ic_cloud_download),
+        PULLING(R.drawable.ic_cloud_downloading),
+        NO_CONNECTION(R.drawable.ic_cloud);
+
+        private final int iconResource;
+
+        public int getIconResource() {
+            return iconResource;
+        }
+
+        CloudState(int iconResource) {
+            this.iconResource = iconResource;
+        }
+    }
+
+    public interface OnCloudStateChangedListener{
+        void onCloudStateChanged(CloudState state);
     }
 }

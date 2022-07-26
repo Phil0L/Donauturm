@@ -53,7 +53,7 @@ public class DrinkMenuRegistry extends MapObservable<String, DrinksMenu> impleme
         if (containsKey(s)) {
             DrinksMenu old = get(s);
             if (old == null) return null;
-            if (old.isVersionGreaterThan(drinksMenu.getVersion())) {
+            if (old.hasGreaterVersionThan(drinksMenu.getVersion())) {
                 return old;
             } else {
                 return replace(s, drinksMenu);
