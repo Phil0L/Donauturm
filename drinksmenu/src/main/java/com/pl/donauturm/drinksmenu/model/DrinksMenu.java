@@ -38,8 +38,8 @@ public class DrinksMenu implements Serializable {
 
     private transient boolean loading = false;
     private transient CloudState cloudState = CloudState.UNKNOWN;
-    private final transient List<OnMenuLoadedListener> onMenuLoadedListeners = new ArrayList<>();
-    private final transient List<OnCloudStateChangedListener> onCloudStateChangedListeners = new ArrayList<>();
+    private transient List<OnMenuLoadedListener> onMenuLoadedListeners = new ArrayList<>();
+    private transient List<OnCloudStateChangedListener> onCloudStateChangedListeners = new ArrayList<>();
 
     public DrinksMenu() {
         setLoading(true);
@@ -98,11 +98,11 @@ public class DrinksMenu implements Serializable {
         return height;
     }
 
-    public void addItem(Item item){
+    public void addItem(Item item) {
         this.items.add(item);
     }
 
-    public void removeItem(Item item){
+    public void removeItem(Item item) {
         this.items.remove(item);
     }
 
@@ -120,7 +120,7 @@ public class DrinksMenu implements Serializable {
 
     private void setLoading(boolean loading) {
         this.loading = loading;
-        if (loading) {
+        if (!loading) {
             if (onMenuLoadedListeners != null) {
                 for (OnMenuLoadedListener onMenuLoadedListener : onMenuLoadedListeners) {
                     onMenuLoadedListener.onMenuLoaded(this);
@@ -129,7 +129,9 @@ public class DrinksMenu implements Serializable {
         }
     }
 
-    public void onLoaded(OnMenuLoadedListener listener){
+    public void onLoaded(OnMenuLoadedListener listener) {
+        if (onMenuLoadedListeners == null)
+            this.onMenuLoadedListeners = new ArrayList<>();
         this.onMenuLoadedListeners.add(listener);
     }
 
@@ -146,7 +148,9 @@ public class DrinksMenu implements Serializable {
         }
     }
 
-    public void onCloudStateChanged(OnCloudStateChangedListener listener){
+    public void onCloudStateChanged(OnCloudStateChangedListener listener) {
+        if (onCloudStateChangedListeners == null)
+            this.onCloudStateChangedListeners = new ArrayList<>();
         this.onCloudStateChangedListeners.add(listener);
     }
 
@@ -163,8 +167,8 @@ public class DrinksMenu implements Serializable {
         return menuImage = new DrinksMenuRenderer().renderSyncFromMenu(context, this);
     }
 
-    public void provideMenuImage(Bitmap bitmap){
-        if (bitmap.getWidth() == 1920){
+    public void provideMenuImage(Bitmap bitmap) {
+        if (bitmap.getWidth() == 1920) {
             this.menuImage = bitmap;
             return;
         }
@@ -173,8 +177,8 @@ public class DrinksMenu implements Serializable {
         this.menuImage = Bitmap.createScaledBitmap(bitmap, width, height, true);
     }
 
-    public void provideBackGround(Bitmap bitmap){
-        if (bitmap.getWidth() == 1920){
+    public void provideBackGround(Bitmap bitmap) {
+        if (bitmap.getWidth() == 1920) {
             this.backGround = bitmap;
             if (loading) setLoading(false);
             return;
@@ -185,7 +189,7 @@ public class DrinksMenu implements Serializable {
         if (loading) setLoading(false);
     }
 
-    public List<Bitmap> getAllBitmaps(){
+    public List<Bitmap> getAllBitmaps() {
         List<Bitmap> bitmaps = new ArrayList<>(List.of(menuImage, backGround));
         items.forEach(i -> {
 
@@ -197,7 +201,7 @@ public class DrinksMenu implements Serializable {
         return version;
     }
 
-    public String increaseVersion(){
+    public String increaseVersion() {
         return version = getNewVersion();
     }
 
@@ -227,7 +231,7 @@ public class DrinksMenu implements Serializable {
      * @param other has to be another version string of the same format as this.version
      * @return true if own version is greater, false if other version is greater or equal
      */
-    public boolean hasGreaterVersionThan(String other){
+    public boolean hasGreaterVersionThan(String other) {
         String[] self = version.split("\\.");
         String[] some = other.split("\\.");
         if (Integer.parseInt(self[0]) > Integer.parseInt(some[0])) return true;
@@ -241,7 +245,7 @@ public class DrinksMenu implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-       return o == this;
+        return o == this;
     }
 
     @Override
@@ -261,7 +265,7 @@ public class DrinksMenu implements Serializable {
                 '}';
     }
 
-    public static Gson serializer(Context context){
+    public static Gson serializer(Context context) {
         return new GsonBuilder()
                 .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toLocalFile(context))
                 .create();
@@ -274,31 +278,37 @@ public class DrinksMenu implements Serializable {
                 .create();
     }
 
-    public interface OnMenuLoadedListener{
+    public interface OnMenuLoadedListener {
         void onMenuLoaded(DrinksMenu menu);
     }
 
     public enum CloudState {
-        UNKNOWN(R.drawable.ic_cloud),
-        UP_TO_DATE(R.drawable.ic_cloud_done),
-        READY_FOR_PUSH(R.drawable.ic_cloud_upload),
-        PUSHING(R.drawable.ic_cloud_uploading),
-        READY_FOR_PULL(R.drawable.ic_cloud_download),
-        PULLING(R.drawable.ic_cloud_downloading),
-        NO_CONNECTION(R.drawable.ic_cloud);
+        UNKNOWN(R.drawable.ic_cloud, true),
+        UP_TO_DATE(R.drawable.ic_cloud_done, true),
+        READY_FOR_PUSH(R.drawable.ic_cloud_upload, false),
+        PUSHING(R.drawable.ic_cloud_uploading, false),
+        READY_FOR_PULL(R.drawable.ic_cloud_download, true),
+        PULLING(R.drawable.ic_cloud_downloading, false),
+        NO_CONNECTION(R.drawable.ic_cloud, false);
 
         private final int iconResource;
+        private final boolean overwrite;
 
         public int getIconResource() {
             return iconResource;
         }
 
-        CloudState(int iconResource) {
+        public boolean isAbleToOverwrite() {
+            return overwrite;
+        }
+
+        CloudState(int iconResource, boolean overwrite) {
             this.iconResource = iconResource;
+            this.overwrite = overwrite;
         }
     }
 
-    public interface OnCloudStateChangedListener{
+    public interface OnCloudStateChangedListener {
         void onCloudStateChanged(CloudState state);
     }
 }

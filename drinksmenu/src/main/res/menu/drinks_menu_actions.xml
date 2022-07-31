@@ -7,9 +7,4 @@
         android:icon="@drawable/ic_cloud"
         android:title="Cloud"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/pull_all"
-        android:icon="@drawable/ic_get"
-        android:title="Pull all Drink menus"
-        app:showAsAction="never" />
 </menu>

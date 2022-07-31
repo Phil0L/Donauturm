@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 
 import com.google.android.material.tabs.TabLayout;
@@ -39,7 +40,8 @@ import java.util.Map;
     // hide bottomsheet when clicked on frame
 
 public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
-        MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy {
+        MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy,
+        SwipeRefreshLayout.OnRefreshListener, DrinksMenu.OnCloudStateChangedListener {
 
     private FragmentDrinksMenuBinding binding;
     private DrinksMenuAdapter drinksMenuAdapter;
@@ -54,6 +56,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
         drinksMenuAdapter.setItems(new ArrayList<>(DrinkMenuRegistry.getInstance().values())); //TODO: probably unnecessary
         binding.drinksMenuPager.setAdapter(drinksMenuAdapter);
         binding.drinksMenuPager.registerOnPageChangeCallback(new PageChangeListener());
+        binding.swipeRefresh.setOnRefreshListener(this);
         DrinkMenuRegistry.getInstance().observe(this);
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(binding.drinksMenuTabs, binding.drinksMenuPager, this);
         tabLayoutMediator.attach();
@@ -68,15 +71,21 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
 
     private void pull(){
         drinksMenuAdapter.showALoadingFragment(true);
+        binding.swipeRefresh.setEnabled(false);
         api.asynchronous.getAllDrinkMenusIteratedWithoutImages(this, list -> {
             drinksMenuAdapter.showALoadingFragment(false);
+            binding.swipeRefresh.setEnabled(true);
         });
     }
 
     private void pullAgain(){
-        drinksMenuAdapter.showALoadingFragment(true);
+        binding.swipeRefresh.setRefreshing(true);
+        DrinkMenuRegistry.getInstance().values().forEach(dm -> {
+            if (dm.getCloudState().isAbleToOverwrite())
+                dm.setCloudState(DrinksMenu.CloudState.PULLING);
+        });
         api.asynchronous.getAllDrinkMenusIterated(this, list -> {
-            drinksMenuAdapter.showALoadingFragment(false);
+            binding.swipeRefresh.setRefreshing(false);
         });
     }
 
@@ -112,8 +121,9 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
 
     @Override
     public void onAddition(int index, String source, DrinksMenu element, Map<String, DrinksMenu> map) {
-        element.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+        element.onCloudStateChanged(this);
         drinksMenuAdapter.addItem(element);
+        element.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
     }
 
     @Override
@@ -123,7 +133,12 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
 
     @Override
     public void onUpdate(int index, String source, DrinksMenu oldElement, DrinksMenu newElement, Map<String, DrinksMenu> map) {
+        newElement.onCloudStateChanged(this);
         drinksMenuAdapter.updateItemAt(index, newElement);
+        newElement.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+        binding.swipeRefresh.post(() -> {
+            newElement.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+        });
 
     }
 
@@ -147,6 +162,11 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
     }
 
     @Override
+    public void onRefresh() {
+        pullAgain();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull @NotNull MenuItem item) {
         switch (item.getTitle().toString()) {
             case "Cloud":
@@ -158,6 +178,12 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onCloudStateChanged(DrinksMenu.CloudState state) {
+        if (getActivity() != null)
+            getActivity().invalidateOptionsMenu();
     }
 
     private void cloudClicked(){

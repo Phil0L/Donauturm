@@ -17,13 +17,14 @@ import java.util.List;
 
 public class DrinksMenuAdapter extends FragmentStateAdapter {
 
-    private HashMap<Integer, DrinksMenuFragment> fragmentCache;
     private List<DrinksMenu> items;
-    private FragmentManager fragmentManager;
+    private final HashMap<Integer, DrinksMenuFragment> fragmentCache;
+    private final FragmentManager fragmentManager;
     private boolean showALoadingFragment;
     private long loadingId = 1000;
     private int loadingPos = 0;
 
+    @SuppressWarnings("unused")
     public DrinksMenuAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
         this.items = new ArrayList<>();
@@ -66,17 +67,18 @@ public class DrinksMenuAdapter extends FragmentStateAdapter {
             notifyItemRemoved(items.size());
     }
 
+    @SuppressWarnings("unused")
     public void updateItem(DrinksMenu item){
         int index = items.indexOf(item);
         if (index != -1) {
             items.set(index, item);
-            notifyItemChanged(index);
+            notifyFragmentDataChanged(index, item);
         }
     }
 
     public void updateItemAt(int index, DrinksMenu item){
         items.set(index, item);
-        notifyItemChanged(index);
+        notifyFragmentDataChanged(index, item);
     }
 
     public List<DrinksMenu> getItems() {
@@ -147,7 +149,13 @@ public class DrinksMenuAdapter extends FragmentStateAdapter {
         notifyItemRemoved(position);
         notifyItemInserted(position);
         notifyItemChanged(position);
+    }
 
+    private void notifyFragmentDataChanged(int position, DrinksMenu drinksMenu){
+        Fragment fragment = getFragmentAt(position);
+        if (fragment instanceof DrinksMenuFragment)
+            ((DrinksMenuFragment) fragment).onMenuLoaded(drinksMenu);
+        notifyItemChanged(position);
     }
 
 }

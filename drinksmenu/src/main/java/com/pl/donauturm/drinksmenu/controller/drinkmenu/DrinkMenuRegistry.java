@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.util.MapObservable;
 
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -46,6 +47,12 @@ public class DrinkMenuRegistry extends MapObservable<String, DrinksMenu> impleme
     @Nullable
     public DrinksMenu get(@Nullable Object o) {
         return DrinkMenus.get(o);
+    }
+
+    public String getKey(DrinksMenu drinksMenu){
+        return DrinkMenus.entrySet()
+                .stream().filter(e -> e.getValue().getName().equals(drinksMenu.getName()))
+                .findFirst().orElse(new AbstractMap.SimpleEntry<>(null, null)).getKey();
     }
 
     @Nullable

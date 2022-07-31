@@ -33,7 +33,7 @@ import com.pl.donauturm.drinksmenu.model.DrinksMenu;
  * Use the {@link DrinksMenuFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoadedListener, DrinksMenu.OnCloudStateChangedListener {
+public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoadedListener {
 
     private Button mEditButton;
     private TextView mVersionTextView;
@@ -95,7 +95,6 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
     public void reloadImage(View v) {
         if (drinksMenu.isLoading()) return;
         this.mVersionTextView.setText("v." + drinksMenu.getVersion());
-        this.onCloudStateChanged(drinksMenu.getCloudState());
         new DrinksMenuRenderer().renderFromMenu(getContext(), drinksMenu, bm -> {
             this.mMenuView.setImageBitmap(bm);
             this.mMenuView.postInvalidate();
@@ -133,13 +132,6 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
         this.mMenuView.post(() -> this.reloadImage(null));
         this.mEditButton.setVisibility(View.VISIBLE);
         this.mMenuView.setAlpha(1f);
-        this.onCloudStateChanged(drinksMenu.getCloudState());
-    }
-
-    @Override
-    public void onCloudStateChanged(DrinksMenu.CloudState state) {
-        if (getActivity() != null)
-            getActivity().invalidateOptionsMenu();
     }
 
     final ActivityResultLauncher<DrinksMenu> editor = registerForActivityResult(new ActivityResultContract<DrinksMenu, DrinksMenu>() {
