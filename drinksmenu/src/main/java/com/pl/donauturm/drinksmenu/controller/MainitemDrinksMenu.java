@@ -151,11 +151,17 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
         MenuItem cloudItem = menu.findItem(R.id.cloud);
+        MenuItem addItem = menu.findItem(R.id.add_menu);
+        MenuItem cloneItem = menu.findItem(R.id.clone_menu);
         DrinksMenuFragment currentFragment = getCurrentDrinksMenuFragment();
         if (currentFragment == null) {
             cloudItem.setVisible(false);
+            addItem.setVisible(false);
+            cloneItem.setVisible(false);
         } else {
             cloudItem.setVisible(true);
+            addItem.setVisible(true);
+            cloneItem.setVisible(true);
             cloudItem.setIcon(currentFragment.getDrinksMenu().getCloudState().getIconResource());
         }
 

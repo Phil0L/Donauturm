@@ -34,8 +34,8 @@ across the layout configurations
                     android:layout_height="?attr/actionBarSize"
                     android:background="@color/white"
                     android:elevation="4dp"
-                    android:theme="@style/ThemeOverlay.AppCompat.Light"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                    android:theme="@style/Theme.Donauturm"
+                    app:popupTheme="@style/Theme.Donauturm" />
 
             </com.google.android.material.appbar.AppBarLayout>
 

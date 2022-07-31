@@ -3,6 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/clone_menu"
+        android:icon="@drawable/ic_copy"
+        android:title="Clone drink menu"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/add_menu"
+        android:icon="@drawable/ic_add"
+        android:title="Add drink menu"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/cloud"
         android:icon="@drawable/ic_cloud"
         android:title="Cloud"
