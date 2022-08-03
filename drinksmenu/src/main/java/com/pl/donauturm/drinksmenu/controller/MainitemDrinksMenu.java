@@ -42,6 +42,7 @@ import java.util.Map;
 // hide bottomsheet when clicked on frame
 // change background
 // change name
+// add image view
 
 public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
         MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy,
@@ -176,7 +177,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
     public boolean onOptionsItemSelected(@NonNull @NotNull MenuItem item) {
         switch (item.getTitle().toString()) {
             case "Cloud":
-                cloudClicked();
+                cloudClicked(requireActivity().findViewById(R.id.cloud));
                 return true;
             case "Add drink menu":
                 addClicked();
@@ -195,11 +196,11 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
             getActivity().invalidateOptionsMenu();
     }
 
-    private void cloudClicked() {
+    private void cloudClicked(View v) {
         int pageIndex = binding.drinksMenuPager.getCurrentItem();
         Fragment fragment = drinksMenuAdapter.getFragmentAt(pageIndex);
         if (fragment instanceof DrinksMenuFragment) {
-            ((DrinksMenuFragment) fragment).cloudClicked(api);
+            ((DrinksMenuFragment) fragment).cloudClicked(api, v);
         }
     }
 

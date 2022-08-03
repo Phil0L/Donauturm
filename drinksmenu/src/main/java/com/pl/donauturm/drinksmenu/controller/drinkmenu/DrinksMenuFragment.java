@@ -26,6 +26,7 @@ import com.pl.donauturm.drinksmenu.controller.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.controller.MainitemDrinksMenu;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
+import com.pl.donauturm.drinksmenu.view.popup.UpToDateInfo;
 
 
 /**
@@ -105,13 +106,15 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
         this.editor.launch(drinksMenu);
     }
 
-    public void cloudClicked(DrinksMenuAPI api) {
+    public void cloudClicked(DrinksMenuAPI api, View v) {
         switch (drinksMenu.getCloudState()) {
             case UNKNOWN:
             case PULLING:
             case PUSHING:
-            case UP_TO_DATE:
             case READY_FOR_PULL:
+                break;
+            case UP_TO_DATE:
+                new UpToDateInfo(getActivity()).show(v);
                 break;
             case READY_FOR_PUSH:
                 uploadDrinksMenu(api);
