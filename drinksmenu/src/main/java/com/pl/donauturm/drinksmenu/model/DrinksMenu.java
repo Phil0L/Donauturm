@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 
-public class DrinksMenu implements Serializable {
+public class DrinksMenu implements Serializable, Cloneable {
 
     protected String name;
     protected List<Item> items;
@@ -84,6 +84,10 @@ public class DrinksMenu implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    private void setName(String name) {
+        this.name = name;
     }
 
     public List<Item> getItems() {
@@ -201,8 +205,12 @@ public class DrinksMenu implements Serializable {
         return version;
     }
 
-    public String increaseVersion() {
-        return version = getNewVersion();
+    private void setVersion(String version) {
+        this.version = version;
+    }
+
+    public void increaseVersion() {
+        version = getNewVersion();
     }
 
     private String getVersionNow() {
@@ -276,6 +284,50 @@ public class DrinksMenu implements Serializable {
                 .registerTypeAdapter(Item.class, new PolymorphicDeserializer<Item>())
                 .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toLocalFile(context))
                 .create();
+    }
+
+    public static Gson serializer() {
+        return new GsonBuilder()
+                .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
+                .create();
+    }
+
+    public static Gson deserializer() {
+        return new GsonBuilder()
+                .registerTypeAdapter(Item.class, new PolymorphicDeserializer<Item>())
+                .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
+                .create();
+    }
+
+    @Override
+    @NonNull
+    @SuppressWarnings("UnusedAssignment")
+    public DrinksMenu clone() {
+        try {
+            DrinksMenu clone = (DrinksMenu) super.clone();
+            String content = serializer().toJson(this);
+            clone = deserializer().fromJson(content, DrinksMenu.class);
+            clone.provideBackGround(Bitmap.createBitmap(backGround));
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    @NonNull
+    @SuppressWarnings("UnusedAssignment")
+    public DrinksMenu clone(String name) {
+        try {
+            DrinksMenu clone = (DrinksMenu) super.clone();
+            String content = serializer().toJson(this);
+            clone = deserializer().fromJson(content, DrinksMenu.class);
+            clone.provideBackGround(Bitmap.createBitmap(backGround));
+            clone.setVersion(getVersionNow());
+            clone.setName(name);
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     public interface OnMenuLoadedListener {

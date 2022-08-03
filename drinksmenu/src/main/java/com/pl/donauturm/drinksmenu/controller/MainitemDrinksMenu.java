@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 
 import com.google.android.material.tabs.TabLayout;
@@ -28,6 +29,7 @@ import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksMenuBinding;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
 import com.pl.donauturm.drinksmenu.util.MapObservable;
+import com.pl.donauturm.drinksmenu.view.dialogs.NewDrinksmenuDialog;
 import com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI;
 
 import org.jetbrains.annotations.NotNull;
@@ -36,8 +38,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 //TODO: some todos: editor:
-    // hide bottomsheet when back pressed
-    // hide bottomsheet when clicked on frame
+// hide bottomsheet when back pressed
+// hide bottomsheet when clicked on frame
+// change background
+// change name
 
 public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
         MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy,
@@ -69,7 +73,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
         pull();
     }
 
-    private void pull(){
+    private void pull() {
         drinksMenuAdapter.showALoadingFragment(true);
         binding.swipeRefresh.setEnabled(false);
         api.asynchronous.getAllDrinkMenusIteratedWithoutImages(this, list -> {
@@ -78,7 +82,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
         });
     }
 
-    private void pullAgain(){
+    private void pullAgain() {
         binding.swipeRefresh.setRefreshing(true);
         DrinkMenuRegistry.getInstance().values().forEach(dm -> {
             if (dm.getCloudState().isAbleToOverwrite())
@@ -95,7 +99,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
         if (drinksMenu != null) {
             tab.setText(drinksMenu.getName());
             tab.setIcon(null);
-        }else {
+        } else {
             tab.setText("");
             tab.setIcon(R.drawable.anim_loading);
             if (tab.getIcon() instanceof AnimatedVectorDrawable)
@@ -136,10 +140,6 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
         newElement.onCloudStateChanged(this);
         drinksMenuAdapter.updateItemAt(index, newElement);
         newElement.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
-        binding.swipeRefresh.post(() -> {
-            newElement.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
-        });
-
     }
 
     @Override
@@ -178,8 +178,11 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
             case "Cloud":
                 cloudClicked();
                 return true;
-            case "Pull all Drink menus":
-                pullAgain();
+            case "Add drink menu":
+                addClicked();
+                return true;
+            case "Clone drink menu":
+                cloneClicked();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -192,7 +195,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
             getActivity().invalidateOptionsMenu();
     }
 
-    private void cloudClicked(){
+    private void cloudClicked() {
         int pageIndex = binding.drinksMenuPager.getCurrentItem();
         Fragment fragment = drinksMenuAdapter.getFragmentAt(pageIndex);
         if (fragment instanceof DrinksMenuFragment) {
@@ -200,7 +203,33 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
         }
     }
 
-    private DrinksMenuFragment getCurrentDrinksMenuFragment(){
+    private void addClicked() {
+        NewDrinksmenuDialog dialog = NewDrinksmenuDialog.newInstance();
+        dialog.setOnTextSelectedListener(name -> {
+            DrinksMenu drinksMenu = new DrinksMenu(name, requireContext());
+            drinksMenu.onCloudStateChanged(this);
+            drinksMenu.setCloudState(DrinksMenu.CloudState.READY_FOR_PUSH);
+            DrinkMenuRegistry.getInstance().put(name, drinksMenu);
+        });
+        dialog.show(getChildFragmentManager(), "NewDrinksmenuDialog");
+    }
+
+    private void cloneClicked() {
+        int pageIndex = binding.drinksMenuPager.getCurrentItem();
+        Fragment fragment = drinksMenuAdapter.getFragmentAt(pageIndex);
+        if (!(fragment instanceof DrinksMenuFragment)) return;
+        DrinksMenu cDrinksMenu = ((DrinksMenuFragment) fragment).getDrinksMenu();
+        NewDrinksmenuDialog dialog = NewDrinksmenuDialog.newInstance();
+        dialog.setOnTextSelectedListener(name -> {
+            DrinksMenu drinksMenu = cDrinksMenu.clone(name);
+            drinksMenu.onCloudStateChanged(this);
+            drinksMenu.setCloudState(DrinksMenu.CloudState.READY_FOR_PUSH);
+            DrinkMenuRegistry.getInstance().put(name, drinksMenu);
+        });
+        dialog.show(getChildFragmentManager(), "NewDrinksmenuDialog");
+    }
+
+    private DrinksMenuFragment getCurrentDrinksMenuFragment() {
         int pageIndex = binding.drinksMenuPager.getCurrentItem();
         Fragment fragment = drinksMenuAdapter.getFragmentAt(pageIndex);
         if (fragment instanceof DrinksMenuFragment) {
@@ -209,7 +238,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
         return null;
     }
 
-    private DrinksMenuFragment getDrinksMenuFragmentAt(int index){
+    private DrinksMenuFragment getDrinksMenuFragmentAt(int index) {
         Fragment fragment = drinksMenuAdapter.getFragmentAt(index);
         if (fragment instanceof DrinksMenuFragment) {
             return (DrinksMenuFragment) fragment;
@@ -245,6 +274,12 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
         public void onPageSelected(int position) {
             super.onPageSelected(position);
             requireActivity().invalidateOptionsMenu();
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+            if (!binding.swipeRefresh.isRefreshing())
+                binding.swipeRefresh.setEnabled(state == ViewPager.SCROLL_STATE_IDLE);
         }
     }
 
