@@ -67,19 +67,6 @@ public class DrinksMenuCloud extends DrinksMenu {
         return imageUrl;
     }
 
-    @Deprecated
-    public DrinksMenu toStandard(Bitmap bg, Bitmap image) {
-        if (image == null) return toStandard(bg);
-        DrinksMenu drinksMenu = new DrinksMenu();
-        drinksMenu.name = name;
-        drinksMenu.items = items;
-        drinksMenu.height = height;
-        drinksMenu.width = width;
-        drinksMenu.version = version;
-        drinksMenu.backGround = bg;
-        drinksMenu.provideMenuImage(image);
-        return drinksMenu;
-    }
 
     public DrinksMenu toStandard(Bitmap bg) {
         DrinksMenu drinksMenu = new DrinksMenu();

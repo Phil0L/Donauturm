@@ -25,6 +25,7 @@ import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinkMenuRegistry;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuAdapter;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuFragment;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.LocalDrinksMenuManager;
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksMenuBinding;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
@@ -58,7 +59,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
         setHasOptionsMenu(true);
         binding = FragmentDrinksMenuBinding.inflate(inflater, container, false);
         drinksMenuAdapter = new DrinksMenuAdapter(requireActivity().getSupportFragmentManager(), getLifecycle());
-        drinksMenuAdapter.setItems(new ArrayList<>(DrinkMenuRegistry.getInstance().values())); //TODO: probably unnecessary
+        drinksMenuAdapter.setItems(new ArrayList<>());
         binding.drinksMenuPager.setAdapter(drinksMenuAdapter);
         binding.drinksMenuPager.registerOnPageChangeCallback(new PageChangeListener());
         binding.swipeRefresh.setOnRefreshListener(this);
@@ -70,17 +71,24 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        api = DrinksMenuAPI.simple("philippletschka", "S4T2x9F@yEKYnA3", getContext());
+        load();
         pull();
     }
 
+    private void load() {
+        LocalDrinksMenuManager.loadAllLocalSavesAsync(requireContext());
+    }
+
     private void pull() {
-        drinksMenuAdapter.showALoadingFragment(true);
+        api = DrinksMenuAPI.simple("philippletschka", "S4T2x9F@yEKYnA3", getContext());
+//        if (drinksMenuAdapter.getItems().isEmpty())
+//            drinksMenuAdapter.showALoadingFragment(true);
         binding.swipeRefresh.setEnabled(false);
         api.asynchronous.getAllDrinkMenusIteratedWithoutImages(this, list -> {
-            drinksMenuAdapter.showALoadingFragment(false);
+//            drinksMenuAdapter.showALoadingFragment(false);
             binding.swipeRefresh.setEnabled(true);
         });
+        // TODO: check for deleted items on the cloud
     }
 
     private void pullAgain() {
@@ -128,19 +136,20 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
     public void onAddition(int index, String source, DrinksMenu element, Map<String, DrinksMenu> map) {
         element.onCloudStateChanged(this);
         drinksMenuAdapter.addItem(element);
-        element.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+        LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), element);
     }
 
     @Override
     public void onRemoval(int index, String deletedSource, DrinksMenu deletedElement, Map<String, DrinksMenu> map) {
         drinksMenuAdapter.removeItem(deletedElement);
+        LocalDrinksMenuManager.deleteLocalSave(requireContext(), deletedElement.getName());
     }
 
     @Override
     public void onUpdate(int index, String source, DrinksMenu oldElement, DrinksMenu newElement, Map<String, DrinksMenu> map) {
         newElement.onCloudStateChanged(this);
         drinksMenuAdapter.updateItemAt(index, newElement);
-        newElement.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+        LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), newElement);
     }
 
     @Override

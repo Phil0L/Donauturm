@@ -156,6 +156,7 @@ public class DrinksMenu implements Serializable, Cloneable {
         if (onCloudStateChangedListeners == null)
             this.onCloudStateChangedListeners = new ArrayList<>();
         this.onCloudStateChangedListeners.add(listener);
+        listener.onCloudStateChanged(getCloudState());
     }
 
     @Nullable
@@ -240,6 +241,8 @@ public class DrinksMenu implements Serializable, Cloneable {
      * @return true if own version is greater, false if other version is greater or equal
      */
     public boolean hasGreaterVersionThan(String other) {
+        if (version == null || version.isEmpty()) return true;
+        if (other == null || other.isEmpty()) return false;
         String[] self = version.split("\\.");
         String[] some = other.split("\\.");
         if (Integer.parseInt(self[0]) > Integer.parseInt(some[0])) return true;

@@ -114,6 +114,8 @@ public class DrinksMenuAdapter extends FragmentStateAdapter {
         if (showALoadingFragment && position >= items.size()) {
             return new DrinksMenuFragment.LoadingFragment();
         }
+        if (position < 0 || position >= items.size())
+            return null;
         DrinksMenuFragment drinksMenuFragment = DrinksMenuFragment.newInstance(items.get(position));
         fragmentCache.put(position, drinksMenuFragment);
         return drinksMenuFragment;
