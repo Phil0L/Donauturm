@@ -5,21 +5,26 @@ import static com.pl.donauturm.drinksmenu.model.DrinksMenu.serializer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuRenderer;
@@ -33,27 +38,32 @@ import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.Dri
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.DrinkGroupGenerator;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.ShapeGenerator;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.TextGenerator;
+import com.pl.donauturm.drinksmenu.databinding.ActivityDrinksMenuEditorBinding;
+import com.pl.donauturm.drinksmenu.model.DrinksMenu;
+import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.Shape;
+import com.pl.donauturm.drinksmenu.model.content.Text;
+import com.pl.donauturm.drinksmenu.util.KeyboardListener;
 import com.pl.donauturm.drinksmenu.view.dialogs.AddDrinkDialog;
 import com.pl.donauturm.drinksmenu.view.dialogs.AddDrinkGroupDialog;
 import com.pl.donauturm.drinksmenu.view.dialogs.AddTextDialog;
 import com.pl.donauturm.drinksmenu.view.dialogs.ItemSelectorDialog;
-import com.pl.donauturm.drinksmenu.view.layouts.PreviewHolder;
 import com.pl.donauturm.drinksmenu.view.views.DrinkGroupView;
 import com.pl.donauturm.drinksmenu.view.views.DrinkView;
 import com.pl.donauturm.drinksmenu.view.views.ItemView;
 import com.pl.donauturm.drinksmenu.view.views.ShapeView;
 import com.pl.donauturm.drinksmenu.view.views.TextView;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
-import com.pl.donauturm.drinksmenu.model.DrinksMenu;
-import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.content.Shape;
-import com.pl.donauturm.drinksmenu.model.content.Text;
-import com.pl.donauturm.drinksmenu.util.KeyboardListener;
+
+import java.util.ArrayList;
+
+import lv.chi.photopicker.PhotoPickerFragment;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class DrinksMenuEditorActivity extends AppCompatActivity
-        implements ItemView.OnSelect, ItemEventHandler.EditorProvider, ViewTreeObserver.OnGlobalLayoutListener, KeyboardListener.SoftKeyboardToggleListener {
+public class DrinksMenuEditorActivity extends AppCompatActivity implements
+        ItemView.OnSelect, ItemEventHandler.EditorProvider, ViewTreeObserver.OnGlobalLayoutListener,
+        KeyboardListener.SoftKeyboardToggleListener, PhotoPickerFragment.Callback {
 
     private DrinksMenu drinksMenu;
     private ItemView selectedView;
@@ -61,14 +71,9 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
     private ItemEventHandler eventHandler;
     private BottomSheetViewHolder bottomViewHolder;
     private KeyboardListener keyboardListener;
+    private ActivityDrinksMenuEditorBinding binding;
 
     private View mRoot;
-    private Button mSave;
-    private Button mCancel;
-    private CoordinatorLayout mCoordinator;
-    private PreviewHolder mFrameLayout;
-    private ImageView mBackgroundView;
-    private ImageView mGeneratedView;
     private LinearLayout mLayoutBottomSheet;
 
 
@@ -83,35 +88,35 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
         return selectedView;
     }
 
-    public ItemView getNextView(){
-        int ci = mFrameLayout.indexOfChild(getSelectedView());
-        return getNextView(ci+1);
+    public ItemView getNextView() {
+        int ci = binding.previewHolder.indexOfChild(getSelectedView());
+        return getNextView(ci + 1);
     }
 
     @NonNull
-    private ItemView getNextView(int ci){
-        View nv = mFrameLayout.getChildAt(ci);
+    private ItemView getNextView(int ci) {
+        View nv = binding.previewHolder.getChildAt(ci);
         if (nv == null) return getNextView(0);
-        if (!(nv instanceof ItemView)) return getNextView(ci+1);
+        if (!(nv instanceof ItemView)) return getNextView(ci + 1);
         return (ItemView) nv;
     }
 
-    public ItemView getPreviousView(){
-        int ci = mFrameLayout.indexOfChild(getSelectedView());
-        return getPreviousView(ci-1);
+    public ItemView getPreviousView() {
+        int ci = binding.previewHolder.indexOfChild(getSelectedView());
+        return getPreviousView(ci - 1);
     }
 
     @NonNull
-    private ItemView getPreviousView(int ci){
-        View nv = mFrameLayout.getChildAt(ci);
-        if (nv == null) return getPreviousView(mFrameLayout.getChildCount()-1);
-        if (!(nv instanceof ItemView)) return getPreviousView(ci-1);
+    private ItemView getPreviousView(int ci) {
+        View nv = binding.previewHolder.getChildAt(ci);
+        if (nv == null) return getPreviousView(binding.previewHolder.getChildCount() - 1);
+        if (!(nv instanceof ItemView)) return getPreviousView(ci - 1);
         return (ItemView) nv;
     }
 
-    public ItemView getViewFromItem(Item item){
-        for (int i = 0; i < mFrameLayout.getChildCount(); i++) {
-            View v = mFrameLayout.getChildAt(i);
+    public ItemView getViewFromItem(Item item) {
+        for (int i = 0; i < binding.previewHolder.getChildCount(); i++) {
+            View v = binding.previewHolder.getChildAt(i);
             if (v instanceof ItemView) {
                 ItemView iv = (ItemView) v;
                 if (iv.item.equals(item)) return iv;
@@ -132,17 +137,13 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setContentView(R.layout.activity_drinks_menu_editor);
+        this.binding = ActivityDrinksMenuEditorBinding.inflate(getLayoutInflater());
+        super.setContentView(binding.getRoot());
         this.drinksMenu = deserializer(this).fromJson(getIntent().getStringExtra("menu"), DrinksMenu.class);
-        this.mSave = findViewById(R.id.save_button);
-        this.mSave.setOnClickListener(this::save);
-        this.mCancel = findViewById(R.id.cancel_button);
-        this.mCancel.setOnClickListener(this::cancel);
-        this.mCoordinator = findViewById(R.id.root_coordinator);
-        this.mFrameLayout = findViewById(R.id.preview_holder);
-        this.mBackgroundView = findViewById(R.id.preview_background);
-        this.mBackgroundView.setImageBitmap(drinksMenu.getBackGround());
-        this.mGeneratedView = findViewById(R.id.generated_menu);
+        this.binding.saveButton.setOnClickListener(this::save);
+        this.binding.cancelButton.setOnClickListener(this::cancel);
+        this.binding.previewBackground.setImageBitmap(drinksMenu.getBackGround());
+        this.binding.previewBackground.setOnClickListener(v -> onSelect(null));
         this.mLayoutBottomSheet = findViewById(R.id.bottom_sheet_container);
         this.eventHandler = new ItemEventHandler(this);
         this.keyboardListener = new KeyboardListener(this, this);
@@ -155,6 +156,19 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
         this.sheetBehavior.addBottomSheetCallback(new BottomSheetActionHandler());
         this.mRoot = getWindow().getDecorView().getRootView();
         this.mRoot.getViewTreeObserver().addOnGlobalLayoutListener(this);
+        this.binding.actions.parentLayout.setOnClickListener(v -> {
+            if (binding.actions.isExpanded()) binding.actions.collapse();
+            else binding.actions.expand();
+        });
+        this.binding.infos.parentLayout.setOnClickListener(v -> {
+            if (binding.infos.isExpanded()) binding.infos.collapse();
+            else binding.infos.expand();
+        });
+        this.binding.actions.setSpinnerColor(getResources().getColor(R.color.black, null));
+        this.binding.infos.setSpinnerColor(getResources().getColor(R.color.black, null));
+        this.binding.actions.secondLayout.findViewById(R.id.change_background).setOnClickListener(v -> onChangeBackgroundClicked());
+        this.binding.actions.secondLayout.findViewById(R.id.change_name).setOnClickListener(v -> onChangeNameClicked());
+
     }
 
     @Override
@@ -172,10 +186,19 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
     }
 
     @Override
+    public void onBackPressed() {
+        if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void onGlobalLayout() {
         mRoot.getViewTreeObserver().removeOnGlobalLayoutListener(this);
         new PreviewRenderer().renderPreview();
-        keyboardListener.provideHeightReference(mSave);
+        keyboardListener.provideHeightReference(binding.saveButton);
         mRoot.post(this::generateImage);
     }
 
@@ -184,16 +207,16 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
     public void onToggleSoftKeyboard(boolean isVisible, int height) {
         if (bottomViewHolder != null) {
             bottomViewHolder.onToggleSoftKeyboard(isVisible);
-            int topOffset = (int) (mBackgroundView.getY() + mBackgroundView.getPaddingTop() + mBackgroundView.getHeight() + mBackgroundView.getPaddingBottom() - ((ViewGroup.MarginLayoutParams) mLayoutBottomSheet.getLayoutParams()).topMargin);
-            int bottomHeight = this.mCoordinator.getHeight() - topOffset;
+            int topOffset = (int) (binding.previewBackground.getY() + binding.previewBackground.getPaddingTop() + binding.previewBackground.getHeight() + binding.previewBackground.getPaddingBottom() - ((ViewGroup.MarginLayoutParams) mLayoutBottomSheet.getLayoutParams()).topMargin);
+            int bottomHeight = binding.rootCoordinator.getHeight() - topOffset;
             bottomViewHolder.setHeight(bottomHeight);
         }
     }
 
     @Override
     public void onSelect(ItemView itemView) {
-        int topOffset = (int) (mBackgroundView.getY() + mBackgroundView.getPaddingTop() + mBackgroundView.getHeight() + mBackgroundView.getPaddingBottom() - ((ViewGroup.MarginLayoutParams) mLayoutBottomSheet.getLayoutParams()).topMargin);
-        int bottomHeight = this.mCoordinator.getHeight() - topOffset;
+        int topOffset = (int) (binding.previewBackground.getY() + binding.previewBackground.getPaddingTop() + binding.previewBackground.getHeight() + binding.previewBackground.getPaddingBottom() - ((ViewGroup.MarginLayoutParams) mLayoutBottomSheet.getLayoutParams()).topMargin);
+        int bottomHeight = binding.rootCoordinator.getHeight() - topOffset;
         this.sheetBehavior.setExpandedOffset(topOffset);
         if (selectedView != null)
             selectedView.requestDeselect();
@@ -227,7 +250,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
         }
         bottomViewHolder.setHeight(bottomHeight);
         bottomViewHolder.update();
-        mFrameLayout.bringChildToFront(selectedView);
+        binding.previewHolder.bringChildToFront(selectedView);
         invalidateOptionsMenu();
     }
 
@@ -245,7 +268,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
         }
     }
 
-    private boolean onCloneItemClicked(){
+    private boolean onCloneItemClicked() {
         Item item = selectedView.item;
         Item clone = item.clone();
         // offset clone by 50 pixel to avoid overlapping with original item
@@ -269,6 +292,39 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
         eventHandler.onDelete();
         onSelect(null);
         return true;
+    }
+
+    private void onChangeBackgroundClicked() {
+        PhotoPickerFragment.Companion
+                .newInstance(false, false, 1, R.style.ChiliPhotoPicker_Light)
+                .show(getSupportFragmentManager(), "PhotoPickerFragment");
+    }
+
+    @Override
+    public void onImagesPicked(@NonNull ArrayList<Uri> arrayList) {
+        Glide.with(this)
+                .asBitmap()
+                .load(arrayList.get(0))
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        if (resource.getWidth() < resource.getHeight()) {
+                            Toast.makeText(getApplicationContext(), "Image must be in landscape orientation", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        drinksMenu.provideBackGround(resource);
+                        binding.previewBackground.setImageBitmap(resource);
+                        mRoot.post(() -> generateImage());
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                    }
+                });
+    }
+
+    private void onChangeNameClicked() {
+
     }
 
     private boolean onAddItemClicked() {
@@ -337,10 +393,10 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
 
     @Override
     public void generateImage() {
-        mGeneratedView.setImageBitmap(drinksMenu.getBackGround());
-        new DrinksMenuRenderer().renderAsyncFromView(mFrameLayout, bm -> {
+        binding.generatedMenu.setImageBitmap(drinksMenu.getBackGround());
+        new DrinksMenuRenderer().renderAsyncFromView(binding.previewHolder, bm -> {
             drinksMenu.provideMenuImage(bm);
-            mGeneratedView.post(() -> mGeneratedView.setImageBitmap(bm));
+            binding.generatedMenu.post(() -> binding.generatedMenu.setImageBitmap(bm));
         });
     }
 
@@ -380,7 +436,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
 
         private void renderDrinkGroup(DrinkGroup drinkGroup) {
             DrinkGroupGenerator drinkGroupGenerator = new DrinkGroupGenerator();
-            DrinkGroupView drinkGroupView = drinkGroupGenerator.generateNewPreviewDrinkGroup(mFrameLayout, drinkGroup);
+            DrinkGroupView drinkGroupView = drinkGroupGenerator.generateNewPreviewDrinkGroup(binding.previewHolder, drinkGroup);
             drinkGroupView.setItem(drinkGroup);
             DrinkGroupView.GridAdapter adapter = drinkGroupView.newGridAdapter();
             drinkGroupView.setAdapter(adapter);
@@ -391,7 +447,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
 
         private void renderDrink(Drink drink) {
             DrinkGenerator drinkGroupGenerator = new DrinkGenerator();
-            DrinkView drinkView = drinkGroupGenerator.generateNewPreviewDrink(mFrameLayout, drink);
+            DrinkView drinkView = drinkGroupGenerator.generateNewPreviewDrink(binding.previewHolder, drink);
             drinkView.setItem(drink);
             DrinkView.SingleAdapter adapter = drinkView.newSingleAdapter();
             drinkView.setAdapter(adapter);
@@ -402,7 +458,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
 
         private void renderText(Text text) {
             TextGenerator textGenerator = new TextGenerator();
-            TextView textView = textGenerator.generateNewPreviewText(mFrameLayout, text);
+            TextView textView = textGenerator.generateNewPreviewText(binding.previewHolder, text);
             textView.setItem(text);
             TextView.SingleAdapter adapter = textView.newSingleAdapter();
             textView.setAdapter(adapter);
@@ -413,15 +469,15 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
 
         private void renderShape(Shape shape) {
             ShapeGenerator shapeGenerator = new ShapeGenerator();
-            ShapeView shapeView = shapeGenerator.generateNewPreviewShape(mFrameLayout, shape);
+            ShapeView shapeView = shapeGenerator.generateNewPreviewShape(binding.previewHolder, shape);
             shapeView.setItem(shape);
             shapeView.setSelectListener(DrinksMenuEditorActivity.this);
             shapeView.setResizeListener(eventHandler);
             shapeView.setRepositionListener(eventHandler);
         }
 
-        private void killItem(ItemView itemView){
-            mFrameLayout.removeView(itemView);
+        private void killItem(ItemView itemView) {
+            binding.previewHolder.removeView(itemView);
         }
     }
 
@@ -451,8 +507,8 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
         public int scaleViewToPosition(int draggedPosition) {
             if (context == null && previewWidth == 0) return draggedPosition;
             if (context != null && bitmapWidth == 0)
-                bitmapWidth = context.mBackgroundView.getDrawable().getIntrinsicWidth();
-            if (previewWidth == 0) previewWidth = context.mBackgroundView.getWidth();
+                bitmapWidth = context.binding.previewBackground.getDrawable().getIntrinsicWidth();
+            if (previewWidth == 0) previewWidth = context.binding.previewBackground.getWidth();
             float factor = (float) bitmapWidth / previewWidth;
             return (int) (draggedPosition * factor);
         }
@@ -460,8 +516,8 @@ public class DrinksMenuEditorActivity extends AppCompatActivity
         public int scalePositionToView(int draggedPosition) {
             if (context == null && previewWidth == 0) return draggedPosition;
             if (context != null && bitmapWidth == 0)
-                bitmapWidth = context.mBackgroundView.getDrawable().getIntrinsicWidth();
-            if (previewWidth == 0) previewWidth = context.mBackgroundView.getWidth();
+                bitmapWidth = context.binding.previewBackground.getDrawable().getIntrinsicWidth();
+            if (previewWidth == 0) previewWidth = context.binding.previewBackground.getWidth();
             float factor = (float) bitmapWidth / previewWidth;
             return (int) (draggedPosition / factor);
         }

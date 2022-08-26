@@ -39,11 +39,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 //TODO: some todos: editor:
-// hide bottomsheet when back pressed
-// hide bottomsheet when clicked on frame
 // change background
 // change name
 // add image view
+// set name as appbar title
 
 public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
         MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy,
@@ -88,7 +87,7 @@ public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.AP
 //            drinksMenuAdapter.showALoadingFragment(false);
             binding.swipeRefresh.setEnabled(true);
         });
-        // TODO: check for deleted items on the cloud
+        // TODO: check for deleted (and added) items on the cloud
     }
 
     private void pullAgain() {

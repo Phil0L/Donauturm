@@ -32,7 +32,7 @@
             app:srcCompat="@drawable/side_nav_bar" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/arrow_down"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_gravity="bottom"
