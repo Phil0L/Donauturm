@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.Donauturm" parent="Theme.MaterialComponents.Light">
         <!-- Primary brand color. -->
@@ -10,19 +10,22 @@
         <item name="colorSecondaryVariant">@color/pink_400</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" >@color/teal_200</item>
+        <item name="android:statusBarColor" >@color/teal_50</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/white</item>
         <!-- Customize your theme here. -->
         <item name="colorControlNormal">@color/black</item>
     </style>
 
-    <style name="Theme.Donauturm.NoActionBar" parent="Theme.Donauturm">
+    <style name="Theme.Donauturm.AppLayout" parent="Theme.Donauturm">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <!-- Status bar color. -->
-        <item name="android:windowTranslucentStatus">true</item>
+        <item name="windowActionModeOverlay">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
-<!--        <item name="android:fitsSystemWindows">true</item>-->
-        <item name="android:statusBarColor" >@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="statusBarBackground">@color/teal_50</item>
     </style>
 
     <style name="Theme.Donauturm.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

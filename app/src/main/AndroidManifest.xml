@@ -21,7 +21,7 @@
             android:exported="true"
             android:label="@string/title_activity_donauturm"
             android:resizeableActivity="true"
-            android:theme="@style/Theme.Donauturm.NoActionBar" >
+            android:theme="@style/Theme.Donauturm.AppLayout" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

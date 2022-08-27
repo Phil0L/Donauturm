@@ -8,7 +8,7 @@ across the layout configurations
     android:id="@+id/activity_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.Donauturm.NoActionBar">
+    android:theme="@style/Theme.Donauturm.AppLayout">
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
@@ -26,16 +26,35 @@ across the layout configurations
             <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:theme="@style/Theme.Donauturm.NoActionBar">
+                android:background="@color/white"
+                android:theme="@style/Theme.Donauturm.AppLayout">
 
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbar"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="@color/white"
-                    android:elevation="4dp"
-                    android:theme="@style/Theme.Donauturm"
-                    app:popupTheme="@style/Theme.Donauturm" />
+                    android:layout_height="match_parent">
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        android:elevation="4dp"
+                        android:theme="@style/Theme.Donauturm"
+                        app:popupTheme="@style/Theme.Donauturm">
+
+                        <!--                    <ImageView-->
+                        <!--                        android:layout_width="match_parent"-->
+                        <!--                        android:layout_height="10dp" />-->
+
+                    </androidx.appcompat.widget.Toolbar>
+
+                    <ImageView
+                        android:id="@+id/status_fade"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/status_bar_fade_size"
+                        android:scaleType="matrix"
+                        app:srcCompat="@drawable/top_gradient_status_bar" />
+
+                </FrameLayout>
 
             </com.google.android.material.appbar.AppBarLayout>
 
@@ -59,8 +78,8 @@ across the layout configurations
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:fitsSystemWindows="true"
             app:headerLayout="@layout/nav_header_donauturm"
-            app:menu="@menu/navigation_drawer" />
+            app:menu="@menu/navigation_drawer"
+            app:insetForeground="@color/transparent"/>
     </androidx.drawerlayout.widget.DrawerLayout>
 </FrameLayout>
