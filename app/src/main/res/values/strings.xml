@@ -1,48 +1,37 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
+    // App
     <string name="app_name">Donauturm</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="title_activity_donauturm">Donauturm</string>
+
+    // Navigation
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Jugend- und Kulturplattform Donauturm e.V.</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
-    <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
-
-    <string name="menu_transform">Transform</string>
-    <string name="menu_reflow">Reflow</string>
-    <string name="menu_slideshow">Slideshow</string>
-    <string name="menu_settings">Settings</string>
     <string name="menu_drinksmenu">DrinkMenu</string>
+    <string name="menu_welcome">Welcome</string>
 
+    // Lorem Ipsum
     <string name="lorem_ipsum_title">Lorem Ipsum"</string>
     <string name="lorem_ipsum">Lorem Ipsum is simply placeholder text of the printing and
         typesetting industry. Lorem Ipsum has been the industry\'s standard placeholder text ever
         since the 1500s, when an unknown printer took a galley of type and scrambled it to make a
         type specimen book"
     </string>
+
+    // Content description
     <string name="fab_content_description">Represents a view to invoke an action</string>
     <string name="image_view_item_transform_content_description">Represents an image view in the
         item
     </string>
-    <string name="menu_welcome">Welcome</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="nav_header_desc">Represents a design-only header in the drawer</string>
+    <string name="design_only">This is only for design. There is no information nor functionality</string>
 
+    // Welcome fragment
     <string name="welcome_text">Welcome!</string>
+    <string name="welcome_text_morning">Good morning!</string>
+    <string name="welcome_text_afternoon">Good afternoon!</string>
+    <string name="welcome_text_evening">Good evening!</string>
     <string name="start_working_text">Start</string>
 
 </resources>

@@ -52,7 +52,8 @@ across the layout configurations
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/status_bar_fade_size"
                         android:scaleType="matrix"
-                        app:srcCompat="@drawable/top_gradient_status_bar" />
+                        app:srcCompat="@drawable/top_gradient_status_bar"
+                        android:contentDescription="@string/design_only" />
 
                 </FrameLayout>
 

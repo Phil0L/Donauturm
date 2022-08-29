@@ -18,13 +18,14 @@ import com.pl.donauturm.databinding.ActivityDonauturmBinding;
 
 public class DonauturmActivity extends AppCompatActivity {
 
-    DrawerLayout drawerLayout;
+    public DrawerLayout drawerLayout;
+    public ActivityDonauturmBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityDonauturmBinding binding = ActivityDonauturmBinding.inflate(getLayoutInflater());
+        binding = ActivityDonauturmBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.toolbar);

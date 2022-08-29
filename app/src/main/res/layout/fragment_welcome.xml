@@ -12,32 +12,34 @@
         android:layout_margin="8dp"
         android:outlineProvider="background"
         app:cardCornerRadius="5dp"
-        app:cardElevation="3dp"
+        app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="?attr/strokeColor"
+        app:strokeWidth="1dp">
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="96dp">
+            android:minHeight="80dp">
 
             <Button
                 android:id="@+id/button"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:text="@string/start_working_text"
                 app:cornerRadius="5dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/icon_holder"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
             <TextView
-                android:id="@+id/textView3"
+                android:id="@+id/welcome_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -47,11 +49,11 @@
                 android:textSize="24sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/materialCardView"
-                app:layout_constraintTop_toTopOf="@+id/materialCardView" />
+                app:layout_constraintStart_toEndOf="@id/icon_holder"
+                app:layout_constraintTop_toTopOf="@id/icon_holder" />
 
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/materialCardView"
+                android:id="@+id/icon_holder"
                 android:layout_width="70dp"
                 android:layout_height="0dp"
                 android:layout_marginStart="8dp"
@@ -66,22 +68,20 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/loading_spinner"
+                    android:id="@+id/welcome_icon"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:contentDescription="@string/navigation_drawer_open"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="h,1:1"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/img_logo_corporate"
-                    tools:ignore="ImageContrastCheck"
-                    android:contentDescription="@string/navigation_drawer_open" />
+                    tools:ignore="ImageContrastCheck" />
 
             </com.google.android.material.card.MaterialCardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </com.google.android.material.card.MaterialCardView>
 
 
