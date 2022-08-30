@@ -38,8 +38,8 @@ across the layout configurations
                         android:layout_width="match_parent"
                         android:layout_height="?attr/actionBarSize"
                         android:elevation="4dp"
-                        android:theme="@style/Theme.Donauturm"
-                        app:popupTheme="@style/Theme.Donauturm">
+                        android:theme="@style/Theme.Donauturm.BasicActivity"
+                        app:popupTheme="@style/Theme.Donauturm.PopupOverlay">
 
                         <!--                    <ImageView-->
                         <!--                        android:layout_width="match_parent"-->

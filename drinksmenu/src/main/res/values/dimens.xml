@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="item_group_border_width">3dp</dimen>
+
+    <!--Status bar-->
+    <dimen name="status_bar_fade_size">4dp</dimen>
 </resources>

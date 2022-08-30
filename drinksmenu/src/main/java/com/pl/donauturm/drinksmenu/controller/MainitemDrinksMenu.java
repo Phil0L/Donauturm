@@ -42,7 +42,6 @@ import java.util.Map;
 // change background
 // change name
 // add image view
-// set name as appbar title
 
 public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
         MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy,

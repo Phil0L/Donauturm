@@ -24,12 +24,13 @@
             android:theme="@style/Theme.Donauturm.AppLayout" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity" />
+        <activity
+            android:name=".drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity"
+            android:theme="@style/Theme.Donauturm.DrinksMenu.Editor" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

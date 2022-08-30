@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_coordinator"
@@ -7,9 +8,48 @@
     android:layout_height="match_parent"
     tools:context=".controller.drinkmenu.drinksedit.DrinksMenuEditorActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:theme="@style/Theme.Donauturm.DrinksMenu.Editor">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:elevation="4dp"
+                android:theme="@style/Theme.Donauturm.DrinksMenu.Editor"
+                app:popupTheme="@style/Theme.Donauturm.DrinksMenu.PopupOverlay"
+                app:title="Editor">
+
+                <!--                    <ImageView-->
+                <!--                        android:layout_width="match_parent"-->
+                <!--                        android:layout_height="10dp" />-->
+
+            </androidx.appcompat.widget.Toolbar>
+
+            <ImageView
+                android:id="@+id/status_fade"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/status_bar_fade_size"
+                android:contentDescription="@string/design_only"
+                android:scaleType="matrix"
+                app:srcCompat="@drawable/top_gradient_status_bar" />
+
+        </FrameLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:theme="@style/Theme.Donauturm.DrinksMenu.Editor"
+        android:layout_marginTop="?attr/actionBarSize"
         android:padding="8dp">
 
         <com.pl.donauturm.drinksmenu.view.layouts.PreviewHolder
@@ -44,27 +84,6 @@
             app:layout_constraintTop_toBottomOf="@+id/preview_holder"
             app:srcCompat="@drawable/ic_arrow_down" />
 
-
-        <com.skydoves.expandablelayout.ExpandableLayout
-            android:id="@+id/actions"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            app:expandable_duration="300"
-            app:expandable_isExpanded="false"
-            app:expandable_parentLayout="@layout/pref_exp_header"
-            app:expandable_secondLayout="@layout/pref_editor_actions"
-            app:expandable_showSpinner="true"
-            app:expandable_spinner="@drawable/ic_expand_arrow"
-            app:expandable_spinner_animate="true"
-            app:expandable_spinner_gravity="end"
-            app:expandable_spinner_margin="14dp"
-            app:expandable_spinner_size="32dp"
-            app:layout_constraintEnd_toStartOf="@+id/arrow_down"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/preview_holder">
-
-        </com.skydoves.expandablelayout.ExpandableLayout>
 
         <com.skydoves.expandablelayout.ExpandableLayout
             android:id="@+id/infos"
@@ -121,6 +140,27 @@
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <com.skydoves.expandablelayout.ExpandableLayout
+            android:id="@+id/actions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:expandable_duration="300"
+            app:expandable_isExpanded="false"
+            app:expandable_parentLayout="@layout/pref_exp_header"
+            app:expandable_secondLayout="@layout/pref_editor_actions"
+            app:expandable_showSpinner="true"
+            app:expandable_spinner="@drawable/ic_expand_arrow"
+            app:expandable_spinner_animate="true"
+            app:expandable_spinner_gravity="end"
+            app:expandable_spinner_margin="14dp"
+            app:expandable_spinner_size="32dp"
+            app:layout_constraintEnd_toStartOf="@+id/arrow_down"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/preview_holder">
+
+        </com.skydoves.expandablelayout.ExpandableLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include
@@ -129,7 +169,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:behavior_hideable="true"
-        app:layout_behavior="@string/bottom_sheet_behavior"
-        tools:visibility="gone" />
+        app:layout_behavior="@string/bottom_sheet_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

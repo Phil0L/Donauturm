@@ -15,5 +15,13 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <!-- Content descriptions -->
     <string name="drinksmenu_tablayout_content_description">Drinkmenus listed in Tablayout</string>
+    <string name="design_only">This is only for design. There is no information nor functionality</string>
+
+    <!-- Editor display -->
+    <string name="header_actions">Edit basics</string>
+    <string name="header_info">Info</string>
+
 </resources>

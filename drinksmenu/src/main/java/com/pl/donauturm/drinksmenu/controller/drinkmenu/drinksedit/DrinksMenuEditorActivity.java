@@ -3,6 +3,7 @@ package com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit;
 import static com.pl.donauturm.drinksmenu.model.DrinksMenu.deserializer;
 import static com.pl.donauturm.drinksmenu.model.DrinksMenu.serializer;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -74,6 +75,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
     private ActivityDrinksMenuEditorBinding binding;
 
     private View mRoot;
+    private android.widget.TextView headerLeft, headerRight;
     private LinearLayout mLayoutBottomSheet;
 
 
@@ -139,11 +141,25 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         this.binding = ActivityDrinksMenuEditorBinding.inflate(getLayoutInflater());
         super.setContentView(binding.getRoot());
+
+        // action bar
+        super.setSupportActionBar(binding.toolbar);
         this.drinksMenu = deserializer(this).fromJson(getIntent().getStringExtra("menu"), DrinksMenu.class);
-        this.binding.saveButton.setOnClickListener(this::save);
-        this.binding.cancelButton.setOnClickListener(this::cancel);
+        if (getSupportActionBar() != null) {
+            super.getSupportActionBar().setTitle(drinksMenu.getName());
+            super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            super.getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        // buttons
+        this.binding.saveButton.setOnClickListener(v -> save());
+        this.binding.cancelButton.setOnClickListener(v -> cancel());
+
+        // preview
         this.binding.previewBackground.setImageBitmap(drinksMenu.getBackGround());
         this.binding.previewBackground.setOnClickListener(v -> onSelect(null));
+
+        // bottom sheet
         this.mLayoutBottomSheet = findViewById(R.id.bottom_sheet_container);
         this.eventHandler = new ItemEventHandler(this);
         this.keyboardListener = new KeyboardListener(this, this);
@@ -154,8 +170,16 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         this.sheetBehavior.setUpdateImportantForAccessibilityOnSiblings(true);
         this.sheetBehavior.setHalfExpandedRatio(.0000001f);
         this.sheetBehavior.addBottomSheetCallback(new BottomSheetActionHandler());
+
+        // root
         this.mRoot = getWindow().getDecorView().getRootView();
         this.mRoot.getViewTreeObserver().addOnGlobalLayoutListener(this);
+
+        // actions and info
+        this.headerLeft = binding.actions.parentLayout.findViewById(R.id.header_text);
+        this.headerRight = binding.infos.parentLayout.findViewById(R.id.header_text);
+        this.headerLeft.setText(R.string.header_actions);
+        this.headerRight.setText(R.string.header_info);
         this.binding.actions.parentLayout.setOnClickListener(v -> {
             if (binding.actions.isExpanded()) binding.actions.collapse();
             else binding.actions.expand();
@@ -168,6 +192,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         this.binding.infos.setSpinnerColor(getResources().getColor(R.color.black, null));
         this.binding.actions.secondLayout.findViewById(R.id.change_background).setOnClickListener(v -> onChangeBackgroundClicked());
         this.binding.actions.secondLayout.findViewById(R.id.change_name).setOnClickListener(v -> onChangeNameClicked());
+        this.updateInfo();
 
     }
 
@@ -186,11 +211,17 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
     }
 
     @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
         if (sheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
             sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
         } else {
-            super.onBackPressed();
+            cancel();
         }
     }
 
@@ -315,6 +346,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
                         drinksMenu.provideBackGround(resource);
                         binding.previewBackground.setImageBitmap(resource);
                         mRoot.post(() -> generateImage());
+                        updateInfo();
                     }
 
                     @Override
@@ -325,6 +357,16 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
 
     private void onChangeNameClicked() {
 
+    }
+
+    @SuppressLint("DefaultLocale")
+    private void updateInfo() {
+        android.widget.TextView size = binding.infos.secondLayout.findViewById(R.id.info_size);
+        android.widget.TextView created = binding.infos.secondLayout.findViewById(R.id.info_created);
+        android.widget.TextView elements = binding.infos.secondLayout.findViewById(R.id.info_element_count);
+        size.setText(String.format("%s x %s", drinksMenu.getWidth(), drinksMenu.getHeight()));
+        created.setText(String.format("Version %s", drinksMenu.getVersion()));
+        elements.setText(String.format("Elements: %d", drinksMenu.getItems().size()));
     }
 
     private boolean onAddItemClicked() {
@@ -393,6 +435,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
 
     @Override
     public void generateImage() {
+        updateInfo();
         binding.generatedMenu.setImageBitmap(drinksMenu.getBackGround());
         new DrinksMenuRenderer().renderAsyncFromView(binding.previewHolder, bm -> {
             drinksMenu.provideMenuImage(bm);
@@ -400,7 +443,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         });
     }
 
-    public void save(View v) {
+    public void save() {
         drinksMenu.increaseVersion();
         Intent intent = new Intent();
         String menuString = serializer(this).toJson(drinksMenu);
@@ -410,7 +453,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
 
     }
 
-    public void cancel(View v) {
+    public void cancel() {
         setResult(RESULT_CANCELED);
         finish();
     }
