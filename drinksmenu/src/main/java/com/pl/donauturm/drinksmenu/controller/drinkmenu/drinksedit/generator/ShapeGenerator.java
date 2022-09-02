@@ -3,7 +3,7 @@ package com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.pl.donauturm.drinksmenu.controller.MainitemDrinksMenu;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.MainFragmentDrinkMenu;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
 import com.pl.donauturm.drinksmenu.view.views.ShapeView;
 import com.pl.donauturm.drinksmenu.model.content.Shape;
@@ -23,10 +23,10 @@ public class ShapeGenerator {
 
     public ShapeView generateNewImageShape(FrameLayout parent, Shape shape, ImageView bg){
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                MainitemDrinksMenu.ValueScale.scalePositionToView((int) shape.getWidth(), bg),
-                MainitemDrinksMenu.ValueScale.scalePositionToView((int) shape.getHeight(), bg));
-        layoutParams.leftMargin = MainitemDrinksMenu.ValueScale.scalePositionToView((int) shape.getLeft(), bg);
-        layoutParams.topMargin = MainitemDrinksMenu.ValueScale.scalePositionToView((int) shape.getTop(), bg);
+                MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) shape.getWidth(), bg),
+                MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) shape.getHeight(), bg));
+        layoutParams.leftMargin = MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) shape.getLeft(), bg);
+        layoutParams.topMargin = MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) shape.getTop(), bg);
         ShapeView shapeView = new ShapeView(parent.getContext());
         shapeView.deactivateResize();
         shapeView.deactivateDrag();

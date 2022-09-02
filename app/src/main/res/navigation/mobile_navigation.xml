@@ -13,7 +13,13 @@
 
     <fragment
         android:id="@+id/nav_drinksmenu"
-        android:name="com.pl.donauturm.drinksmenu.controller.MainitemDrinksMenu"
+        android:name="com.pl.donauturm.drinksmenu.controller.drinkmenu.MainFragmentDrinkMenu"
         android:label="@string/menu_drinksmenu"
         tools:layout="@layout/fragment_drinks_menu" />
+
+    <fragment
+        android:id="@+id/nav_drinks"
+        android:name="com.pl.donauturm.drinksmenu.controller.drinks.MainFragmentDrinks"
+        android:label="@string/menu_drinks"
+        tools:layout="@layout/fragment_drinks" />
 </navigation>

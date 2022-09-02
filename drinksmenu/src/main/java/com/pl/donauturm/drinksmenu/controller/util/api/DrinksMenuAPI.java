@@ -1,8 +1,7 @@
-package com.pl.donauturm.drinksmenu.controller;
+package com.pl.donauturm.drinksmenu.controller.util.api;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.StrictMode;
 
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;

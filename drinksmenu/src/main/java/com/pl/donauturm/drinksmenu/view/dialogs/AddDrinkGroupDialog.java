@@ -20,7 +20,7 @@ import androidx.fragment.app.DialogFragment;
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.model.content.Drink;
 import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinkRegistry;
+import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
 import com.pl.donauturm.drinksmenu.model.content.DrinkStyle;
 
 import java.util.ArrayList;

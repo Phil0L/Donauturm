@@ -1,12 +1,12 @@
-package com.pl.donauturm.drinksmenu.controller.drinkmenu;
+package com.pl.donauturm.drinksmenu.controller.drinks;
 
 import com.pl.donauturm.drinksmenu.model.content.Drink;
 
-import java.util.Set;
+import java.util.List;
 
 public class DrinkRegistry {
 
-    public static final Set<Drink> DRINKS = Set.of(
+    public static final List<Drink> DRINKS = List.of(
             new Drink("Bier", "Gold Ochsen Hell", 2),
             new Drink("Desperados", "Bier mit Tequilla Geschmack", 3),
             new Drink("Spezial", "Gold Ochsen Spezial", 3),

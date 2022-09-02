@@ -1,4 +1,4 @@
-package com.pl.donauturm.drinksmenu.controller;
+package com.pl.donauturm.drinksmenu.controller.util.api;
 
 import android.content.Context;
 import android.graphics.Bitmap;

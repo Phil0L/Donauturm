@@ -17,7 +17,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import com.pl.donauturm.drinksmenu.controller.DrinksMenuAPI;
+import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.pisignageapi.requests.Request;
 
 import java.io.ByteArrayOutputStream;

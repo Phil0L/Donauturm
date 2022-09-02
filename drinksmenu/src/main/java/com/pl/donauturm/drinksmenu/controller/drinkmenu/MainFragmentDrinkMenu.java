@@ -1,4 +1,4 @@
-package com.pl.donauturm.drinksmenu.controller;
+package com.pl.donauturm.drinksmenu.controller.drinkmenu;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimatedVectorDrawable;
@@ -22,10 +22,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinkMenuRegistry;
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuAdapter;
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuFragment;
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.LocalDrinksMenuManager;
+import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksMenuBinding;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
@@ -43,7 +40,7 @@ import java.util.Map;
 // change name
 // add image view
 
-public class MainitemDrinksMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
+public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
         MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy,
         SwipeRefreshLayout.OnRefreshListener, DrinksMenu.OnCloudStateChangedListener {
 

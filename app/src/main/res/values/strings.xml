@@ -10,6 +10,7 @@
     <string name="nav_header_title">Jugend- und Kulturplattform Donauturm e.V.</string>
     <string name="menu_drinksmenu">DrinkMenu</string>
     <string name="menu_welcome">Welcome</string>
+    <string name="menu_drinks">Drinks</string>
 
     // Lorem Ipsum
     <string name="lorem_ipsum_title">Lorem Ipsum"</string>
