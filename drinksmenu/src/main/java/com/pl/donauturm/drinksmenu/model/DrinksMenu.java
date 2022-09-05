@@ -10,9 +10,11 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuRenderer;
+import com.pl.donauturm.drinksmenu.model.interfaces.Id;
 import com.pl.donauturm.drinksmenu.util.json.BitmapDeSerializer;
 import com.pl.donauturm.drinksmenu.util.json.PolymorphicDeserializer;
+
+import org.jetbrains.annotations.TestOnly;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -24,9 +26,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
+public class DrinksMenu implements Serializable, Cloneable, Id {
 
-public class DrinksMenu implements Serializable, Cloneable {
-
+    protected String id;
     protected String name;
     protected List<Item> items;
     protected int width;
@@ -45,6 +48,19 @@ public class DrinksMenu implements Serializable, Cloneable {
         setLoading(true);
     }
 
+    @CreatorConstructor
+    private DrinksMenu(String name, Context context) {
+        this.name = name;
+        this.items = new ArrayList<>();
+        this.backGround = BitmapFactory.decodeResource(context.getResources(), R.drawable.png_background);
+        this.width = 1920;
+        this.height = (int) (backGround.getHeight() * (1920f / backGround.getWidth())); // keep aspect ratio
+        this.backGround = Bitmap.createScaledBitmap(backGround, width, height, true);
+        this.version = getVersionNow();
+        this.setLoading(false);
+    }
+
+    @TestOnly
     public DrinksMenu(String name) {
         this.name = name;
         this.items = new ArrayList<>();
@@ -54,6 +70,7 @@ public class DrinksMenu implements Serializable, Cloneable {
         this.version = getVersionNow();
     }
 
+    @TestOnly
     public DrinksMenu(String name, Item... items) {
         this.name = name;
         this.items = new ArrayList<>(Arrays.asList(items));
@@ -63,6 +80,7 @@ public class DrinksMenu implements Serializable, Cloneable {
         this.version = getVersionNow();
     }
 
+    @TestOnly
     public DrinksMenu(String name, Context context, Item... items) {
         this.name = name;
         this.items = new ArrayList<>(Arrays.asList(items));
@@ -73,6 +91,7 @@ public class DrinksMenu implements Serializable, Cloneable {
         this.version = getVersionNow();
     }
 
+    @TestOnly
     public DrinksMenu(String name, List<Item> items, Bitmap backGround) {
         this.name = name;
         this.items = new ArrayList<>(items);
@@ -164,14 +183,6 @@ public class DrinksMenu implements Serializable, Cloneable {
         return menuImage;
     }
 
-    @NonNull
-    @Deprecated
-    public Bitmap requireMenuImage(Context context) {
-        if (menuImage != null)
-            return menuImage;
-        return menuImage = new DrinksMenuRenderer().renderSyncFromMenu(context, this);
-    }
-
     public void provideMenuImage(Bitmap bitmap) {
         if (bitmap.getWidth() == 1920) {
             this.menuImage = bitmap;
@@ -197,7 +208,7 @@ public class DrinksMenu implements Serializable, Cloneable {
     public List<Bitmap> getAllBitmaps() {
         List<Bitmap> bitmaps = new ArrayList<>(List.of(menuImage, backGround));
         items.forEach(i -> {
-
+            //TODO: implement
         });
         return bitmaps;
     }
@@ -249,19 +260,17 @@ public class DrinksMenu implements Serializable, Cloneable {
         if (Integer.parseInt(self[0]) < Integer.parseInt(some[0])) return false;
         if (Integer.parseInt(self[1]) > Integer.parseInt(some[1])) return true;
         if (Integer.parseInt(self[1]) < Integer.parseInt(some[1])) return false;
-        if (Integer.parseInt(self[2]) > Integer.parseInt(some[2])) return true;
-        if (Integer.parseInt(self[2]) < Integer.parseInt(some[2])) return false;
-        return false;
+        return Integer.parseInt(self[2]) > Integer.parseInt(some[2]);
     }
 
     @Override
     public boolean equals(Object o) {
-        return o == this;
+        return o instanceof DrinksMenu && ((DrinksMenu) o).getIdLong() == getIdLong();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, items);
+        return Objects.hash(id, name, items);
     }
 
     @NonNull
@@ -310,6 +319,7 @@ public class DrinksMenu implements Serializable, Cloneable {
             DrinksMenu clone = (DrinksMenu) super.clone();
             String content = serializer().toJson(this);
             clone = deserializer().fromJson(content, DrinksMenu.class);
+            clone.createNewId();
             clone.provideBackGround(Bitmap.createBitmap(backGround));
             return clone;
         } catch (CloneNotSupportedException e) {
@@ -324,6 +334,7 @@ public class DrinksMenu implements Serializable, Cloneable {
             DrinksMenu clone = (DrinksMenu) super.clone();
             String content = serializer().toJson(this);
             clone = deserializer().fromJson(content, DrinksMenu.class);
+            clone.createNewId();
             clone.provideBackGround(Bitmap.createBitmap(backGround));
             clone.setVersion(getVersionNow());
             clone.setName(name);
@@ -333,10 +344,27 @@ public class DrinksMenu implements Serializable, Cloneable {
         }
     }
 
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(id);
+    }
+
+    @Override
+    public DrinksMenu createNewId() {
+        this.id = newId();
+        return this;
+    }
+
     public interface OnMenuLoadedListener {
         void onMenuLoaded(DrinksMenu menu);
     }
 
+    @SuppressWarnings("unused")
     public enum CloudState {
         UNKNOWN(R.drawable.ic_cloud, true),
         UP_TO_DATE(R.drawable.ic_cloud_done, true),

@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-
+@SuppressWarnings("unused")
 public class DrinksMenuCloud extends DrinksMenu {
 
     public String backgroundUrl;
@@ -68,17 +68,6 @@ public class DrinksMenuCloud extends DrinksMenu {
     }
 
 
-    public DrinksMenu toStandard(Bitmap bg) {
-        DrinksMenu drinksMenu = new DrinksMenu();
-        drinksMenu.name = name;
-        drinksMenu.items = items;
-        drinksMenu.height = height;
-        drinksMenu.width = width;
-        drinksMenu.version = version;
-        drinksMenu.backGround = bg;
-        return drinksMenu;
-    }
-
     public File bitmapToFile(Bitmap bitmap, Context context, String filename) {
         try {
             File f = new File(context.getCacheDir(), filename);
@@ -95,7 +84,7 @@ public class DrinksMenuCloud extends DrinksMenu {
             fos.flush();
             fos.close();
             return f;
-        } catch (IOException ioe){
+        } catch (IOException ioe) {
             ioe.printStackTrace();
             return null;
         }
@@ -106,7 +95,7 @@ public class DrinksMenuCloud extends DrinksMenu {
         api.uploadAsset(f).withLabels("generated", "background", "belongs to: " + name).upload();
     }
 
-    public void upload(Context context){
+    public void upload(Context context) {
         Bitmap bitmap = original.getMenuImage();
         if (bitmap == null) return;
         uploadBackGround(context);
@@ -115,7 +104,7 @@ public class DrinksMenuCloud extends DrinksMenu {
 
     }
 
-    private String friendly(String s){
+    private String friendly(String s) {
         return s.replace("ä", "ae")
                 .replace("ö", "oe")
                 .replace("ü", "ue")
@@ -126,7 +115,7 @@ public class DrinksMenuCloud extends DrinksMenu {
                 .replace(" ", "_");
     }
 
-    public static Gson serializer(){
+    public static Gson serializer() {
         return new GsonBuilder()
                 .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
                 .create();

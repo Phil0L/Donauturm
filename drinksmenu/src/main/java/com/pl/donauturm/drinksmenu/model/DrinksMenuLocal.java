@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+@SuppressWarnings("unused")
 public class DrinksMenuLocal extends DrinksMenu {
 
     public String cloudVersion;
@@ -22,11 +23,8 @@ public class DrinksMenuLocal extends DrinksMenu {
     public String imagePath;
     public String dataPath;
 
-    private final transient DrinksMenu original;
-
     public DrinksMenuLocal(@NonNull DrinksMenu drinksMenu) {
         super();
-        this.original = drinksMenu;
         super.name = drinksMenu.name;
         super.items = drinksMenu.items;
         super.height = drinksMenu.height;
@@ -109,9 +107,7 @@ public class DrinksMenuLocal extends DrinksMenu {
         if (Integer.parseInt(self[0]) < Integer.parseInt(some[0])) return false;
         if (Integer.parseInt(self[1]) > Integer.parseInt(some[1])) return true;
         if (Integer.parseInt(self[1]) < Integer.parseInt(some[1])) return false;
-        if (Integer.parseInt(self[2]) > Integer.parseInt(some[2])) return true;
-        if (Integer.parseInt(self[2]) < Integer.parseInt(some[2])) return false;
-        return false;
+        return Integer.parseInt(self[2]) > Integer.parseInt(some[2]);
     }
 
     public static String friendly(String s) {

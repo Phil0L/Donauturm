@@ -211,7 +211,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     private void addClicked() {
         NewDrinksmenuDialog dialog = NewDrinksmenuDialog.newInstance();
         dialog.setOnTextSelectedListener(name -> {
-            DrinksMenu drinksMenu = new DrinksMenu(name, requireContext());
+            DrinksMenu drinksMenu = new DrinksMenu(name, requireContext()).createNewId();
             drinksMenu.onCloudStateChanged(this);
             drinksMenu.setCloudState(DrinksMenu.CloudState.READY_FOR_PUSH);
             DrinkMenuRegistry.getInstance().put(name, drinksMenu);
