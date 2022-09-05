@@ -84,6 +84,7 @@ public class Shape extends Item implements Serializable, Backgroundable, Cloneab
         Gson gson = new Gson();
         String content = gson.toJson(this);
         clone = gson.fromJson(content, Shape.class);
+        clone.createNewId();
         return clone;
     }
 }

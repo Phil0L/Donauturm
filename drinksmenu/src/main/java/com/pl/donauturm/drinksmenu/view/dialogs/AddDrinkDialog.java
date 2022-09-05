@@ -75,6 +75,7 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Drink drink = ((Drink) drinkListView.getAdapter().getItem(position));
+        drink.createNewId();
         if (drinkSelectedListener != null)
             drinkSelectedListener.onDrinkSelected(drink);
         dismiss();

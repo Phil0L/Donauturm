@@ -85,8 +85,12 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        if (drinkGroupSelectedListener != null)
-            drinkGroupSelectedListener.onDrinkGroupSelected(new DrinkGroup("New Drink Group", getValue(), new DrinkStyle()));
+        if (drinkGroupSelectedListener != null) {
+            DrinkGroup drinkGroup = new DrinkGroup("New Drink Group", getValue(), new DrinkStyle());
+            drinkGroup.createNewId();
+            drinkGroup.getItems().forEach(Drink::createNewId);
+            drinkGroupSelectedListener.onDrinkGroupSelected(drinkGroup);
+        }
         dismiss();
     }
 

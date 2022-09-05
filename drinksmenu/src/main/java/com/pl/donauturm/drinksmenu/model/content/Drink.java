@@ -23,20 +23,21 @@ public class Drink extends Item implements Serializable, Backgroundable, Drinkte
     private DrinkStyle drinkStyle;
 
     public Drink() {
-        this.name = "Drink";
+        super("Drink");
         this.description = "This is a drink";
         this.price = new BigDecimal(1);
         this.drinkStyle = new DrinkStyle();
     }
 
     public Drink(String name) {
-        this.name = name;
+        super(name);
         this.description = "This is a drink";
         this.price = new BigDecimal(1);
         this.drinkStyle = new DrinkStyle();
     }
 
     public Drink(String name, String description, BigDecimal price) {
+        super(name);
         this.name = name;
         this.description = description;
         this.price = price;
@@ -44,6 +45,7 @@ public class Drink extends Item implements Serializable, Backgroundable, Drinkte
     }
 
     public Drink(String name, String description, int price) {
+        super(name);
         this.name = name;
         this.description = description;
         this.price = new BigDecimal(price);
@@ -51,6 +53,7 @@ public class Drink extends Item implements Serializable, Backgroundable, Drinkte
     }
 
     public Drink(String name, String description, float price) {
+        super(name);
         this.name = name;
         this.description = description;
         this.price = new BigDecimal(price);
@@ -258,6 +261,7 @@ public class Drink extends Item implements Serializable, Backgroundable, Drinkte
         Gson gson = new Gson();
         String content = gson.toJson(this);
         clone = gson.fromJson(content, Drink.class);
+        clone.createNewId();
         return clone;
     }
 }

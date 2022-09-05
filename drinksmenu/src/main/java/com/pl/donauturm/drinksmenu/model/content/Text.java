@@ -124,6 +124,7 @@ public class Text extends Item implements Serializable, Backgroundable, Textable
         Gson gson = new Gson();
         String content = gson.toJson(this);
         clone = gson.fromJson(content, Text.class);
+        clone.createNewId();
         return clone;
     }
 }

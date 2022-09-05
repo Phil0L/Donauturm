@@ -77,8 +77,11 @@ public class AddTextDialog extends DialogFragment implements TextWatcher, Dialog
     @Override
     public void onClick(DialogInterface dialog, int which) {
         String text = editText.getText().toString();
-        if (textSelectedListener != null)
-            textSelectedListener.onTextSelected(new Text(text));
+        if (textSelectedListener != null) {
+            Text text1 = new Text(text);
+            text1.createNewId();
+            textSelectedListener.onTextSelected(text1);
+        }
     }
 
 

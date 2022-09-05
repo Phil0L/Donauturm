@@ -26,15 +26,13 @@ public class DrinkGroup extends Item implements Group<Drink>, Serializable, Back
     private int rowSpacing;
 
     public DrinkGroup() {
-        super();
-        setName("Item Group");
+        super("Drink Group");
         this.drinks = new ArrayList<>();
         this.drinkStyle = new DrinkStyle();
     }
 
     public DrinkGroup(String name, List<Drink> drinks, DrinkStyle drinkStyle) {
-        super();
-        setName(name);
+        super(name);
         this.drinkStyle = drinkStyle;
         this.drinks = new ArrayList<>(drinks);
     }
@@ -239,6 +237,7 @@ public class DrinkGroup extends Item implements Group<Drink>, Serializable, Back
         Gson gson = new Gson();
         String content = gson.toJson(this);
         clone = gson.fromJson(content, DrinkGroup.class);
+        clone.createNewId();
         return clone;
     }
 }

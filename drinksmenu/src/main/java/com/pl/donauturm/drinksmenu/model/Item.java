@@ -6,6 +6,7 @@ import com.pl.donauturm.drinksmenu.model.content.Drink;
 import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
 import com.pl.donauturm.drinksmenu.model.content.Shape;
 import com.pl.donauturm.drinksmenu.model.content.Text;
+import com.pl.donauturm.drinksmenu.model.interfaces.Id;
 import com.pl.donauturm.drinksmenu.util.json.JsonSubtype;
 
 import java.io.Serializable;
@@ -15,10 +16,11 @@ import java.util.Objects;
 @JsonSubtype(field = "type", clazz = Shape.class)
 @JsonSubtype(field = "type", clazz = Drink.class)
 @JsonSubtype(field = "type", clazz = DrinkGroup.class)
-public abstract class Item implements Serializable, Cloneable {
+public abstract class Item implements Serializable, Cloneable, Id {
 
     private final String type;
 
+    protected String id;
     protected String name;
 
     protected float left;
@@ -121,6 +123,22 @@ public abstract class Item implements Serializable, Cloneable {
     @SuppressWarnings("unused")
     public String getType() {
         return type;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public long getIdLong() {
+        return Long.parseLong(id);
+    }
+
+    @Override
+    public Item createNewId() {
+        this.id = newId();
+        return this;
     }
 
     @Override

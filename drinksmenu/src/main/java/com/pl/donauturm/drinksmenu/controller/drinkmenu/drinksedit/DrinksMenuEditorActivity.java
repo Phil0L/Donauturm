@@ -417,6 +417,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
                     break;
                 case "Shape":
                     Shape shape = new Shape("New Shape", Color.WHITE, 100);
+                    shape.createNewId();
                     drinksMenu.addItem(shape);
                     new PreviewRenderer().renderShape(shape);
                     eventHandler.onAdd();
