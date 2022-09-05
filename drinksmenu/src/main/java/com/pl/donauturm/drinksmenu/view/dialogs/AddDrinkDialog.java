@@ -49,7 +49,7 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
     }
 
     private List<Drink> getDrinks(){
-        return new ArrayList<>(DrinkRegistry.DRINKS);
+        return new ArrayList<>(DrinkRegistry.getInstance().values());
     }
 
     @NonNull

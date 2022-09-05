@@ -46,7 +46,7 @@ public class DrinkPreference extends Preference implements DrinkDialog.OnDrinkSe
     }
 
     private void loadFonts() {
-        drinks = new ArrayList<>(DrinkRegistry.DRINKS);
+        drinks = new ArrayList<>(DrinkRegistry.getInstance().values());
     }
 
     @Override

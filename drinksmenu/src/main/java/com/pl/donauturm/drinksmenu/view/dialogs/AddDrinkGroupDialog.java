@@ -58,7 +58,7 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
     }
 
     private List<Drink> getDrinks(){
-        return new ArrayList<>(DrinkRegistry.DRINKS);
+        return new ArrayList<>(DrinkRegistry.getInstance().values());
     }
 
     @NonNull

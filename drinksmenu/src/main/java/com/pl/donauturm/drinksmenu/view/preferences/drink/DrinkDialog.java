@@ -61,7 +61,7 @@ public class DrinkDialog extends DialogFragment implements AdapterView.OnItemCli
     private List<Drink> getDrinks(){
         if (preference != null)
             return preference.getDrinks();
-        return new ArrayList<>(DrinkRegistry.DRINKS);
+        return new ArrayList<>(DrinkRegistry.getInstance().values());
     }
 
     @NonNull

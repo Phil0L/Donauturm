@@ -14,14 +14,19 @@ import androidx.transition.AutoTransition;
 import androidx.transition.TransitionManager;
 
 import com.pl.donauturm.drinksmenu.databinding.PrefItemDrinkBinding;
+import com.pl.donauturm.drinksmenu.model.content.Drink;
+
+import java.util.List;
 
 public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder> {
 
     private final RecyclerView mRecyclerView;
+    private final List<Drink> drinks;
     private int expandedPosition = -1;
 
-    public DrinksAdapter(RecyclerView recyclerView) {
+    public DrinksAdapter(RecyclerView recyclerView, List<Drink> drinks) {
         mRecyclerView = recyclerView;
+        this.drinks = drinks;
     }
 
     @NonNull
@@ -53,9 +58,9 @@ public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder
             }
         });
 
-        holder.binding.expHeader.drinkName.setText(DrinkRegistry.DRINKS.get(position).getName());
-        holder.binding.expHeader.drinkPrice.setText(String.valueOf(DrinkRegistry.DRINKS.get(position).getPriceFormatted()));
-        holder.binding.expHeader.drinkDescription.setText(DrinkRegistry.DRINKS.get(position).getDescription());
+        holder.binding.expHeader.drinkName.setText(drinks.get(position).getName());
+        holder.binding.expHeader.drinkPrice.setText(String.valueOf(drinks.get(position).getPriceFormatted()));
+        holder.binding.expHeader.drinkDescription.setText(drinks.get(position).getDescription());
 
         ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) holder.binding.card.getLayoutParams();
         if (position == 0){
@@ -63,7 +68,7 @@ public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder
         } else {
             lp.topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, holder.binding.getRoot().getResources().getDisplayMetrics());
         }
-        if (position == DrinkRegistry.DRINKS.size() - 1){
+        if (position == DrinkRegistry.getInstance().size() - 1){
             lp.bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, holder.binding.getRoot().getResources().getDisplayMetrics());
         } else {
             lp.bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, holder.binding.getRoot().getResources().getDisplayMetrics());
@@ -73,7 +78,7 @@ public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return DrinkRegistry.DRINKS.size();
+        return drinks.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

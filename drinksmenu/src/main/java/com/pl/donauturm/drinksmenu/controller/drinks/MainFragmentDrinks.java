@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksBinding;
 
+import java.util.ArrayList;
+
 public class MainFragmentDrinks extends Fragment {
 
     @Nullable
@@ -20,7 +22,7 @@ public class MainFragmentDrinks extends Fragment {
         FragmentDrinksBinding binding = FragmentDrinksBinding.inflate(inflater, container, false);
 
         binding.recyclerDrinks.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.recyclerDrinks.setAdapter(new DrinksAdapter(binding.recyclerDrinks));
+        binding.recyclerDrinks.setAdapter(new DrinksAdapter(binding.recyclerDrinks, new ArrayList<>(DrinkRegistry.getInstance().values())));
 
         return binding.getRoot();
     }
