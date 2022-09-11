@@ -21,10 +21,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Group;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.view.preferences.drink.DrinkDialog;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ import java.util.List;
 @SuppressWarnings("FieldCanBeLocal")
 public class ItemsEditorFragment extends Fragment {
 
-    private Group<? extends Item> item;
+    private Group<? extends DrinksMenuItem> item;
     private OnItemsChanged callback;
     private RecyclerView mRecyclerView;
     private ItemsAdapter mAdapter;
@@ -45,7 +45,7 @@ public class ItemsEditorFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public ItemsEditorFragment(Group<? extends Item> item, OnItemsChanged callback) {
+    public ItemsEditorFragment(Group<? extends DrinksMenuItem> item, OnItemsChanged callback) {
         this.item = item;
         this.callback = callback;
     }
@@ -56,8 +56,8 @@ public class ItemsEditorFragment extends Fragment {
      *
      * @return A new instance of fragment DrinksMenuFragment.
      */
-    public static ItemsEditorFragment newInstance(DrinkGroup drinkGroup, OnItemsChanged callback) {
-        return new ItemsEditorFragment(drinkGroup, callback);
+    public static ItemsEditorFragment newInstance(DrinkGroupItem drinkGroupItem, OnItemsChanged callback) {
+        return new ItemsEditorFragment(drinkGroupItem, callback);
     }
 
     @Override
@@ -104,10 +104,10 @@ public class ItemsEditorFragment extends Fragment {
         fragment.show(((AppCompatActivity) requireContext()).getSupportFragmentManager(), "drink_" + item.hashCode());
     }
 
-    public void onItemAdded(int position, Drink drink) {
-        mAdapter.mData.add(drink);
+    public void onItemAdded(int position, DrinkItem drinkItem) {
+        mAdapter.mData.add(drinkItem);
         mAdapter.notifyItemInserted(position);
-        callback.onItemAdded(position, drink);
+        callback.onItemAdded(position, drinkItem);
         callback.onItemsChanged(mAdapter.mData);
     }
 
@@ -119,13 +119,13 @@ public class ItemsEditorFragment extends Fragment {
         callback.onItemsChanged(mAdapter.mData);
     }
 
-    private static List<Drink> itemListToDrinkList(List<? extends Item> itemList) {
-        List<Drink> drinkList = new ArrayList<>();
-        for (Item item : itemList) {
-            if (item instanceof Drink)
-                drinkList.add((Drink) item);
+    private static List<DrinkItem> itemListToDrinkList(List<? extends DrinksMenuItem> itemList) {
+        List<DrinkItem> drinkItemList = new ArrayList<>();
+        for (DrinksMenuItem item : itemList) {
+            if (item instanceof DrinkItem)
+                drinkItemList.add((DrinkItem) item);
         }
-        return drinkList;
+        return drinkItemList;
     }
 
     public static class ItemsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -133,14 +133,14 @@ public class ItemsEditorFragment extends Fragment {
         public static final int ITEM_VIEW_TYPE = 0;
         public static final int ADDI_VIEW_TYPE = 1;
 
-        private final List<Drink> mData;
+        private final List<DrinkItem> mData;
         private final LayoutInflater mInflater;
         private ItemClickListener mDeleteListener;
         private ItemClickListener mDragListener;
         private ItemClickListener mAddItemListener;
 
         // data is passed into the constructor
-        ItemsAdapter(Context context, List<Drink> data) {
+        ItemsAdapter(Context context, List<DrinkItem> data) {
             this.mInflater = LayoutInflater.from(context);
             this.mData = new ArrayList<>(data);
         }
@@ -162,9 +162,9 @@ public class ItemsEditorFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             if (holder instanceof ViewHolder) {
-                Drink drink = mData.get(position);
-                ((ViewHolder) holder).mNameView.setText(drink.getName());
-                ((ViewHolder) holder).mDescriptionView.setText(drink.getDescription());
+                DrinkItem drinkItem = mData.get(position);
+                ((ViewHolder) holder).mNameView.setText(drinkItem.getName());
+                ((ViewHolder) holder).mDescriptionView.setText(drinkItem.getDescription());
             }
         }
 
@@ -232,7 +232,7 @@ public class ItemsEditorFragment extends Fragment {
 
         // convenience method for getting data at click position
         @SuppressWarnings("unused")
-        Drink getItem(int id) {
+        DrinkItem getItem(int id) {
             return mData.get(id);
         }
 
@@ -318,12 +318,12 @@ public class ItemsEditorFragment extends Fragment {
     }
 
     public interface OnItemsChanged {
-        void onItemAdded(int index, Item item);
+        void onItemAdded(int index, DrinksMenuItem item);
 
         void onItemMoved(int from, int to);
 
         void onItemDelete(int index);
 
-        void onItemsChanged(List<? extends Item> items);
+        void onItemsChanged(List<? extends DrinksMenuItem> items);
     }
 }

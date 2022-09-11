@@ -41,11 +41,11 @@ import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.Sha
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.TextGenerator;
 import com.pl.donauturm.drinksmenu.databinding.ActivityDrinksMenuEditorBinding;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
-import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
-import com.pl.donauturm.drinksmenu.model.content.Shape;
-import com.pl.donauturm.drinksmenu.model.content.Text;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.model.content.ShapeItem;
+import com.pl.donauturm.drinksmenu.model.content.TextItem;
 import com.pl.donauturm.drinksmenu.util.KeyboardListener;
 import com.pl.donauturm.drinksmenu.view.dialogs.AddDrinkDialog;
 import com.pl.donauturm.drinksmenu.view.dialogs.AddDrinkGroupDialog;
@@ -80,7 +80,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
 
 
     @Override
-    public Item getCurrentItem() {
+    public DrinksMenuItem getCurrentItem() {
         if (selectedView == null) return null;
         return selectedView.item;
     }
@@ -116,7 +116,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         return (ItemView) nv;
     }
 
-    public ItemView getViewFromItem(Item item) {
+    public ItemView getViewFromItem(DrinksMenuItem item) {
         for (int i = 0; i < binding.previewHolder.getChildCount(); i++) {
             View v = binding.previewHolder.getChildAt(i);
             if (v instanceof ItemView) {
@@ -263,16 +263,16 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         }
         sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         selectedView = itemView;
-        if (itemView.item instanceof DrinkGroup) {
+        if (itemView.item instanceof DrinkGroupItem) {
             eventHandler = new DrinkGroupEventHandler(this);
             bottomViewHolder = new BottomSheetViewHolder(this, mLayoutBottomSheet, itemView.item, DrinkGroupBottomSheet.getEditors());
-        } else if (itemView.item instanceof Drink) {
+        } else if (itemView.item instanceof DrinkItem) {
             eventHandler = new DrinkEventHandler(this);
             bottomViewHolder = new BottomSheetViewHolder(this, mLayoutBottomSheet, itemView.item, DrinkBottomSheet.getEditors());
-        } else if (itemView.item instanceof Text) {
+        } else if (itemView.item instanceof TextItem) {
             eventHandler = new TextEventHandler(this);
             bottomViewHolder = new BottomSheetViewHolder(this, mLayoutBottomSheet, itemView.item, TextBottomSheet.getEditors());
-        } else if (itemView.item instanceof Shape) {
+        } else if (itemView.item instanceof ShapeItem) {
             eventHandler = new ShapeEventHandler(this);
             bottomViewHolder = new BottomSheetViewHolder(this, mLayoutBottomSheet, itemView.item, ShapeBottomSheet.getEditors());
         } else {
@@ -300,8 +300,8 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
     }
 
     private boolean onCloneItemClicked() {
-        Item item = selectedView.item;
-        Item clone = item.clone();
+        DrinksMenuItem item = selectedView.item;
+        DrinksMenuItem clone = item.clone();
         // offset clone by 50 pixel to avoid overlapping with original item
         clone.setLeft(item.getLeft() + 50);
         clone.setTop(item.getTop() + 50);
@@ -416,13 +416,13 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
                     addTextDialog.show(getSupportFragmentManager(), getClass().getSimpleName());
                     break;
                 case "Shape":
-                    Shape shape = new Shape("New Shape", Color.WHITE, 100);
-                    shape.createNewId();
-                    drinksMenu.addItem(shape);
-                    new PreviewRenderer().renderShape(shape);
+                    ShapeItem shapeItem = new ShapeItem("New Shape", Color.WHITE, 100);
+                    shapeItem.createNewId();
+                    drinksMenu.addItem(shapeItem);
+                    new PreviewRenderer().renderShape(shapeItem);
                     eventHandler.onAdd();
                     mRoot.post(() -> {
-                        ItemView newView = getViewFromItem(shape);
+                        ItemView newView = getViewFromItem(shapeItem);
                         newView.requestSelect();
                         onSelect(newView);
                     });
@@ -462,26 +462,26 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
     private class PreviewRenderer {
 
         private void renderPreview() {
-            for (Item item : drinksMenu.getItems()) {
+            for (DrinksMenuItem item : drinksMenu.getItems()) {
                 renderItem(item);
             }
         }
 
-        private void renderItem(Item item) {
-            if (item instanceof DrinkGroup)
-                renderDrinkGroup((DrinkGroup) item);
-            if (item instanceof Drink)
-                renderDrink((Drink) item);
-            if (item instanceof Text)
-                renderText(((Text) item));
-            if (item instanceof Shape)
-                renderShape((Shape) item);
+        private void renderItem(DrinksMenuItem item) {
+            if (item instanceof DrinkGroupItem)
+                renderDrinkGroup((DrinkGroupItem) item);
+            if (item instanceof DrinkItem)
+                renderDrink((DrinkItem) item);
+            if (item instanceof TextItem)
+                renderText(((TextItem) item));
+            if (item instanceof ShapeItem)
+                renderShape((ShapeItem) item);
         }
 
-        private void renderDrinkGroup(DrinkGroup drinkGroup) {
+        private void renderDrinkGroup(DrinkGroupItem drinkGroupItem) {
             DrinkGroupGenerator drinkGroupGenerator = new DrinkGroupGenerator();
-            DrinkGroupView drinkGroupView = drinkGroupGenerator.generateNewPreviewDrinkGroup(binding.previewHolder, drinkGroup);
-            drinkGroupView.setItem(drinkGroup);
+            DrinkGroupView drinkGroupView = drinkGroupGenerator.generateNewPreviewDrinkGroup(binding.previewHolder, drinkGroupItem);
+            drinkGroupView.setItem(drinkGroupItem);
             DrinkGroupView.GridAdapter adapter = drinkGroupView.newGridAdapter();
             drinkGroupView.setAdapter(adapter);
             drinkGroupView.setSelectListener(DrinksMenuEditorActivity.this);
@@ -489,10 +489,10 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
             drinkGroupView.setRepositionListener(eventHandler);
         }
 
-        private void renderDrink(Drink drink) {
+        private void renderDrink(DrinkItem drinkItem) {
             DrinkGenerator drinkGroupGenerator = new DrinkGenerator();
-            DrinkView drinkView = drinkGroupGenerator.generateNewPreviewDrink(binding.previewHolder, drink);
-            drinkView.setItem(drink);
+            DrinkView drinkView = drinkGroupGenerator.generateNewPreviewDrink(binding.previewHolder, drinkItem);
+            drinkView.setItem(drinkItem);
             DrinkView.SingleAdapter adapter = drinkView.newSingleAdapter();
             drinkView.setAdapter(adapter);
             drinkView.setSelectListener(DrinksMenuEditorActivity.this);
@@ -500,10 +500,10 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
             drinkView.setRepositionListener(eventHandler);
         }
 
-        private void renderText(Text text) {
+        private void renderText(TextItem textItem) {
             TextGenerator textGenerator = new TextGenerator();
-            TextView textView = textGenerator.generateNewPreviewText(binding.previewHolder, text);
-            textView.setItem(text);
+            TextView textView = textGenerator.generateNewPreviewText(binding.previewHolder, textItem);
+            textView.setItem(textItem);
             TextView.SingleAdapter adapter = textView.newSingleAdapter();
             textView.setAdapter(adapter);
             textView.setSelectListener(DrinksMenuEditorActivity.this);
@@ -511,10 +511,10 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
             textView.setRepositionListener(eventHandler);
         }
 
-        private void renderShape(Shape shape) {
+        private void renderShape(ShapeItem shapeItem) {
             ShapeGenerator shapeGenerator = new ShapeGenerator();
-            ShapeView shapeView = shapeGenerator.generateNewPreviewShape(binding.previewHolder, shape);
-            shapeView.setItem(shape);
+            ShapeView shapeView = shapeGenerator.generateNewPreviewShape(binding.previewHolder, shapeItem);
+            shapeView.setItem(shapeItem);
             shapeView.setSelectListener(DrinksMenuEditorActivity.this);
             shapeView.setResizeListener(eventHandler);
             shapeView.setRepositionListener(eventHandler);

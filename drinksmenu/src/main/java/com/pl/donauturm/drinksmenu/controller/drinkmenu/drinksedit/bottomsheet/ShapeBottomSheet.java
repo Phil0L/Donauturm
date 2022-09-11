@@ -6,8 +6,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.OptionsEditorFragment;
-import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.content.Shape;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
+import com.pl.donauturm.drinksmenu.model.content.ShapeItem;
 
 import java.util.List;
 
@@ -15,11 +15,11 @@ import java.util.List;
 public class ShapeBottomSheet extends ItemBottomSheet{
 
 
-    public ShapeBottomSheet(@NonNull FragmentActivity fragmentActivity, Item item, ItemEvent eventHandler) {
+    public ShapeBottomSheet(@NonNull FragmentActivity fragmentActivity, DrinksMenuItem item, ItemEvent eventHandler) {
         super(fragmentActivity, item, eventHandler);
     }
 
-    public ShapeBottomSheet(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, Shape item, ShapeEvent eventHandler) {
+    public ShapeBottomSheet(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, ShapeItem item, ShapeEvent eventHandler) {
         super(fragmentManager, lifecycle, item, eventHandler);
     }
 

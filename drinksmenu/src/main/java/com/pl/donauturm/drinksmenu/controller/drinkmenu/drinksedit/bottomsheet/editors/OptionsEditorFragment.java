@@ -16,12 +16,12 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SeekBarPreference;
 
 import com.pl.donauturm.drinksmenu.R;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.view.preferences.color.ColorPreference;
 import com.pl.donauturm.drinksmenu.view.preferences.font.FontPreference;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
 import com.pl.donauturm.drinksmenu.model.Font;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Group;
@@ -48,14 +48,14 @@ public class OptionsEditorFragment extends Fragment {
     public static final String KEY_ITEM_PRICE_SIZE = "item_price_font_size";
     public static final String KEY_ITEM_PRICE_FONT = "item_price_font";
 
-    private Item item;
+    private DrinksMenuItem item;
     private OnOptionsChanged callback;
 
     public OptionsEditorFragment() {
         // Required empty public constructor
     }
 
-    public OptionsEditorFragment(Item item, OnOptionsChanged callback){
+    public OptionsEditorFragment(DrinksMenuItem item, OnOptionsChanged callback){
         this.item = item;
         this.callback = callback;
     }
@@ -66,7 +66,7 @@ public class OptionsEditorFragment extends Fragment {
      *
      * @return A new instance of fragment DrinksMenuFragment.
      */
-    public static OptionsEditorFragment newInstance(Item item, OnOptionsChanged callback) {
+    public static OptionsEditorFragment newInstance(DrinksMenuItem item, OnOptionsChanged callback) {
         return new OptionsEditorFragment(item, callback);
     }
 
@@ -107,18 +107,18 @@ public class OptionsEditorFragment extends Fragment {
         return false;
     }
 
-    public Drink prepareDrink(){
-        if (item instanceof Drink)
-            return (Drink) item;
+    public DrinkItem prepareDrink(){
+        if (item instanceof DrinkItem)
+            return (DrinkItem) item;
         return null;
     }
 
     public boolean onDrinkChange(Preference preference, Object newValue){
-        if (newValue instanceof Drink){
-            Drink drink = ((Drink) newValue);
+        if (newValue instanceof DrinkItem){
+            DrinkItem drinkItem = ((DrinkItem) newValue);
             if (callback instanceof OnDrinkChanged)
-                ((OnDrinkChanged) callback).onDrinkChanged(drink);
-            ((DrinkPreference) preference).setValue(drink);
+                ((OnDrinkChanged) callback).onDrinkChanged(drinkItem);
+            ((DrinkPreference) preference).setValue(drinkItem);
         }
         return false;
     }
@@ -158,8 +158,8 @@ public class OptionsEditorFragment extends Fragment {
     }
 
     public int prepareColumnCount(){
-        if (item instanceof DrinkGroup)
-            return ((DrinkGroup) item).getColumnCount();
+        if (item instanceof DrinkGroupItem)
+            return ((DrinkGroupItem) item).getColumnCount();
         return 1;
     }
 
@@ -175,8 +175,8 @@ public class OptionsEditorFragment extends Fragment {
     }
 
     public int prepareColumnSpacing(){
-        if (item instanceof DrinkGroup)
-            return ((DrinkGroup) item).getColumnSpacing();
+        if (item instanceof DrinkGroupItem)
+            return ((DrinkGroupItem) item).getColumnSpacing();
         return 0;
     }
 
@@ -191,8 +191,8 @@ public class OptionsEditorFragment extends Fragment {
     }
 
     public int prepareRowSpacing(){
-        if (item instanceof DrinkGroup)
-            return ((DrinkGroup) item).getRowSpacing();
+        if (item instanceof DrinkGroupItem)
+            return ((DrinkGroupItem) item).getRowSpacing();
         return 0;
     }
 
@@ -402,7 +402,7 @@ public class OptionsEditorFragment extends Fragment {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             if (caller.item instanceof Group)
                 addPreferencesFromResource(R.xml.group_name_setting);
-            if (caller.item instanceof Drink)
+            if (caller.item instanceof DrinkItem)
                 addPreferencesFromResource(R.xml.drink_select_setting);
             if (caller.item instanceof Textable)
                 addPreferencesFromResource(R.xml.text_setting);
@@ -537,7 +537,7 @@ public class OptionsEditorFragment extends Fragment {
     }
 
     public interface OnDrinkChanged extends OnOptionsChanged{
-        void onDrinkChanged(Drink newDrink);
+        void onDrinkChanged(DrinkItem newDrinkItem);
     }
 
     public interface OnBackgroundOptionsChanged extends OnOptionsChanged{

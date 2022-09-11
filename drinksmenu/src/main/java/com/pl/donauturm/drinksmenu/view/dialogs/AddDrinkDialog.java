@@ -17,7 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
 
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
         }
     }
 
-    private List<Drink> getDrinks(){
+    private List<DrinkItem> getDrinks(){
         return new ArrayList<>(DrinkRegistry.getInstance().values());
     }
 
@@ -58,9 +58,9 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View rootView = layoutInflater.inflate(R.layout.dialog_select_drinks, null);
 
-        List<Drink> drinks = getDrinks();
+        List<DrinkItem> drinkItems = getDrinks();
         drinkListView = rootView.findViewById(R.id.drink_list_view);
-        drinkListView.setAdapter(new DrinkAdapter(drinks));
+        drinkListView.setAdapter(new DrinkAdapter(drinkItems));
         SearchView drinkSearch = rootView.findViewById(R.id.drink_search);
         drinkSearch.setQuery("", false);
         drinkSearch.setOnQueryTextListener(this);
@@ -74,10 +74,10 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Drink drink = ((Drink) drinkListView.getAdapter().getItem(position));
-        drink.createNewId();
+        DrinkItem drinkItem = ((DrinkItem) drinkListView.getAdapter().getItem(position));
+        drinkItem.createNewId();
         if (drinkSelectedListener != null)
-            drinkSelectedListener.onDrinkSelected(drink);
+            drinkSelectedListener.onDrinkSelected(drinkItem);
         dismiss();
     }
 
@@ -98,23 +98,23 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
     }
 
     public interface OnDrinkSelectedListener {
-        void onDrinkSelected(Drink drink);
+        void onDrinkSelected(DrinkItem drinkItem);
     }
 
     // Drink adaptor responsible for redrawing the item TextView with the appropriate font.
     // We use BaseAdapter since we need both arrays, and the effort is quite small.
     public class DrinkAdapter extends BaseAdapter {
 
-        private final List<Drink> drinks;
-        private List<Drink> filteredDrinks;
+        private final List<DrinkItem> drinkItems;
+        private List<DrinkItem> filteredDrinkItems;
 
-        public DrinkAdapter(List<Drink> drinks) {
-            this.drinks = new ArrayList<>(drinks);
-            this.filteredDrinks = new ArrayList<>(drinks);
+        public DrinkAdapter(List<DrinkItem> drinkItems) {
+            this.drinkItems = new ArrayList<>(drinkItems);
+            this.filteredDrinkItems = new ArrayList<>(drinkItems);
         }
 
         public void filter(String text){
-            filteredDrinks = drinks.stream().filter(d
+            filteredDrinkItems = drinkItems.stream().filter(d
                     -> d.getName().toLowerCase().contains(text.toLowerCase())
                     || d.getDescription().toLowerCase().contains(text.toLowerCase())
             ).collect(Collectors.toList());
@@ -122,18 +122,18 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
 
         @Override
         public int getCount() {
-            return filteredDrinks.size();
+            return filteredDrinkItems.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return filteredDrinks.get(position);
+            return filteredDrinkItems.get(position);
         }
 
         @Override
         public long getItemId(int position) {
             // We use the position as ID
-            return drinks.indexOf(filteredDrinks.get(position));
+            return drinkItems.indexOf(filteredDrinkItems.get(position));
         }
 
         @Override
@@ -155,9 +155,9 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
                 view.setOnClickListener(v -> AddDrinkDialog.this.onItemClick(AddDrinkDialog.this.drinkListView, v, position, getItemId(position)));
                 // Find the text view from our interface
                 TextView name = view.findViewById(R.id.drink_name);
-                name.setText(filteredDrinks.get(position).getName());
+                name.setText(filteredDrinkItems.get(position).getName());
                 TextView desc = view.findViewById(R.id.drink_description);
-                desc.setText(filteredDrinks.get(position).getDescription());
+                desc.setText(filteredDrinkItems.get(position).getDescription());
 
             }
 

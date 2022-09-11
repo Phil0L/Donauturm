@@ -5,28 +5,28 @@ import android.widget.ImageView;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.MainFragmentDrinkMenu;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
+import com.pl.donauturm.drinksmenu.model.content.TextItem;
 import com.pl.donauturm.drinksmenu.view.views.TextView;
-import com.pl.donauturm.drinksmenu.model.content.Text;
 
 public class TextGenerator {
 
-    public TextView generateNewPreviewText(FrameLayout parent, Text text){
+    public TextView generateNewPreviewText(FrameLayout parent, TextItem textItem){
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                DrinksMenuEditorActivity.ValueScale.with(parent.getContext()).scalePositionToView((int) text.getWidth()),
-                DrinksMenuEditorActivity.ValueScale.with(parent.getContext()).scalePositionToView((int) text.getHeight()));
-        layoutParams.leftMargin = DrinksMenuEditorActivity.ValueScale.with(parent.getContext()).scalePositionToView((int) text.getLeft());
-        layoutParams.topMargin = DrinksMenuEditorActivity.ValueScale.with(parent.getContext()).scalePositionToView((int) text.getTop());
+                DrinksMenuEditorActivity.ValueScale.with(parent.getContext()).scalePositionToView((int) textItem.getWidth()),
+                DrinksMenuEditorActivity.ValueScale.with(parent.getContext()).scalePositionToView((int) textItem.getHeight()));
+        layoutParams.leftMargin = DrinksMenuEditorActivity.ValueScale.with(parent.getContext()).scalePositionToView((int) textItem.getLeft());
+        layoutParams.topMargin = DrinksMenuEditorActivity.ValueScale.with(parent.getContext()).scalePositionToView((int) textItem.getTop());
         TextView textView = new TextView(parent.getContext());
         parent.addView(textView, layoutParams);
         return textView;
     }
 
-    public TextView generateNewImageText(FrameLayout parent, Text text, ImageView bg){
+    public TextView generateNewImageText(FrameLayout parent, TextItem textItem, ImageView bg){
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) text.getWidth(), bg),
-                MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) text.getHeight(), bg));
-        layoutParams.leftMargin = MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) text.getLeft(), bg);
-        layoutParams.topMargin = MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) text.getTop(), bg);
+                MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) textItem.getWidth(), bg),
+                MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) textItem.getHeight(), bg));
+        layoutParams.leftMargin = MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) textItem.getLeft(), bg);
+        layoutParams.topMargin = MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) textItem.getTop(), bg);
         TextView textView = new TextView(parent.getContext());
         textView.deactivateResize();
         textView.deactivateDrag();

@@ -16,11 +16,11 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
-import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.content.Shape;
-import com.pl.donauturm.drinksmenu.model.content.Text;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
+import com.pl.donauturm.drinksmenu.model.content.ShapeItem;
+import com.pl.donauturm.drinksmenu.model.content.TextItem;
 
 import java.util.List;
 
@@ -69,28 +69,28 @@ public class ItemSelectorDialog extends DialogFragment implements AdapterView.On
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Class<? extends Item> name = ((ItemsAdapter) itemListView.getAdapter()).getItem(position);
+        Class<? extends DrinksMenuItem> name = ((ItemsAdapter) itemListView.getAdapter()).getItem(position);
         if (itemSelectedListener != null)
             itemSelectedListener.onItemSelected(name);
         dismiss();
     }
 
     public interface OnItemSelectedListener {
-        void onItemSelected(Class<? extends Item> itemClass);
+        void onItemSelected(Class<? extends DrinksMenuItem> itemClass);
     }
 
     // Font adaptor responsible for redrawing the item TextView with the appropriate font.
     // We use BaseAdapter since we need both arrays, and the effort is quite small.
     public class ItemsAdapter extends BaseAdapter {
 
-        private final List<Class<? extends Item>> items;
+        private final List<Class<? extends DrinksMenuItem>> items;
 
         public ItemsAdapter() {
             this.items = List.of(
-                    Drink.class,
-                    DrinkGroup.class,
-                    Text.class,
-                    Shape.class
+                    DrinkItem.class,
+                    DrinkGroupItem.class,
+                    TextItem.class,
+                    ShapeItem.class
             );
         }
 
@@ -101,7 +101,7 @@ public class ItemSelectorDialog extends DialogFragment implements AdapterView.On
         }
 
         @Override
-        public Class<? extends Item> getItem(int position) {
+        public Class<? extends DrinksMenuItem> getItem(int position) {
             return items.get(position);
         }
 

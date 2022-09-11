@@ -7,7 +7,7 @@ import androidx.annotation.Nullable;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.BottomSheetViewHolder;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.ItemBottomSheet;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.view.views.ItemView;
 
 public class ItemEventHandler implements ItemBottomSheet.ItemEvent {
@@ -26,7 +26,7 @@ public class ItemEventHandler implements ItemBottomSheet.ItemEvent {
             provider.generateImage();
         if (itemView == null) itemView = provider.getSelectedView();
         if (itemView == null) return;
-        Item item = itemView.item;
+        DrinksMenuItem item = itemView.item;
         if (item == null) return;
         item.setWidth(width);
         item.setHeight(height);
@@ -43,7 +43,7 @@ public class ItemEventHandler implements ItemBottomSheet.ItemEvent {
     public void onSizeLock(boolean nowLocked) {
         ItemView itemView = provider.getSelectedView();
         if (itemView == null) return;
-        Item item = itemView.item;
+        DrinksMenuItem item = itemView.item;
         if (item == null) return;
         item.setSizeLocked(nowLocked);
         if (nowLocked){
@@ -60,7 +60,7 @@ public class ItemEventHandler implements ItemBottomSheet.ItemEvent {
         if (itemView != null && provider.getSelectedView() == null)
             provider.generateImage();
         if (itemView == null) itemView = provider.getSelectedView();
-        Item item = itemView.item;
+        DrinksMenuItem item = itemView.item;
         if (item == null) return;
         item.setLeft(left);
         item.setTop(top);
@@ -76,7 +76,7 @@ public class ItemEventHandler implements ItemBottomSheet.ItemEvent {
     public void onPositionLock(boolean nowLocked) {
         ItemView itemView = provider.getSelectedView();
         if (itemView == null) return;
-        Item item = itemView.item;
+        DrinksMenuItem item = itemView.item;
         if (item == null) return;
         item.setPositionLocked(nowLocked);
         if (nowLocked){
@@ -91,7 +91,7 @@ public class ItemEventHandler implements ItemBottomSheet.ItemEvent {
     @Override
     public void onNameChanged(String name) {
         onAnyChange();
-        Item item;
+        DrinksMenuItem item;
         if ((item = provider.getCurrentItem()) != null)
             item.setName(name);
         if (provider.getBottomSheet() != null)
@@ -125,7 +125,7 @@ public class ItemEventHandler implements ItemBottomSheet.ItemEvent {
     }
 
     public interface EditorProvider{
-        Item getCurrentItem();
+        DrinksMenuItem getCurrentItem();
         ItemView getSelectedView();
         BottomSheetViewHolder getBottomSheet();
         void generateImage();

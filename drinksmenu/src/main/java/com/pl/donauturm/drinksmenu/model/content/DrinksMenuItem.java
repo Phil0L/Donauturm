@@ -1,22 +1,18 @@
-package com.pl.donauturm.drinksmenu.model;
+package com.pl.donauturm.drinksmenu.model.content;
 
 import androidx.annotation.NonNull;
 
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
-import com.pl.donauturm.drinksmenu.model.content.Shape;
-import com.pl.donauturm.drinksmenu.model.content.Text;
 import com.pl.donauturm.drinksmenu.model.interfaces.Id;
 import com.pl.donauturm.drinksmenu.util.json.JsonSubtype;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-@JsonSubtype(field = "type", clazz = Text.class)
-@JsonSubtype(field = "type", clazz = Shape.class)
-@JsonSubtype(field = "type", clazz = Drink.class)
-@JsonSubtype(field = "type", clazz = DrinkGroup.class)
-public abstract class Item implements Serializable, Cloneable, Id {
+@JsonSubtype(field = "type", clazz = TextItem.class)
+@JsonSubtype(field = "type", clazz = ShapeItem.class)
+@JsonSubtype(field = "type", clazz = DrinkItem.class)
+@JsonSubtype(field = "type", clazz = DrinkGroupItem.class)
+public abstract class DrinksMenuItem implements Serializable, Cloneable, Id {
 
     private final String type;
 
@@ -31,7 +27,7 @@ public abstract class Item implements Serializable, Cloneable, Id {
     private boolean sizeLocked;
     private boolean positionLocked;
 
-    public Item() {
+    public DrinksMenuItem() {
         this.createNewId();
         this.left = 0;
         this.top = 0;
@@ -43,7 +39,7 @@ public abstract class Item implements Serializable, Cloneable, Id {
         this.type = getClass().getSimpleName();
     }
 
-    public Item(float left, float top, float width, float height) {
+    public DrinksMenuItem(float left, float top, float width, float height) {
         this.createNewId();
         this.left = left;
         this.top = top;
@@ -55,7 +51,7 @@ public abstract class Item implements Serializable, Cloneable, Id {
         this.type = getClass().getSimpleName();
     }
 
-    public Item(String name) {
+    public DrinksMenuItem(String name) {
         this.createNewId();
         this.left = 0;
         this.top = 0;
@@ -139,7 +135,7 @@ public abstract class Item implements Serializable, Cloneable, Id {
     }
 
     @Override
-    public Item createNewId() {
+    public DrinksMenuItem createNewId() {
         this.id = newId();
         return this;
     }
@@ -168,9 +164,9 @@ public abstract class Item implements Serializable, Cloneable, Id {
 
     @NonNull
     @Override
-    public Item clone() {
+    public DrinksMenuItem clone() {
         try {
-            return (Item) super.clone();
+            return (DrinksMenuItem) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }

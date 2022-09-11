@@ -10,8 +10,8 @@ import android.widget.ArrayAdapter;
 import androidx.annotation.Nullable;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.content.Text;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
+import com.pl.donauturm.drinksmenu.model.content.TextItem;
 
 public class TextView extends ItemView {
 
@@ -30,7 +30,7 @@ public class TextView extends ItemView {
     }
 
     public SingleAdapter newSingleAdapter() {
-        internalAdapter = new SingleAdapter(getContext(), (Text) item);
+        internalAdapter = new SingleAdapter(getContext(), (TextItem) item);
         return internalAdapter;
     }
 
@@ -39,14 +39,14 @@ public class TextView extends ItemView {
         internalAdapter.notifyDataSetChanged();
     }
 
-    public static class SingleAdapter extends ArrayAdapter<Item> {
+    public static class SingleAdapter extends ArrayAdapter<DrinksMenuItem> {
         private final Context context;
-        private final Text text;
+        private final TextItem textItem;
 
 
-        public SingleAdapter(Context context, Text text) {
+        public SingleAdapter(Context context, TextItem textItem) {
             super(context, R.layout.pref_preview_text);
-            this.text = text;
+            this.textItem = textItem;
             this.context = context;
         }
 
@@ -56,8 +56,8 @@ public class TextView extends ItemView {
         }
 
         @Override
-        public Item getItem(int position) {
-            return text;
+        public DrinksMenuItem getItem(int position) {
+            return textItem;
         }
 
         @Override
@@ -72,11 +72,11 @@ public class TextView extends ItemView {
                 convertView = layoutInflater.inflate(R.layout.pref_preview_text, parent, false);
 
             android.widget.TextView tv = convertView.findViewById(R.id.text);
-            tv.setText(text.getName());
-            tv.setTextColor(text.getColor());
-            tv.setTextSize(text.getFontSize());
-            if (text.getFont() != null)
-                tv.setTypeface(text.getFont().getTypeFace());
+            tv.setText(textItem.getName());
+            tv.setTextColor(textItem.getColor());
+            tv.setTextSize(textItem.getFontSize());
+            if (textItem.getFont() != null)
+                tv.setTypeface(textItem.getFont().getTypeFace());
             return convertView;
         }
     }

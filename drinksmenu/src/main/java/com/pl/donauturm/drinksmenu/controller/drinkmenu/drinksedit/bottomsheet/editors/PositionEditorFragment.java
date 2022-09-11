@@ -15,12 +15,12 @@ import androidx.fragment.app.Fragment;
 
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.DrinkGroupBottomSheet;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.view.views.ItemView;
 
 public class PositionEditorFragment extends Fragment implements TextWatcher, View.OnClickListener, DrinkGroupBottomSheet.EditorUpdate {
 
-    private Item item;
+    private DrinksMenuItem item;
     private OnReposition callback;
 
     private EditText mEditTextLeft;
@@ -31,7 +31,7 @@ public class PositionEditorFragment extends Fragment implements TextWatcher, Vie
         // Required empty public constructor
     }
 
-    public PositionEditorFragment(Item item, OnReposition callback) {
+    public PositionEditorFragment(DrinksMenuItem item, OnReposition callback) {
         this.item = item;
         this.callback = callback;
     }
@@ -42,7 +42,7 @@ public class PositionEditorFragment extends Fragment implements TextWatcher, Vie
      *
      * @return A new instance of fragment DrinksMenuFragment.
      */
-    public static PositionEditorFragment newInstance(Item item, OnReposition callback) {
+    public static PositionEditorFragment newInstance(DrinksMenuItem item, OnReposition callback) {
         return new PositionEditorFragment(item, callback);
     }
 
@@ -95,7 +95,7 @@ public class PositionEditorFragment extends Fragment implements TextWatcher, Vie
     }
 
     @Override
-    public void onDataChanged(Item item) {
+    public void onDataChanged(DrinksMenuItem item) {
         if (!String.valueOf(((int) item.getLeft())).equals(String.valueOf(mEditTextLeft.getText()))) {
             mEditTextLeft.removeTextChangedListener(this);
             mEditTextLeft.setText(String.valueOf(((int) item.getLeft())));

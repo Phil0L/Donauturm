@@ -10,7 +10,7 @@ import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.e
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.OptionsEditorFragment;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.PositionEditorFragment;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.SizeEditorFragment;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
 
 import java.util.List;
 
@@ -18,12 +18,12 @@ public class DrinkGroupBottomSheet extends ItemBottomSheet {
 
     public static final int ITEM_EDITOR = 4;
 
-    public DrinkGroupBottomSheet(@NonNull FragmentActivity fragmentActivity, DrinkGroup drinkGroup, DrinkGroupEvent eventHandler) {
-        super(fragmentActivity, drinkGroup, eventHandler);
+    public DrinkGroupBottomSheet(@NonNull FragmentActivity fragmentActivity, DrinkGroupItem drinkGroupItem, DrinkGroupEvent eventHandler) {
+        super(fragmentActivity, drinkGroupItem, eventHandler);
     }
 
-    public DrinkGroupBottomSheet(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, DrinkGroup drinkGroup, DrinkGroupEvent eventHandler) {
-        super(fragmentManager, lifecycle, drinkGroup, eventHandler);
+    public DrinkGroupBottomSheet(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, DrinkGroupItem drinkGroupItem, DrinkGroupEvent eventHandler) {
+        super(fragmentManager, lifecycle, drinkGroupItem, eventHandler);
     }
 
     @NonNull
@@ -43,7 +43,7 @@ public class DrinkGroupBottomSheet extends ItemBottomSheet {
                 editors.add(fragment);
                 return fragment;
             case ITEM_EDITOR:
-                fragment = ItemsEditorFragment.newInstance((DrinkGroup) item, (DrinkGroupEvent) eventHandler);
+                fragment = ItemsEditorFragment.newInstance((DrinkGroupItem) item, (DrinkGroupEvent) eventHandler);
                 editors.add(fragment);
                 return fragment;
             default: break;

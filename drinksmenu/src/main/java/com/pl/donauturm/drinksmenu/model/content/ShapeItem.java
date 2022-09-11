@@ -5,30 +5,29 @@ import android.graphics.Color;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
-import com.pl.donauturm.drinksmenu.model.Item;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Shape extends Item implements Serializable, Backgroundable, Cloneable {
+public class ShapeItem extends DrinksMenuItem implements Serializable, Backgroundable, Cloneable {
 
     private int backColor;
     private int cornerRadius;
 
-    public Shape() {
+    public ShapeItem() {
         super("Shape");
         this.backColor = Color.WHITE;
         this.cornerRadius = 10;
     }
 
-    public Shape(String name, int backColor, int cornerRadius) {
+    public ShapeItem(String name, int backColor, int cornerRadius) {
         super(name);
         this.backColor = backColor;
         this.cornerRadius = cornerRadius;
     }
 
-    public Shape(float left, float top, float width, float height) {
+    public ShapeItem(float left, float top, float width, float height) {
         super(left, top, width, height);
     }
 
@@ -79,11 +78,11 @@ public class Shape extends Item implements Serializable, Backgroundable, Cloneab
     @NonNull
     @Override
     @SuppressWarnings("UnusedAssignment")
-    public Shape clone() {
-        Shape clone = (Shape) super.clone();
+    public ShapeItem clone() {
+        ShapeItem clone = (ShapeItem) super.clone();
         Gson gson = new Gson();
         String content = gson.toJson(this);
-        clone = gson.fromJson(content, Shape.class);
+        clone = gson.fromJson(content, ShapeItem.class);
         clone.createNewId();
         return clone;
     }

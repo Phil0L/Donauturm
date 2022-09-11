@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pl.donauturm.drinksmenu.R;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Id;
 import com.pl.donauturm.drinksmenu.util.json.BitmapDeSerializer;
 import com.pl.donauturm.drinksmenu.util.json.PolymorphicDeserializer;
@@ -31,7 +32,7 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
 
     protected String id;
     protected String name;
-    protected List<Item> items;
+    protected List<DrinksMenuItem> items;
     protected int width;
     protected int height;
     protected String version;
@@ -74,7 +75,7 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     }
 
     @TestOnly
-    public DrinksMenu(String name, Item... items) {
+    public DrinksMenu(String name, DrinksMenuItem... items) {
         this.name = name;
         this.items = new ArrayList<>(Arrays.asList(items));
         this.backGround = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888, true);
@@ -84,7 +85,7 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     }
 
     @TestOnly
-    public DrinksMenu(String name, Context context, Item... items) {
+    public DrinksMenu(String name, Context context, DrinksMenuItem... items) {
         this.name = name;
         this.items = new ArrayList<>(Arrays.asList(items));
         this.backGround = BitmapFactory.decodeResource(context.getResources(), R.drawable.png_background);
@@ -95,7 +96,7 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     }
 
     @TestOnly
-    public DrinksMenu(String name, List<Item> items, Bitmap backGround) {
+    public DrinksMenu(String name, List<DrinksMenuItem> items, Bitmap backGround) {
         this.name = name;
         this.items = new ArrayList<>(items);
         this.width = 1920;
@@ -112,7 +113,7 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         this.name = name;
     }
 
-    public List<Item> getItems() {
+    public List<DrinksMenuItem> getItems() {
         return items;
     }
 
@@ -124,11 +125,11 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         return height;
     }
 
-    public void addItem(Item item) {
+    public void addItem(DrinksMenuItem item) {
         this.items.add(item);
     }
 
-    public void removeItem(Item item) {
+    public void removeItem(DrinksMenuItem item) {
         this.items.remove(item);
     }
 
@@ -296,7 +297,7 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
 
     public static Gson deserializer(Context context) {
         return new GsonBuilder()
-                .registerTypeAdapter(Item.class, new PolymorphicDeserializer<Item>())
+                .registerTypeAdapter(DrinksMenuItem.class, new PolymorphicDeserializer<DrinksMenuItem>())
                 .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toLocalFile(context))
                 .create();
     }
@@ -309,7 +310,7 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
 
     public static Gson deserializer() {
         return new GsonBuilder()
-                .registerTypeAdapter(Item.class, new PolymorphicDeserializer<Item>())
+                .registerTypeAdapter(DrinksMenuItem.class, new PolymorphicDeserializer<DrinksMenuItem>())
                 .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
                 .create();
     }

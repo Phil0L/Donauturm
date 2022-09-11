@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.pl.donauturm.drinksmenu.model.Font;
-import com.pl.donauturm.drinksmenu.model.Item;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Textable;
 
@@ -15,7 +14,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class Text extends Item implements Serializable, Backgroundable, Textable, Cloneable {
+public class TextItem extends DrinksMenuItem implements Serializable, Backgroundable, Textable, Cloneable {
 
     private int backColor;
     private int cornerRadius;
@@ -26,7 +25,7 @@ public class Text extends Item implements Serializable, Backgroundable, Textable
     @Nullable
     private transient Font tempFont;
 
-    public Text(String name) {
+    public TextItem(String name) {
         super(name);
         this.textSize = 10;
         this.textColor = Color.WHITE;
@@ -119,11 +118,11 @@ public class Text extends Item implements Serializable, Backgroundable, Textable
     @NonNull
     @Override
     @SuppressWarnings("UnusedAssignment")
-    public Text clone() {
-        Text clone = (Text) super.clone();
+    public TextItem clone() {
+        TextItem clone = (TextItem) super.clone();
         Gson gson = new Gson();
         String content = gson.toJson(this);
-        clone = gson.fromJson(content, Text.class);
+        clone = gson.fromJson(content, TextItem.class);
         clone.createNewId();
         return clone;
     }

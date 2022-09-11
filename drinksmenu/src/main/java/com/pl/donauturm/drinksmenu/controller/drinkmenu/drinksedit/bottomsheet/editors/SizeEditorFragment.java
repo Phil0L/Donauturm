@@ -16,11 +16,11 @@ import androidx.fragment.app.Fragment;
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.DrinkGroupBottomSheet;
 import com.pl.donauturm.drinksmenu.view.views.ItemView;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 
 public class SizeEditorFragment extends Fragment implements TextWatcher, View.OnClickListener, DrinkGroupBottomSheet.EditorUpdate {
 
-    private Item item;
+    private DrinksMenuItem item;
     private OnResize callback;
 
     private EditText mEditTextHeight;
@@ -31,7 +31,7 @@ public class SizeEditorFragment extends Fragment implements TextWatcher, View.On
         // Required empty public constructor
     }
 
-    public SizeEditorFragment(Item item, OnResize callback) {
+    public SizeEditorFragment(DrinksMenuItem item, OnResize callback) {
         this.item = item;
         this.callback = callback;
     }
@@ -42,7 +42,7 @@ public class SizeEditorFragment extends Fragment implements TextWatcher, View.On
      *
      * @return A new instance of fragment DrinksMenuFragment.
      */
-    public static SizeEditorFragment newInstance(Item item, OnResize callback) {
+    public static SizeEditorFragment newInstance(DrinksMenuItem item, OnResize callback) {
         return new SizeEditorFragment(item, callback);
     }
 
@@ -95,7 +95,7 @@ public class SizeEditorFragment extends Fragment implements TextWatcher, View.On
     }
 
     @Override
-    public void onDataChanged(Item item) {
+    public void onDataChanged(DrinksMenuItem item) {
         if (mEditTextHeight == null || mEditTextWidth == null) return;
         if (!String.valueOf(((int) item.getHeight())).equals(String.valueOf(mEditTextHeight.getText()))) {
             mEditTextHeight.removeTextChangedListener(this);

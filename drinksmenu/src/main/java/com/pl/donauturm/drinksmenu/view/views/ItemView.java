@@ -9,14 +9,14 @@ import androidx.core.content.res.ResourcesCompat;
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.PositionEditorFragment;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.SizeEditorFragment;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 
 import java.util.List;
 
 public class ItemView extends ViewBuilder {
 
-    public Item item;
+    public DrinksMenuItem item;
     private boolean selected = false;
     private OnSelect selectListener;
     private SizeEditorFragment.OnResize resizeListener;
@@ -52,7 +52,7 @@ public class ItemView extends ViewBuilder {
         invalidate();
     }
 
-    public void setItem(Item item) {
+    public void setItem(DrinksMenuItem item) {
         this.item = item;
         if (item instanceof Backgroundable) {
             setBackgroundColor(((Backgroundable) item).getBackgroundColor());

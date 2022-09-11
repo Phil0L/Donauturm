@@ -1,10 +1,10 @@
 package com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.DrinkGroupBottomSheet;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.model.Font;
-import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
 
@@ -18,39 +18,39 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     }
 
     @Override
-    public void onItemAdded(int index, Item item) {
-        Item itemG = provider.getCurrentItem();
-        if (itemG instanceof DrinkGroup && item instanceof Drink) {
-            DrinkGroup drinkGroup = ((DrinkGroup) itemG);
-            Drink drink = (Drink) item;
-            drinkGroup.addDrinks(drink);
+    public void onItemAdded(int index, DrinksMenuItem item) {
+        DrinksMenuItem itemG = provider.getCurrentItem();
+        if (itemG instanceof DrinkGroupItem && item instanceof DrinkItem) {
+            DrinkGroupItem drinkGroupItem = ((DrinkGroupItem) itemG);
+            DrinkItem drinkItem = (DrinkItem) item;
+            drinkGroupItem.addDrinks(drinkItem);
         }
     }
 
     @Override
     public void onItemMoved(int from, int to) {
-        Item itemG = provider.getCurrentItem();
-        if (itemG instanceof DrinkGroup) {
-            DrinkGroup drinkGroup = ((DrinkGroup) itemG);
-            List<Drink> drinks = drinkGroup.getItems();
-            Collections.swap(drinks, from, to);
-            drinkGroup.setDrinks(drinks);
+        DrinksMenuItem itemG = provider.getCurrentItem();
+        if (itemG instanceof DrinkGroupItem) {
+            DrinkGroupItem drinkGroupItem = ((DrinkGroupItem) itemG);
+            List<DrinkItem> drinkItems = drinkGroupItem.getItems();
+            Collections.swap(drinkItems, from, to);
+            drinkGroupItem.setDrinks(drinkItems);
         }
     }
 
     @Override
     public void onItemDelete(int index) {
-        Item itemG = provider.getCurrentItem();
-        if (itemG instanceof DrinkGroup) {
-            DrinkGroup drinkGroup = ((DrinkGroup) itemG);
-            List<Drink> drinks = drinkGroup.getItems();
-            drinks.remove(index);
-            drinkGroup.setDrinks(drinks);
+        DrinksMenuItem itemG = provider.getCurrentItem();
+        if (itemG instanceof DrinkGroupItem) {
+            DrinkGroupItem drinkGroupItem = ((DrinkGroupItem) itemG);
+            List<DrinkItem> drinkItems = drinkGroupItem.getItems();
+            drinkItems.remove(index);
+            drinkGroupItem.setDrinks(drinkItems);
         }
     }
 
     @Override
-    public void onItemsChanged(List<? extends Item> items) {
+    public void onItemsChanged(List<? extends DrinksMenuItem> items) {
         onAnyChange();
         if (provider.getBottomSheet() != null)
             provider.getBottomSheet().update();
@@ -61,7 +61,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onBackgroundChanged(int color) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Backgroundable)
             ((Backgroundable) item).setBackgroundColor(color);
         if (provider.getSelectedView() != null)
@@ -71,7 +71,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onCornerRadiusChanged(int radius) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Backgroundable)
             ((Backgroundable) item).setCornerRadius(radius);
         if (provider.getSelectedView() != null)
@@ -81,7 +81,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onNameColorChange(int color) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setNameColor(color);
         provider.getSelectedView().notifyChanged();
@@ -90,7 +90,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onNameSizeChange(int size) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setNameFontSize(size);
         provider.getSelectedView().notifyChanged();
@@ -99,7 +99,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onNameFontChange(Font font) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setNameFont(font);
         provider.getSelectedView().notifyChanged();
@@ -108,7 +108,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onDescColorChange(int color) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setDescriptionColor(color);
         provider.getSelectedView().notifyChanged();
@@ -117,7 +117,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onDescSizeChange(int size) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setDescriptionFontSize(size);
         provider.getSelectedView().notifyChanged();
@@ -126,7 +126,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onDescFontChange(Font font) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setDescriptionFont(font);
         provider.getSelectedView().notifyChanged();
@@ -135,7 +135,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onPriceVisibleChange(boolean visible) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setPriceVisible(visible);
         provider.getSelectedView().notifyChanged();
@@ -144,7 +144,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onPriceColorChange(int color) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setPriceColor(color);
         provider.getSelectedView().notifyChanged();
@@ -153,7 +153,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onPriceSizeChange(int size) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setPriceFontSize(size);
         provider.getSelectedView().notifyChanged();
@@ -162,7 +162,7 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onPriceFontChange(Font font) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setPriceFont(font);
         provider.getSelectedView().notifyChanged();
@@ -171,27 +171,27 @@ public class DrinkGroupEventHandler extends ItemEventHandler implements DrinkGro
     @Override
     public void onColumnCountChange(int columns) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
-        if (item instanceof DrinkGroup)
-            ((DrinkGroup) item).setColumnCount(columns);
+        DrinksMenuItem item = provider.getCurrentItem();
+        if (item instanceof DrinkGroupItem)
+            ((DrinkGroupItem) item).setColumnCount(columns);
         provider.getSelectedView().notifyChanged();
     }
 
     @Override
     public void onColumnSpacingChange(int space) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
-        if (item instanceof DrinkGroup)
-            ((DrinkGroup) item).setColumnSpacing(space);
+        DrinksMenuItem item = provider.getCurrentItem();
+        if (item instanceof DrinkGroupItem)
+            ((DrinkGroupItem) item).setColumnSpacing(space);
         provider.getSelectedView().notifyChanged();
     }
 
     @Override
     public void onRowSpacingChange(int space) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
-        if (item instanceof DrinkGroup)
-            ((DrinkGroup) item).setRowSpacing(space);
+        DrinksMenuItem item = provider.getCurrentItem();
+        if (item instanceof DrinkGroupItem)
+            ((DrinkGroupItem) item).setRowSpacing(space);
         provider.getSelectedView().notifyChanged();
     }
 }

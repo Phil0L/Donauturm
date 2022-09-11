@@ -13,11 +13,11 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
-import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.content.Shape;
-import com.pl.donauturm.drinksmenu.model.content.Text;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
+import com.pl.donauturm.drinksmenu.model.content.ShapeItem;
+import com.pl.donauturm.drinksmenu.model.content.TextItem;
 import com.pl.donauturm.drinksmenu.view.views.ItemView;
 
 import java.util.Arrays;
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class BottomSheetViewHolder{
 
-    public Item item;
+    public DrinksMenuItem item;
     protected DrinksMenuEditorActivity activity;
     protected List<EDITORS> editors;
     protected ItemBottomSheet itemBottomSheet;
@@ -40,7 +40,7 @@ public class BottomSheetViewHolder{
     private final ImageView mNext, mPrevious;
     private final ViewPager2 mViewPager;
 
-    public BottomSheetViewHolder(DrinksMenuEditorActivity activity, @NonNull View root, Item item, EDITORS... editors) {
+    public BottomSheetViewHolder(DrinksMenuEditorActivity activity, @NonNull View root, DrinksMenuItem item, EDITORS... editors) {
         this.activity = activity;
         this.editors = Arrays.asList(editors);
         this.item = item;
@@ -61,26 +61,26 @@ public class BottomSheetViewHolder{
     }
 
     private void setup() {
-        if (item instanceof DrinkGroup)
+        if (item instanceof DrinkGroupItem)
             this.itemBottomSheet = new DrinkGroupBottomSheet(
                 activity.getSupportFragmentManager(),
                 activity.getLifecycle(),
-                (DrinkGroup) item, (DrinkGroupBottomSheet.DrinkGroupEvent) activity.getEventHandler());
-        else if (item instanceof Drink)
+                (DrinkGroupItem) item, (DrinkGroupBottomSheet.DrinkGroupEvent) activity.getEventHandler());
+        else if (item instanceof DrinkItem)
             this.itemBottomSheet = new DrinkBottomSheet(
                     activity.getSupportFragmentManager(),
                     activity.getLifecycle(),
-                    (Drink) item, (DrinkBottomSheet.DrinkEvent) activity.getEventHandler());
-        else if (item instanceof Text)
+                    (DrinkItem) item, (DrinkBottomSheet.DrinkEvent) activity.getEventHandler());
+        else if (item instanceof TextItem)
             this.itemBottomSheet = new TextBottomSheet(
                     activity.getSupportFragmentManager(),
                     activity.getLifecycle(),
-                    (Text) item, (TextBottomSheet.TextEvent) activity.getEventHandler());
-        else if (item instanceof Shape)
+                    (TextItem) item, (TextBottomSheet.TextEvent) activity.getEventHandler());
+        else if (item instanceof ShapeItem)
             this.itemBottomSheet = new ShapeBottomSheet(
                     activity.getSupportFragmentManager(),
                     activity.getLifecycle(),
-                    (Shape) item, (ShapeBottomSheet.ShapeEvent) activity.getEventHandler());
+                    (ShapeItem) item, (ShapeBottomSheet.ShapeEvent) activity.getEventHandler());
         else
             this.itemBottomSheet = new ItemBottomSheet(
                     activity.getSupportFragmentManager(),

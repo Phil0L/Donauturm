@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.Text;
+import com.pl.donauturm.drinksmenu.model.content.TextItem;
 
 public class AddTextDialog extends DialogFragment implements TextWatcher, DialogInterface.OnClickListener {
 
@@ -78,14 +78,14 @@ public class AddTextDialog extends DialogFragment implements TextWatcher, Dialog
     public void onClick(DialogInterface dialog, int which) {
         String text = editText.getText().toString();
         if (textSelectedListener != null) {
-            Text text1 = new Text(text);
-            text1.createNewId();
-            textSelectedListener.onTextSelected(text1);
+            TextItem textItem1 = new TextItem(text);
+            textItem1.createNewId();
+            textSelectedListener.onTextSelected(textItem1);
         }
     }
 
 
     public interface OnTextSelectedListener {
-        void onTextSelected(Text text);
+        void onTextSelected(TextItem textItem);
     }
 }

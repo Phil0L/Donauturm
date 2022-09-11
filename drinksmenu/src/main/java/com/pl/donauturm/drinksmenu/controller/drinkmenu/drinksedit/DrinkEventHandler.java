@@ -1,9 +1,9 @@
 package com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.DrinkBottomSheet;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.model.Font;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
 
@@ -16,7 +16,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onBackgroundChanged(int color) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Backgroundable)
             ((Backgroundable) item).setBackgroundColor(color);
         if (provider.getSelectedView() != null)
@@ -26,7 +26,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onCornerRadiusChanged(int radius) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Backgroundable)
             ((Backgroundable) item).setCornerRadius(radius);
         if (provider.getSelectedView() != null)
@@ -36,7 +36,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onNameColorChange(int color) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setNameColor(color);
         provider.getSelectedView().notifyChanged();
@@ -45,7 +45,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onNameSizeChange(int size) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setNameFontSize(size);
         provider.getSelectedView().notifyChanged();
@@ -54,7 +54,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onNameFontChange(Font font) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setNameFont(font);
         provider.getSelectedView().notifyChanged();
@@ -63,7 +63,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onDescColorChange(int color) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setDescriptionColor(color);
         provider.getSelectedView().notifyChanged();
@@ -72,7 +72,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onDescSizeChange(int size) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setDescriptionFontSize(size);
         provider.getSelectedView().notifyChanged();
@@ -81,7 +81,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onDescFontChange(Font font) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setDescriptionFont(font);
         provider.getSelectedView().notifyChanged();
@@ -90,7 +90,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onPriceVisibleChange(boolean visible) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setPriceVisible(visible);
         provider.getSelectedView().notifyChanged();
@@ -99,7 +99,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onPriceColorChange(int color) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setPriceColor(color);
         provider.getSelectedView().notifyChanged();
@@ -108,7 +108,7 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onPriceSizeChange(int size) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setPriceFontSize(size);
         provider.getSelectedView().notifyChanged();
@@ -117,20 +117,20 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     @Override
     public void onPriceFontChange(Font font) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Drinktextable)
             ((Drinktextable) item).setPriceFont(font);
         provider.getSelectedView().notifyChanged();
     }
 
     @Override
-    public void onDrinkChanged(Drink newDrink) {
+    public void onDrinkChanged(DrinkItem newDrinkItem) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
-        if (item instanceof Drink){
-            item.setName(newDrink.getName());
-            ((Drink) item).setDescription(newDrink.getDescription());
-            ((Drink) item).setPrice(newDrink.getPrice());
+        DrinksMenuItem item = provider.getCurrentItem();
+        if (item instanceof DrinkItem){
+            item.setName(newDrinkItem.getName());
+            ((DrinkItem) item).setDescription(newDrinkItem.getDescription());
+            ((DrinkItem) item).setPrice(newDrinkItem.getPrice());
         }
         provider.getSelectedView().notifyChanged();
     }

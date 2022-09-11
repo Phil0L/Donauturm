@@ -10,7 +10,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.OptionsEditorFragment;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.PositionEditorFragment;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.SizeEditorFragment;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,18 +21,18 @@ public class ItemBottomSheet extends FragmentStateAdapter {
     public static final int POSITION_EDITOR = 2;
     public static final int OPTIONS_EDITOR = 3;
 
-    protected final Item item;
+    protected final DrinksMenuItem item;
     protected final ItemEvent eventHandler;
     protected final List<Fragment> editors;
 
-    public ItemBottomSheet(@NonNull FragmentActivity fragmentActivity, Item item, ItemEvent eventHandler) {
+    public ItemBottomSheet(@NonNull FragmentActivity fragmentActivity, DrinksMenuItem item, ItemEvent eventHandler) {
         super(fragmentActivity);
         this.item = item;
         this.eventHandler = eventHandler;
         this.editors = new ArrayList<>();
     }
 
-    public ItemBottomSheet(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, Item item, ItemEvent eventHandler) {
+    public ItemBottomSheet(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, DrinksMenuItem item, ItemEvent eventHandler) {
         super(fragmentManager, lifecycle);
         this.item = item;
         this.eventHandler = eventHandler;
@@ -69,7 +69,7 @@ public class ItemBottomSheet extends FragmentStateAdapter {
         return List.of(BottomSheetViewHolder.EDITORS.SIZE, BottomSheetViewHolder.EDITORS.POSITION, BottomSheetViewHolder.EDITORS.OPTIONS).toArray(new BottomSheetViewHolder.EDITORS[0]);
     }
 
-    public void notifyDataChanged(Item item){
+    public void notifyDataChanged(DrinksMenuItem item){
         editors.forEach(editor -> {
             if (editor instanceof EditorUpdate)
                 ((EditorUpdate) editor).onDataChanged(item);
@@ -83,6 +83,6 @@ public class ItemBottomSheet extends FragmentStateAdapter {
     }
 
     public interface EditorUpdate{
-        void onDataChanged(Item item);
+        void onDataChanged(DrinksMenuItem item);
     }
 }

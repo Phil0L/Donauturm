@@ -11,8 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 
 public class DrinkView extends ItemView {
 
@@ -31,7 +31,7 @@ public class DrinkView extends ItemView {
     }
 
     public SingleAdapter newSingleAdapter() {
-        internalAdapter = new SingleAdapter(getContext(), (Drink) item);
+        internalAdapter = new SingleAdapter(getContext(), (DrinkItem) item);
         return internalAdapter;
     }
 
@@ -40,14 +40,14 @@ public class DrinkView extends ItemView {
         internalAdapter.notifyDataSetChanged();
     }
 
-    public static class SingleAdapter extends ArrayAdapter<Item> {
+    public static class SingleAdapter extends ArrayAdapter<DrinksMenuItem> {
         private final Context context;
-        private final Drink drink;
+        private final DrinkItem drinkItem;
 
 
-        public SingleAdapter(Context context, Drink drink) {
+        public SingleAdapter(Context context, DrinkItem drinkItem) {
             super(context, R.layout.pref_preview_drink);
-            this.drink = drink;
+            this.drinkItem = drinkItem;
             this.context = context;
         }
 
@@ -57,8 +57,8 @@ public class DrinkView extends ItemView {
         }
 
         @Override
-        public Item getItem(int position) {
-            return drink;
+        public DrinksMenuItem getItem(int position) {
+            return drinkItem;
         }
 
         @Override
@@ -75,22 +75,22 @@ public class DrinkView extends ItemView {
             TextView drinkName = convertView.findViewById(R.id.drink_name);
             TextView drinkDesc = convertView.findViewById(R.id.drink_description);
             TextView drinkPrice = convertView.findViewById(R.id.drink_price);
-            drinkName.setText(drink.getName());
-            drinkName.setTextColor(drink.getNameColor());
-            drinkName.setTextSize(drink.getNameFontSize());
-            if (drink.getNameFont() != null)
-                drinkName.setTypeface(drink.getNameFont().getTypeFace());
-            drinkDesc.setText(drink.getDescription());
-            drinkDesc.setTextColor(drink.getDescriptionColor());
-            drinkDesc.setTextSize(drink.getDescriptionFontSize());
-            if (drink.getDescriptionFont() != null)
-                drinkDesc.setTypeface(drink.getDescriptionFont().getTypeFace());
-            drinkPrice.setVisibility(drink.isPriceVisible() ? VISIBLE : GONE);
-            drinkPrice.setText(drink.getPriceFormatted());
-            drinkPrice.setTextColor(drink.getPriceColor());
-            drinkPrice.setTextSize(drink.getPriceFontSize());
-            if (drink.getPriceFont() != null)
-                drinkPrice.setTypeface(drink.getPriceFont().getTypeFace());
+            drinkName.setText(drinkItem.getName());
+            drinkName.setTextColor(drinkItem.getNameColor());
+            drinkName.setTextSize(drinkItem.getNameFontSize());
+            if (drinkItem.getNameFont() != null)
+                drinkName.setTypeface(drinkItem.getNameFont().getTypeFace());
+            drinkDesc.setText(drinkItem.getDescription());
+            drinkDesc.setTextColor(drinkItem.getDescriptionColor());
+            drinkDesc.setTextSize(drinkItem.getDescriptionFontSize());
+            if (drinkItem.getDescriptionFont() != null)
+                drinkDesc.setTypeface(drinkItem.getDescriptionFont().getTypeFace());
+            drinkPrice.setVisibility(drinkItem.isPriceVisible() ? VISIBLE : GONE);
+            drinkPrice.setText(drinkItem.getPriceFormatted());
+            drinkPrice.setTextColor(drinkItem.getPriceColor());
+            drinkPrice.setTextSize(drinkItem.getPriceFontSize());
+            if (drinkItem.getPriceFont() != null)
+                drinkPrice.setTypeface(drinkItem.getPriceFont().getTypeFace());
             return convertView;
         }
     }

@@ -20,11 +20,11 @@ import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.Dri
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.ShapeGenerator;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.TextGenerator;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
-import com.pl.donauturm.drinksmenu.model.Item;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
-import com.pl.donauturm.drinksmenu.model.content.Shape;
-import com.pl.donauturm.drinksmenu.model.content.Text;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.model.content.ShapeItem;
+import com.pl.donauturm.drinksmenu.model.content.TextItem;
 import com.pl.donauturm.drinksmenu.util.DrinksMenuCanvas;
 import com.pl.donauturm.drinksmenu.view.layouts.PreviewHolder;
 import com.pl.donauturm.drinksmenu.view.views.DrinkGroupView;
@@ -119,15 +119,15 @@ public class DrinksMenuRenderer {
     }
 
     private void addContent(FrameLayout frame, @NonNull DrinksMenu menu, ImageView bg) {
-        for (Item item : menu.getItems()) {
-            if (item instanceof DrinkGroup)
-                addDrinkGroup(frame, (DrinkGroup) item, bg);
-            if (item instanceof Drink)
-                addDrink(frame, (Drink) item, bg);
-            if (item instanceof Text)
-                addText(frame, ((Text) item), bg);
-            if (item instanceof Shape)
-                addShape(frame, (Shape) item, bg);
+        for (DrinksMenuItem item : menu.getItems()) {
+            if (item instanceof DrinkGroupItem)
+                addDrinkGroup(frame, (DrinkGroupItem) item, bg);
+            if (item instanceof DrinkItem)
+                addDrink(frame, (DrinkItem) item, bg);
+            if (item instanceof TextItem)
+                addText(frame, ((TextItem) item), bg);
+            if (item instanceof ShapeItem)
+                addShape(frame, (ShapeItem) item, bg);
         }
     }
 
@@ -139,34 +139,34 @@ public class DrinksMenuRenderer {
         return imageView;
     }
 
-    private void addDrinkGroup(FrameLayout frame, DrinkGroup drinkGroup, ImageView bg) {
+    private void addDrinkGroup(FrameLayout frame, DrinkGroupItem drinkGroupItem, ImageView bg) {
         DrinkGroupGenerator drinkGroupGenerator = new DrinkGroupGenerator();
-        DrinkGroupView drinkGroupView = drinkGroupGenerator.generateNewImageDrinkGroup(frame, drinkGroup, bg);
-        drinkGroupView.setItem(drinkGroup);
+        DrinkGroupView drinkGroupView = drinkGroupGenerator.generateNewImageDrinkGroup(frame, drinkGroupItem, bg);
+        drinkGroupView.setItem(drinkGroupItem);
         DrinkGroupView.GridAdapter adapter = drinkGroupView.newGridAdapter();
         drinkGroupView.setAdapter(adapter);
     }
 
-    private void addDrink(FrameLayout frame, Drink drink, ImageView bg) {
+    private void addDrink(FrameLayout frame, DrinkItem drinkItem, ImageView bg) {
         DrinkGenerator drinkGroupGenerator = new DrinkGenerator();
-        DrinkView drinkView = drinkGroupGenerator.generateNewImageDrink(frame, drink, bg);
-        drinkView.setItem(drink);
+        DrinkView drinkView = drinkGroupGenerator.generateNewImageDrink(frame, drinkItem, bg);
+        drinkView.setItem(drinkItem);
         DrinkView.SingleAdapter adapter = drinkView.newSingleAdapter();
         drinkView.setAdapter(adapter);
     }
 
-    private void addText(FrameLayout frame, Text text, ImageView bg) {
+    private void addText(FrameLayout frame, TextItem textItem, ImageView bg) {
         TextGenerator textGenerator = new TextGenerator();
-        TextView textView = textGenerator.generateNewImageText(frame, text, bg);
-        textView.setItem(text);
+        TextView textView = textGenerator.generateNewImageText(frame, textItem, bg);
+        textView.setItem(textItem);
         TextView.SingleAdapter adapter = textView.newSingleAdapter();
         textView.setAdapter(adapter);
     }
 
-    private void addShape(FrameLayout frame, Shape shape, ImageView bg) {
+    private void addShape(FrameLayout frame, ShapeItem shapeItem, ImageView bg) {
         ShapeGenerator shapeGenerator = new ShapeGenerator();
-        ShapeView shapeView = shapeGenerator.generateNewImageShape(frame, shape, bg);
-        shapeView.setItem(shape);
+        ShapeView shapeView = shapeGenerator.generateNewImageShape(frame, shapeItem, bg);
+        shapeView.setItem(shapeItem);
     }
 
     public interface Rendered {

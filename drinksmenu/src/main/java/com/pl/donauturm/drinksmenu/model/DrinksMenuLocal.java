@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.util.json.BitmapDeSerializer;
 import com.pl.donauturm.drinksmenu.util.json.PolymorphicDeserializer;
 
@@ -137,7 +138,7 @@ public class DrinksMenuLocal extends DrinksMenu {
 
     public static Gson deserializer() {
         return new GsonBuilder()
-                .registerTypeAdapter(Item.class, new PolymorphicDeserializer<Item>())
+                .registerTypeAdapter(DrinksMenuItem.class, new PolymorphicDeserializer<DrinksMenuItem>())
                 .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
                 .create();
     }

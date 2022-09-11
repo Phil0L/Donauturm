@@ -4,100 +4,105 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.pl.donauturm.drinksmenu.model.Font;
-import com.pl.donauturm.drinksmenu.model.Item;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
-import com.pl.donauturm.drinksmenu.model.interfaces.Group;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
-public class DrinkGroup extends Item implements Group<Drink>, Serializable, Backgroundable, Drinktextable, Cloneable {
+@SuppressWarnings("unused")
+public class DrinkItem extends DrinksMenuItem implements Serializable, Backgroundable, Drinktextable, Cloneable {
 
-    private List<Drink> drinks;
-    private DrinkStyle drinkStyle;
+    private String description;
+    private BigDecimal price;
     private int backColor;
     private int cornerRadius;
-    private int columnCount;
-    private int columnSpacing;
-    private int rowSpacing;
+    private DrinkStyle drinkStyle;
 
-    public DrinkGroup() {
-        super("Drink Group");
-        this.drinks = new ArrayList<>();
+    public DrinkItem() {
+        super("Drink");
+        this.description = "This is a drink";
+        this.price = new BigDecimal(1);
         this.drinkStyle = new DrinkStyle();
     }
 
-    public DrinkGroup(String name, List<Drink> drinks, DrinkStyle drinkStyle) {
+    public DrinkItem(String name) {
         super(name);
-        this.drinkStyle = drinkStyle;
-        this.drinks = new ArrayList<>(drinks);
+        this.description = "This is a drink";
+        this.price = new BigDecimal(1);
+        this.drinkStyle = new DrinkStyle();
     }
 
-    public DrinkGroup(float left, float top, float width, float height) {
+    public DrinkItem(String name, String description, BigDecimal price) {
+        super(name);
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.drinkStyle = new DrinkStyle();
+    }
+
+    public DrinkItem(String name, String description, int price) {
+        super(name);
+        this.name = name;
+        this.description = description;
+        this.price = new BigDecimal(price);
+        this.drinkStyle = new DrinkStyle();
+    }
+
+    public DrinkItem(String name, String description, float price) {
+        super(name);
+        this.name = name;
+        this.description = description;
+        this.price = new BigDecimal(price);
+        this.drinkStyle = new DrinkStyle();
+    }
+
+    public DrinkItem(float left, float top, float width, float height) {
         super(left, top, width, height);
-        setName("Item Group");
-        this.drinks = new ArrayList<>();
+        this.name = "Drink";
+        this.description = "This is a drink";
+        this.price = new BigDecimal(1);
+        this.drinkStyle = new DrinkStyle();
     }
 
-    @Override
-    public List<Drink> getItems() {
-        return drinks;
+    public String getName() {
+        return name;
     }
 
-    public void setDrinks(List<Drink> drinks) {
-        this.drinks = drinks;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void addDrinks(Drink... drinks) {
-        this.drinks.addAll(Arrays.asList(drinks));
+    public String getDescription() {
+        return description;
     }
 
-    @Override
-    public int getBackgroundColor() {
-        return backColor;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    @Override
-    public void setBackgroundColor(int color) {
-        this.backColor = color;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    @Override
-    public int getCornerRadius() {
-        return cornerRadius;
+    public String getPriceFormatted() {
+        if (price.stripTrailingZeros().scale() <= 0)
+            return price.intValue() + "€";
+        return price.setScale(2, RoundingMode.HALF_UP).floatValue() + "€";
     }
 
-    @Override
-    public void setCornerRadius(int radius) {
-        this.cornerRadius = radius;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
-    public int getColumnCount() {
-        return columnCount;
+    public DrinkStyle getDrinkStyle() {
+        return drinkStyle;
     }
 
-    public void setColumnCount(int columnCount) {
-        this.columnCount = columnCount;
-    }
-
-    public int getColumnSpacing() {
-        return columnSpacing;
-    }
-
-    public void setColumnSpacing(int columnSpacing) {
-        this.columnSpacing = columnSpacing;
-    }
-
-    public int getRowSpacing() {
-        return rowSpacing;
-    }
-
-    public void setRowSpacing(int rowSpacing) {
-        this.rowSpacing = rowSpacing;
+    public void setDrinkStyle(DrinkStyle drinkStyle) {
+        this.drinkStyle = drinkStyle;
     }
 
     @Override
@@ -201,42 +206,60 @@ public class DrinkGroup extends Item implements Group<Drink>, Serializable, Back
     }
 
     @Override
+    public int getBackgroundColor() {
+        return backColor;
+    }
+
+    @Override
+    public void setBackgroundColor(int color) {
+        this.backColor = color;
+    }
+
+    @Override
+    public int getCornerRadius() {
+        return cornerRadius;
+    }
+
+    @Override
+    public void setCornerRadius(int radius) {
+        this.cornerRadius = radius;
+    }
+
+    @Override
     public boolean equals(Object o) {
         return o == this;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), drinks, drinkStyle, backColor, cornerRadius, columnCount, columnSpacing, rowSpacing);
+        return Objects.hash(super.hashCode(), description, price, backColor, cornerRadius, drinkStyle);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return "DrinkGroup{" +
+        return "Drink{" +
                 "name='" + name + '\'' +
-                ", drinkStyle=" + drinkStyle +
+                ", description='" + description + '\'' +
+                ", price=" + price +
                 ", backColor=" + backColor +
                 ", cornerRadius=" + cornerRadius +
-                ", columnCount=" + columnCount +
-                ", columnSpacing=" + columnSpacing +
-                ", rowSpacing=" + rowSpacing +
+                ", drinkStyle=" + drinkStyle +
                 ", left=" + left +
                 ", top=" + top +
                 ", width=" + width +
                 ", height=" + height +
-                ", drinks=" + drinks +
                 '}';
     }
 
     @NonNull
     @Override
     @SuppressWarnings("UnusedAssignment")
-    public DrinkGroup clone() {
-        DrinkGroup clone = (DrinkGroup) super.clone();
+    public DrinkItem clone() {
+        DrinkItem clone = (DrinkItem) super.clone();
         Gson gson = new Gson();
         String content = gson.toJson(this);
-        clone = gson.fromJson(content, DrinkGroup.class);
+        clone = gson.fromJson(content, DrinkItem.class);
         clone.createNewId();
         return clone;
     }

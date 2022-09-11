@@ -18,8 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
 import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
 import com.pl.donauturm.drinksmenu.model.content.DrinkStyle;
 
@@ -51,13 +51,13 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
         }
     }
 
-    private List<Drink> getValue(){
+    private List<DrinkItem> getValue(){
         if (drinkListView != null && drinkListView.getAdapter() instanceof DrinksAdapter)
             return ((DrinksAdapter) drinkListView.getAdapter()).selected;
         return new ArrayList<>();
     }
 
-    private List<Drink> getDrinks(){
+    private List<DrinkItem> getDrinks(){
         return new ArrayList<>(DrinkRegistry.getInstance().values());
     }
 
@@ -67,10 +67,10 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View rootView = layoutInflater.inflate(R.layout.dialog_select_drinks, null);
 
-        List<Drink> drink = getValue();
-        List<Drink> drinks = getDrinks();
+        List<DrinkItem> drinkItem = getValue();
+        List<DrinkItem> drinkItems = getDrinks();
         drinkListView = rootView.findViewById(R.id.drink_list_view);
-        drinkListView.setAdapter(new DrinksAdapter(drinks, drink));
+        drinkListView.setAdapter(new DrinksAdapter(drinkItems, drinkItem));
         SearchView drinkSearch = rootView.findViewById(R.id.drink_search);
         drinkSearch.setQuery("", false);
         drinkSearch.setOnQueryTextListener(this);
@@ -86,10 +86,10 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (drinkGroupSelectedListener != null) {
-            DrinkGroup drinkGroup = new DrinkGroup("New Drink Group", getValue(), new DrinkStyle());
-            drinkGroup.createNewId();
-            drinkGroup.getItems().forEach(Drink::createNewId);
-            drinkGroupSelectedListener.onDrinkGroupSelected(drinkGroup);
+            DrinkGroupItem drinkGroupItem = new DrinkGroupItem("New Drink Group", getValue(), new DrinkStyle());
+            drinkGroupItem.createNewId();
+            drinkGroupItem.getItems().forEach(DrinkItem::createNewId);
+            drinkGroupSelectedListener.onDrinkGroupSelected(drinkGroupItem);
         }
         dismiss();
     }
@@ -111,51 +111,51 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
     }
 
     public interface OnDrinkGroupSelectedListener {
-        void onDrinkGroupSelected(DrinkGroup drinkGroup);
+        void onDrinkGroupSelected(DrinkGroupItem drinkGroupItem);
     }
 
     // Font adaptor responsible for redrawing the item TextView with the appropriate font.
     // We use BaseAdapter since we need both arrays, and the effort is quite small.
     public class DrinksAdapter extends BaseAdapter {
 
-        private final List<Drink> drinks;
-        private List<Drink> filteredDrinks;
-        private final List<Drink> selected;
+        private final List<DrinkItem> drinkItems;
+        private List<DrinkItem> filteredDrinkItems;
+        private final List<DrinkItem> selected;
 
-        public DrinksAdapter(List<Drink> drinks, List<Drink> selected) {
-            this.drinks = new ArrayList<>(drinks);
-            this.filteredDrinks = new ArrayList<>(drinks);
+        public DrinksAdapter(List<DrinkItem> drinkItems, List<DrinkItem> selected) {
+            this.drinkItems = new ArrayList<>(drinkItems);
+            this.filteredDrinkItems = new ArrayList<>(drinkItems);
             this.selected = selected;
         }
 
         public void filter(String text){
-            filteredDrinks = drinks.stream().filter(d
+            filteredDrinkItems = drinkItems.stream().filter(d
                     -> d.getName().toLowerCase().contains(text.toLowerCase())
                     || d.getDescription().toLowerCase().contains(text.toLowerCase())
             ).collect(Collectors.toList());
         }
 
-        public void clicked(Drink drink, boolean checked){
-            if (checked && !selected.contains(drink))
-                selected.add(drink);
+        public void clicked(DrinkItem drinkItem, boolean checked){
+            if (checked && !selected.contains(drinkItem))
+                selected.add(drinkItem);
             else if(!checked)
-                selected.remove(drink);
+                selected.remove(drinkItem);
         }
 
         @Override
         public int getCount() {
-            return filteredDrinks.size();
+            return filteredDrinkItems.size();
         }
 
         @Override
-        public Drink getItem(int position) {
-            return filteredDrinks.get(position);
+        public DrinkItem getItem(int position) {
+            return filteredDrinkItems.get(position);
         }
 
         @Override
         public long getItemId(int position) {
             // We use the position as ID
-            return drinks.indexOf(filteredDrinks.get(position));
+            return drinkItems.indexOf(filteredDrinkItems.get(position));
         }
 
         @Override
@@ -176,15 +176,15 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
             if (view != null) {
                 // Find the text view from our interface
                 CheckedTextView tv = view.findViewById(R.id.checked_box);
-                tv.setChecked(selected.contains(filteredDrinks.get(position)));
+                tv.setChecked(selected.contains(filteredDrinkItems.get(position)));
                 tv.setOnClickListener(v -> {
                     tv.toggle();
                     clicked(getItem(position), tv.isChecked());
                 });
                 TextView name = view.findViewById(R.id.drink_name);
-                name.setText(filteredDrinks.get(position).getName());
+                name.setText(filteredDrinkItems.get(position).getName());
                 TextView desc = view.findViewById(R.id.drink_description);
-                desc.setText(filteredDrinks.get(position).getDescription());
+                desc.setText(filteredDrinkItems.get(position).getDescription());
 
             }
             return view;

@@ -6,18 +6,18 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.OptionsEditorFragment;
-import com.pl.donauturm.drinksmenu.model.content.Text;
+import com.pl.donauturm.drinksmenu.model.content.TextItem;
 
 import java.util.List;
 
 @SuppressWarnings("unused")
 public class TextBottomSheet extends ItemBottomSheet {
 
-    public TextBottomSheet(@NonNull FragmentActivity fragmentActivity, Text item, TextEvent eventHandler) {
+    public TextBottomSheet(@NonNull FragmentActivity fragmentActivity, TextItem item, TextEvent eventHandler) {
         super(fragmentActivity, item, eventHandler);
     }
 
-    public TextBottomSheet(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, Text item, TextEvent eventHandler) {
+    public TextBottomSheet(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, TextItem item, TextEvent eventHandler) {
         super(fragmentManager, lifecycle, item, eventHandler);
     }
 

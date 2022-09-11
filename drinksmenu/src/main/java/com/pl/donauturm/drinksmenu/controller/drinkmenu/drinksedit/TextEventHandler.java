@@ -2,7 +2,7 @@ package com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.TextBottomSheet;
 import com.pl.donauturm.drinksmenu.model.Font;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Textable;
 
@@ -15,7 +15,7 @@ public class TextEventHandler extends ItemEventHandler implements TextBottomShee
     @Override
     public void onBackgroundChanged(int color) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Backgroundable)
             ((Backgroundable) item).setBackgroundColor(color);
         if (provider.getSelectedView() != null)
@@ -25,7 +25,7 @@ public class TextEventHandler extends ItemEventHandler implements TextBottomShee
     @Override
     public void onCornerRadiusChanged(int radius) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Backgroundable)
             ((Backgroundable) item).setCornerRadius(radius);
         if (provider.getSelectedView() != null)
@@ -35,7 +35,7 @@ public class TextEventHandler extends ItemEventHandler implements TextBottomShee
     @Override
     public void onColorChange(int color) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Textable)
             ((Textable) item).setColor(color);
         provider.getSelectedView().notifyChanged();
@@ -44,7 +44,7 @@ public class TextEventHandler extends ItemEventHandler implements TextBottomShee
     @Override
     public void onSizeChange(int size) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Textable)
             ((Textable) item).setFontSize(size);
         provider.getSelectedView().notifyChanged();
@@ -53,7 +53,7 @@ public class TextEventHandler extends ItemEventHandler implements TextBottomShee
     @Override
     public void onFontChange(Font font) {
         onAnyChange();
-        Item item = provider.getCurrentItem();
+        DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof Textable)
             ((Textable) item).setFont(font);
         provider.getSelectedView().notifyChanged();

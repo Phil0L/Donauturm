@@ -6,18 +6,18 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.editors.OptionsEditorFragment;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 
 import java.util.List;
 
 public class DrinkBottomSheet extends ItemBottomSheet {
 
-    public DrinkBottomSheet(@NonNull FragmentActivity fragmentActivity, Drink drink, DrinkEvent eventHandler) {
-        super(fragmentActivity, drink, eventHandler);
+    public DrinkBottomSheet(@NonNull FragmentActivity fragmentActivity, DrinkItem drinkItem, DrinkEvent eventHandler) {
+        super(fragmentActivity, drinkItem, eventHandler);
     }
 
-    public DrinkBottomSheet(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, Drink drink, DrinkEvent eventHandler) {
-        super(fragmentManager, lifecycle, drink, eventHandler);
+    public DrinkBottomSheet(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle, DrinkItem drinkItem, DrinkEvent eventHandler) {
+        super(fragmentManager, lifecycle, drinkItem, eventHandler);
     }
 
     public static BottomSheetViewHolder.EDITORS[] getEditors(){

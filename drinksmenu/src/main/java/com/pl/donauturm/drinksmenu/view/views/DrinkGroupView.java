@@ -11,9 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.Drink;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroup;
-import com.pl.donauturm.drinksmenu.model.Item;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 
 public class DrinkGroupView extends ItemView {
 
@@ -32,37 +32,37 @@ public class DrinkGroupView extends ItemView {
     }
 
     public GridAdapter newGridAdapter() {
-        internalAdapter = new GridAdapter(getContext(), (DrinkGroup) item);
+        internalAdapter = new GridAdapter(getContext(), (DrinkGroupItem) item);
         return internalAdapter;
     }
 
     @Override
     public void notifyChanged() {
-        setNumColumns(((DrinkGroup) item).getColumnCount());
-        setHorizontalSpacing(((DrinkGroup) item).getColumnSpacing());
-        setVerticalSpacing(((DrinkGroup) item).getRowSpacing());
+        setNumColumns(((DrinkGroupItem) item).getColumnCount());
+        setHorizontalSpacing(((DrinkGroupItem) item).getColumnSpacing());
+        setVerticalSpacing(((DrinkGroupItem) item).getRowSpacing());
         internalAdapter.notifyDataSetChanged();
     }
 
-    public static class GridAdapter extends ArrayAdapter<Item> {
+    public static class GridAdapter extends ArrayAdapter<DrinksMenuItem> {
         private final Context context;
-        private final DrinkGroup drinkGroup;
+        private final DrinkGroupItem drinkGroupItem;
 
 
-        public GridAdapter(Context context, DrinkGroup drinkGroup) {
+        public GridAdapter(Context context, DrinkGroupItem drinkGroupItem) {
             super(context, R.layout.pref_preview_drink);
-            this.drinkGroup = drinkGroup;
+            this.drinkGroupItem = drinkGroupItem;
             this.context = context;
         }
 
         @Override
         public int getCount() {
-            return drinkGroup.getItems().size();
+            return drinkGroupItem.getItems().size();
         }
 
         @Override
-        public Item getItem(int position) {
-            return drinkGroup.getItems().get(position);
+        public DrinksMenuItem getItem(int position) {
+            return drinkGroupItem.getItems().get(position);
         }
 
         @Override
@@ -76,26 +76,26 @@ public class DrinkGroupView extends ItemView {
             if (convertView == null)
                 convertView = layoutInflater.inflate(R.layout.pref_preview_drink, parent, false);
 
-            Drink drink = drinkGroup.getItems().get(position);
+            DrinkItem drinkItem = drinkGroupItem.getItems().get(position);
             TextView drinkName = convertView.findViewById(R.id.drink_name);
             TextView drinkDesc = convertView.findViewById(R.id.drink_description);
             TextView drinkPrice = convertView.findViewById(R.id.drink_price);
-            drinkName.setText(drink.getName());
-            drinkName.setTextColor(drinkGroup.getNameColor());
-            drinkName.setTextSize(drinkGroup.getNameFontSize());
-            if (drinkGroup.getNameFont() != null)
-                drinkName.setTypeface(drinkGroup.getNameFont().getTypeFace());
-            drinkDesc.setText(drink.getDescription());
-            drinkDesc.setTextColor(drinkGroup.getDescriptionColor());
-            drinkDesc.setTextSize(drinkGroup.getDescriptionFontSize());
-            if (drinkGroup.getDescriptionFont() != null)
-                drinkDesc.setTypeface(drinkGroup.getDescriptionFont().getTypeFace());
-            drinkPrice.setVisibility(drinkGroup.isPriceVisible() ? VISIBLE : GONE);
-            drinkPrice.setText(drink.getPriceFormatted());
-            drinkPrice.setTextColor(drinkGroup.getPriceColor());
-            drinkPrice.setTextSize(drinkGroup.getPriceFontSize());
-            if (drinkGroup.getPriceFont() != null)
-                drinkPrice.setTypeface(drinkGroup.getPriceFont().getTypeFace());
+            drinkName.setText(drinkItem.getName());
+            drinkName.setTextColor(drinkGroupItem.getNameColor());
+            drinkName.setTextSize(drinkGroupItem.getNameFontSize());
+            if (drinkGroupItem.getNameFont() != null)
+                drinkName.setTypeface(drinkGroupItem.getNameFont().getTypeFace());
+            drinkDesc.setText(drinkItem.getDescription());
+            drinkDesc.setTextColor(drinkGroupItem.getDescriptionColor());
+            drinkDesc.setTextSize(drinkGroupItem.getDescriptionFontSize());
+            if (drinkGroupItem.getDescriptionFont() != null)
+                drinkDesc.setTypeface(drinkGroupItem.getDescriptionFont().getTypeFace());
+            drinkPrice.setVisibility(drinkGroupItem.isPriceVisible() ? VISIBLE : GONE);
+            drinkPrice.setText(drinkItem.getPriceFormatted());
+            drinkPrice.setTextColor(drinkGroupItem.getPriceColor());
+            drinkPrice.setTextSize(drinkGroupItem.getPriceFontSize());
+            if (drinkGroupItem.getPriceFont() != null)
+                drinkPrice.setTypeface(drinkGroupItem.getPriceFont().getTypeFace());
             return convertView;
         }
     }
