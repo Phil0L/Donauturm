@@ -45,11 +45,14 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     private transient List<OnCloudStateChangedListener> onCloudStateChangedListeners = new ArrayList<>();
 
     public DrinksMenu() {
+        if (id == null)
+            createNewId();
         setLoading(true);
     }
 
     @CreatorConstructor
     private DrinksMenu(String name, Context context) {
+        this();
         this.name = name;
         this.items = new ArrayList<>();
         this.backGround = BitmapFactory.decodeResource(context.getResources(), R.drawable.png_background);

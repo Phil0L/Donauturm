@@ -10,6 +10,7 @@ public class DrinkRegistry extends RegistryMap<Drink> {
     private static final DrinkRegistry instance = new DrinkRegistry();
 
     private DrinkRegistry() {
+        super();
     }
 
     public static DrinkRegistry getInstance() {

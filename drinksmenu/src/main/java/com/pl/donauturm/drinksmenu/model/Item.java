@@ -32,6 +32,7 @@ public abstract class Item implements Serializable, Cloneable, Id {
     private boolean positionLocked;
 
     public Item() {
+        this.createNewId();
         this.left = 0;
         this.top = 0;
         this.width = 200;
@@ -43,6 +44,7 @@ public abstract class Item implements Serializable, Cloneable, Id {
     }
 
     public Item(float left, float top, float width, float height) {
+        this.createNewId();
         this.left = left;
         this.top = top;
         this.width = width;
@@ -54,6 +56,7 @@ public abstract class Item implements Serializable, Cloneable, Id {
     }
 
     public Item(String name) {
+        this.createNewId();
         this.left = 0;
         this.top = 0;
         this.width = 200;

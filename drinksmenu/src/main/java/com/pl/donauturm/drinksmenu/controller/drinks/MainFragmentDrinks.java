@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksBinding;
 
@@ -23,6 +24,9 @@ public class MainFragmentDrinks extends Fragment {
 
         binding.recyclerDrinks.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerDrinks.setAdapter(new DrinksAdapter(binding.recyclerDrinks, new ArrayList<>(DrinkRegistry.getInstance().values())));
+        if (binding.recyclerDrinks.getItemAnimator() instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) binding.recyclerDrinks.getItemAnimator()).setSupportsChangeAnimations(false);
+        }
 
         return binding.getRoot();
     }

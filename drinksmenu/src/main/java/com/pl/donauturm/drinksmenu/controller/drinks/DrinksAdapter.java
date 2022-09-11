@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.AutoTransition;
-import androidx.transition.TransitionManager;
 
 import com.pl.donauturm.drinksmenu.databinding.PrefItemDrinkBinding;
 import com.pl.donauturm.drinksmenu.model.content.Drink;
@@ -42,7 +40,6 @@ public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder
         holder.binding.card.setOnClickListener(v -> {
             if (holder.binding.expContent.getRoot().getVisibility() == View.VISIBLE) {
                 expandedPosition = -1;
-                TransitionManager.beginDelayedTransition(holder.binding.card, new AutoTransition());
                 holder.binding.expContent.getRoot().setVisibility(View.GONE);
             } else {
                 int oldPosition = expandedPosition;
@@ -53,9 +50,9 @@ public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder
                         ((ViewHolder) viewHolder).binding.expContent.getRoot().setVisibility(View.GONE);
                     }
                 }
-                TransitionManager.beginDelayedTransition(holder.binding.card, new AutoTransition());
                 holder.binding.expContent.getRoot().setVisibility(View.VISIBLE);
             }
+            notifyItemChanged(holder.getAdapterPosition());
         });
 
         holder.binding.expHeader.drinkName.setText(drinks.get(position).getName());
