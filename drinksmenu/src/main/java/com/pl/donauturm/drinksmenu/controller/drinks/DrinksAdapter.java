@@ -12,19 +12,19 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pl.donauturm.drinksmenu.databinding.PrefItemDrinkBinding;
-import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.Drink;
 
 import java.util.List;
 
 public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder> {
 
     private final RecyclerView mRecyclerView;
-    private final List<DrinkItem> drinkItems;
+    private final List<Drink> drinks;
     private int expandedPosition = -1;
 
-    public DrinksAdapter(RecyclerView recyclerView, List<DrinkItem> drinkItems) {
+    public DrinksAdapter(RecyclerView recyclerView, List<Drink> drinks) {
         mRecyclerView = recyclerView;
-        this.drinkItems = drinkItems;
+        this.drinks = drinks;
     }
 
     @NonNull
@@ -55,9 +55,9 @@ public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder
             notifyItemChanged(holder.getAdapterPosition());
         });
 
-        holder.binding.expHeader.drinkName.setText(drinkItems.get(position).getName());
-        holder.binding.expHeader.drinkPrice.setText(String.valueOf(drinkItems.get(position).getPriceFormatted()));
-        holder.binding.expHeader.drinkDescription.setText(drinkItems.get(position).getDescription());
+        holder.binding.expHeader.drinkName.setText(drinks.get(position).getName());
+        holder.binding.expHeader.drinkPrice.setText(String.valueOf(drinks.get(position).getPriceFormatted()));
+        holder.binding.expHeader.drinkDescription.setText(drinks.get(position).getDescription());
 
         ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) holder.binding.card.getLayoutParams();
         if (position == 0){
@@ -75,7 +75,7 @@ public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return drinkItems.size();
+        return drinks.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

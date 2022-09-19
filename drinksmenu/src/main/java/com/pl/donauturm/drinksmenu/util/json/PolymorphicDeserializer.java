@@ -19,14 +19,15 @@ public class PolymorphicDeserializer<T> implements JsonDeserializer<T> {
             else typeClass = type.getClass();
             JsonType jsonType = typeClass.getDeclaredAnnotation(JsonType.class);
             if (jsonType == null)
-                throw new IllegalArgumentException("Missing JsonSubtype annotation in class: " + type.getClass().getName());
+                return context.deserialize(json, type);
             JsonSubtype[] subtypes = jsonType.value();
             JsonSubtype subType = Arrays.stream(subtypes)
-                    .filter(subtype -> subtype.clazz().getSimpleName().equals(json.getAsJsonObject().get(subtype.field()).getAsString()))
+                    .filter(subtype -> subtype.clazz().getSimpleName().equals(json.getAsJsonObject().get(subtype.field()).getAsString())
+                    || subtype.old().equals(json.getAsJsonObject().get(subtype.field()).getAsString()))
                     .findFirst().orElseThrow(IllegalArgumentException::new);
             return context.deserialize(json, subType.clazz());
         } catch (Exception e) {
-            throw new JsonParseException("Failed deserialize json: " + e.getMessage(), e);
+            return context.deserialize(json, type);
         }
     }
 }

@@ -18,9 +18,10 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
 import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
+import com.pl.donauturm.drinksmenu.model.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.model.content.DrinkStyle;
 
 import java.util.ArrayList;
@@ -51,13 +52,13 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
         }
     }
 
-    private List<DrinkItem> getValue(){
+    private List<Drink> getValue(){
         if (drinkListView != null && drinkListView.getAdapter() instanceof DrinksAdapter)
             return ((DrinksAdapter) drinkListView.getAdapter()).selected;
         return new ArrayList<>();
     }
 
-    private List<DrinkItem> getDrinks(){
+    private List<Drink> getDrinks(){
         return new ArrayList<>(DrinkRegistry.getInstance().values());
     }
 
@@ -67,8 +68,8 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View rootView = layoutInflater.inflate(R.layout.dialog_select_drinks, null);
 
-        List<DrinkItem> drinkItem = getValue();
-        List<DrinkItem> drinkItems = getDrinks();
+        List<Drink> drinkItem = getValue();
+        List<Drink> drinkItems = getDrinks();
         drinkListView = rootView.findViewById(R.id.drink_list_view);
         drinkListView.setAdapter(new DrinksAdapter(drinkItems, drinkItem));
         SearchView drinkSearch = rootView.findViewById(R.id.drink_search);
@@ -86,7 +87,8 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (drinkGroupSelectedListener != null) {
-            DrinkGroupItem drinkGroupItem = new DrinkGroupItem("New Drink Group", getValue(), new DrinkStyle());
+            List<DrinkItem> drinks = getValue().stream().map(DrinkItem::new).collect(Collectors.toList());
+            DrinkGroupItem drinkGroupItem = new DrinkGroupItem("New Drink Group", drinks, new DrinkStyle());
             drinkGroupItem.createNewId();
             drinkGroupItem.getItems().forEach(DrinkItem::createNewId);
             drinkGroupSelectedListener.onDrinkGroupSelected(drinkGroupItem);
@@ -118,11 +120,11 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
     // We use BaseAdapter since we need both arrays, and the effort is quite small.
     public class DrinksAdapter extends BaseAdapter {
 
-        private final List<DrinkItem> drinkItems;
-        private List<DrinkItem> filteredDrinkItems;
-        private final List<DrinkItem> selected;
+        private final List<Drink> drinkItems;
+        private List<Drink> filteredDrinkItems;
+        private final List<Drink> selected;
 
-        public DrinksAdapter(List<DrinkItem> drinkItems, List<DrinkItem> selected) {
+        public DrinksAdapter(List<Drink> drinkItems, List<Drink> selected) {
             this.drinkItems = new ArrayList<>(drinkItems);
             this.filteredDrinkItems = new ArrayList<>(drinkItems);
             this.selected = selected;
@@ -135,7 +137,7 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
             ).collect(Collectors.toList());
         }
 
-        public void clicked(DrinkItem drinkItem, boolean checked){
+        public void clicked(Drink drinkItem, boolean checked){
             if (checked && !selected.contains(drinkItem))
                 selected.add(drinkItem);
             else if(!checked)
@@ -148,7 +150,7 @@ public class AddDrinkGroupDialog extends DialogFragment implements SearchView.On
         }
 
         @Override
-        public DrinkItem getItem(int position) {
+        public Drink getItem(int position) {
             return filteredDrinkItems.get(position);
         }
 

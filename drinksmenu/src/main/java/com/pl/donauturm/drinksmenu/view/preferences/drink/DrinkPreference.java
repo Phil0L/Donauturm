@@ -6,16 +6,16 @@ import android.util.AttributeSet;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 
-import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
+import com.pl.donauturm.drinksmenu.model.Drink;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DrinkPreference extends Preference implements DrinkDialog.OnDrinkSelectedListener {
 
-    private List<DrinkItem> drinkItems;
-    private DrinkItem currentDrinkItem;
+    private List<Drink> drinks;
+    private Drink currentDrink;
 
     // Font adaptor responsible for redrawing the item TextView with the appropriate font.
     // We use BaseAdapter since we need both arrays, and the effort is quite small.
@@ -31,29 +31,29 @@ public class DrinkPreference extends Preference implements DrinkDialog.OnDrinkSe
         fragment.show(((AppCompatActivity) getContext()).getSupportFragmentManager(), "drink_" + getKey());
     }
 
-    public DrinkItem getValue() {
-        return currentDrinkItem;
+    public Drink getValue() {
+        return currentDrink;
     }
 
-    public void setValue(DrinkItem drinkItem) {
-        if (drinkItem != null)
-            currentDrinkItem = drinkItem;
+    public void setValue(Drink drink) {
+        if (drink != null)
+            currentDrink = drink;
     }
 
-    public List<DrinkItem> getDrinks() {
-        if (drinkItems == null) loadFonts();
-        return drinkItems;
+    public List<Drink> getDrinks() {
+        if (drinks == null) loadFonts();
+        return drinks;
     }
 
     private void loadFonts() {
-        drinkItems = new ArrayList<>(DrinkRegistry.getInstance().values());
+        drinks = new ArrayList<>(DrinkRegistry.getInstance().values());
     }
 
     @Override
-    public void onDrinkSelected(DrinkItem drinkItem) {
-        currentDrinkItem = drinkItem;
+    public void onDrinkSelected(Drink drink) {
+        currentDrink = drink;
         notifyChanged();
-        callChangeListener(drinkItem);
+        callChangeListener(drink);
     }
 
 

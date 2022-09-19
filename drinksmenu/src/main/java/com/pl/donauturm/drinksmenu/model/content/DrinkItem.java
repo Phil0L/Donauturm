@@ -3,6 +3,7 @@ package com.pl.donauturm.drinksmenu.model.content;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
+import com.pl.donauturm.drinksmenu.model.Drink;
 import com.pl.donauturm.drinksmenu.model.Font;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
@@ -15,6 +16,7 @@ import java.util.Objects;
 @SuppressWarnings("unused")
 public class DrinkItem extends DrinksMenuItem implements Serializable, Backgroundable, Drinktextable, Cloneable {
 
+    private String drinkId;
     private String description;
     private BigDecimal price;
     private int backColor;
@@ -22,49 +24,22 @@ public class DrinkItem extends DrinksMenuItem implements Serializable, Backgroun
     private DrinkStyle drinkStyle;
 
     public DrinkItem() {
-        super("Drink");
-        this.description = "This is a drink";
-        this.price = new BigDecimal(1);
+    }
+
+    public DrinkItem(Drink drink){
+        this.drinkId = drink.getId();
+        this.name = drink.name;
+        this.description = drink.description;
+        this.price = drink.price;
         this.drinkStyle = new DrinkStyle();
     }
 
-    public DrinkItem(String name) {
-        super(name);
-        this.description = "This is a drink";
-        this.price = new BigDecimal(1);
-        this.drinkStyle = new DrinkStyle();
+    public String getDrinkId() {
+        return drinkId;
     }
 
-    public DrinkItem(String name, String description, BigDecimal price) {
-        super(name);
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.drinkStyle = new DrinkStyle();
-    }
-
-    public DrinkItem(String name, String description, int price) {
-        super(name);
-        this.name = name;
-        this.description = description;
-        this.price = new BigDecimal(price);
-        this.drinkStyle = new DrinkStyle();
-    }
-
-    public DrinkItem(String name, String description, float price) {
-        super(name);
-        this.name = name;
-        this.description = description;
-        this.price = new BigDecimal(price);
-        this.drinkStyle = new DrinkStyle();
-    }
-
-    public DrinkItem(float left, float top, float width, float height) {
-        super(left, top, width, height);
-        this.name = "Drink";
-        this.description = "This is a drink";
-        this.price = new BigDecimal(1);
-        this.drinkStyle = new DrinkStyle();
+    public void setDrinkId(String drinkId) {
+        this.drinkId = drinkId;
     }
 
     public String getName() {

@@ -100,7 +100,7 @@ public class ItemsEditorFragment extends Fragment {
 
     public void onItemAdd(int position, RecyclerView.ViewHolder viewHolder) {
         DrinkDialog fragment = DrinkDialog.newInstance(null);
-        fragment.setOnDrinkSelectedListener(drink -> onItemAdded(position, drink));
+        fragment.setOnDrinkSelectedListener(drink -> onItemAdded(position, new DrinkItem(drink)));
         fragment.show(((AppCompatActivity) requireContext()).getSupportFragmentManager(), "drink_" + item.hashCode());
     }
 

@@ -17,8 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
+import com.pl.donauturm.drinksmenu.model.Drink;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
         }
     }
 
-    private List<DrinkItem> getDrinks(){
+    private List<Drink> getDrinks(){
         return new ArrayList<>(DrinkRegistry.getInstance().values());
     }
 
@@ -58,7 +59,7 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View rootView = layoutInflater.inflate(R.layout.dialog_select_drinks, null);
 
-        List<DrinkItem> drinkItems = getDrinks();
+        List<Drink> drinkItems = getDrinks();
         drinkListView = rootView.findViewById(R.id.drink_list_view);
         drinkListView.setAdapter(new DrinkAdapter(drinkItems));
         SearchView drinkSearch = rootView.findViewById(R.id.drink_search);
@@ -74,7 +75,8 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        DrinkItem drinkItem = ((DrinkItem) drinkListView.getAdapter().getItem(position));
+        Drink drink = ((Drink) drinkListView.getAdapter().getItem(position));
+        DrinkItem drinkItem = new DrinkItem(drink);
         drinkItem.createNewId();
         if (drinkSelectedListener != null)
             drinkSelectedListener.onDrinkSelected(drinkItem);
@@ -105,10 +107,10 @@ public class AddDrinkDialog extends DialogFragment implements AdapterView.OnItem
     // We use BaseAdapter since we need both arrays, and the effort is quite small.
     public class DrinkAdapter extends BaseAdapter {
 
-        private final List<DrinkItem> drinkItems;
-        private List<DrinkItem> filteredDrinkItems;
+        private final List<Drink> drinkItems;
+        private List<Drink> filteredDrinkItems;
 
-        public DrinkAdapter(List<DrinkItem> drinkItems) {
+        public DrinkAdapter(List<Drink> drinkItems) {
             this.drinkItems = new ArrayList<>(drinkItems);
             this.filteredDrinkItems = new ArrayList<>(drinkItems);
         }

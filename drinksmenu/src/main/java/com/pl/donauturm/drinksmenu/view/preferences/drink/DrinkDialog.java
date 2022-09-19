@@ -18,8 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
+import com.pl.donauturm.drinksmenu.model.Drink;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,13 +52,13 @@ public class DrinkDialog extends DialogFragment implements AdapterView.OnItemCli
         }
     }
 
-    private DrinkItem getValue(){
+    private Drink getValue(){
         if (preference != null)
             return preference.getValue();
         return null;
     }
 
-    private List<DrinkItem> getDrinks(){
+    private List<Drink> getDrinks(){
         if (preference != null)
             return preference.getDrinks();
         return new ArrayList<>(DrinkRegistry.getInstance().values());
@@ -70,10 +70,10 @@ public class DrinkDialog extends DialogFragment implements AdapterView.OnItemCli
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
         View rootView = layoutInflater.inflate(R.layout.dialog_select_drinks, null);
 
-        DrinkItem drinkItem = getValue();
-        List<DrinkItem> drinkItems = getDrinks();
+        Drink drink = getValue();
+        List<Drink> drinks = getDrinks();
         drinkListView = rootView.findViewById(R.id.drink_list_view);
-        drinkListView.setAdapter(new DrinkAdapter(drinkItems, drinkItem));
+        drinkListView.setAdapter(new DrinkAdapter(drinks, drink));
         drinkListView.setOnItemClickListener(this);
         SearchView drinkSearch = rootView.findViewById(R.id.drink_search);
         drinkSearch.setQuery("", false);
@@ -88,9 +88,9 @@ public class DrinkDialog extends DialogFragment implements AdapterView.OnItemCli
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        DrinkItem drinkItem = ((DrinkItem) drinkListView.getAdapter().getItem(position));
+        Drink drink = ((Drink) drinkListView.getAdapter().getItem(position));
         if (drinkSelectedListener != null)
-            drinkSelectedListener.onDrinkSelected(drinkItem);
+            drinkSelectedListener.onDrinkSelected(drink);
         dismiss();
     }
 
@@ -111,25 +111,25 @@ public class DrinkDialog extends DialogFragment implements AdapterView.OnItemCli
     }
 
     public interface OnDrinkSelectedListener {
-        void onDrinkSelected(DrinkItem drinkItem);
+        void onDrinkSelected(Drink drink);
     }
 
     // Font adaptor responsible for redrawing the item TextView with the appropriate font.
     // We use BaseAdapter since we need both arrays, and the effort is quite small.
     public class DrinkAdapter extends BaseAdapter {
 
-        private final List<DrinkItem> drinkItems;
-        private List<DrinkItem> filteredDrinkItems;
-        private final DrinkItem selected;
+        private final List<Drink> drinks;
+        private List<Drink> filteredDrinks;
+        private final Drink selected;
 
-        public DrinkAdapter(List<DrinkItem> drinkItems, DrinkItem selected) {
-            this.drinkItems = new ArrayList<>(drinkItems);
-            this.filteredDrinkItems = new ArrayList<>(drinkItems);
+        public DrinkAdapter(List<Drink> drinks, Drink selected) {
+            this.drinks = new ArrayList<>(drinks);
+            this.filteredDrinks = new ArrayList<>(drinks);
             this.selected = selected;
         }
 
         public void filter(String text){
-            filteredDrinkItems = drinkItems.stream().filter(d
+            filteredDrinks = drinks.stream().filter(d
                     -> d.getName().toLowerCase().contains(text.toLowerCase())
                     || d.getDescription().toLowerCase().contains(text.toLowerCase())
             ).collect(Collectors.toList());
@@ -137,18 +137,18 @@ public class DrinkDialog extends DialogFragment implements AdapterView.OnItemCli
 
         @Override
         public int getCount() {
-            return filteredDrinkItems.size();
+            return filteredDrinks.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return filteredDrinkItems.get(position);
+            return filteredDrinks.get(position);
         }
 
         @Override
         public long getItemId(int position) {
             // We use the position as ID
-            return drinkItems.indexOf(filteredDrinkItems.get(position));
+            return drinks.indexOf(filteredDrinks.get(position));
         }
 
         @Override
@@ -169,11 +169,11 @@ public class DrinkDialog extends DialogFragment implements AdapterView.OnItemCli
             if (view != null) {
                 // Find the text view from our interface
                 CheckedTextView tv = view.findViewById(R.id.checked_box);
-                tv.setChecked(filteredDrinkItems.get(position).equals(selected));
+                tv.setChecked(filteredDrinks.get(position).equals(selected));
                 TextView name = view.findViewById(R.id.drink_name);
-                name.setText(filteredDrinkItems.get(position).getName());
+                name.setText(filteredDrinks.get(position).getName());
                 TextView desc = view.findViewById(R.id.drink_description);
-                desc.setText(filteredDrinkItems.get(position).getDescription());
+                desc.setText(filteredDrinks.get(position).getDescription());
 
             }
 

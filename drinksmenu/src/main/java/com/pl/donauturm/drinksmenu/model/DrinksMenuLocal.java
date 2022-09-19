@@ -24,6 +24,10 @@ public class DrinksMenuLocal extends DrinksMenu {
     public String imagePath;
     public String dataPath;
 
+    public DrinksMenuLocal() {
+        super();
+    }
+
     public DrinksMenuLocal(@NonNull DrinksMenu drinksMenu) {
         super();
         super.name = drinksMenu.name;

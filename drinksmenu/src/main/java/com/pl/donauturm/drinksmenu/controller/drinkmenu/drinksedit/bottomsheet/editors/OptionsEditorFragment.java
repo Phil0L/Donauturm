@@ -16,17 +16,19 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SeekBarPreference;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
-import com.pl.donauturm.drinksmenu.view.preferences.color.ColorPreference;
-import com.pl.donauturm.drinksmenu.view.preferences.font.FontPreference;
-import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
+import com.pl.donauturm.drinksmenu.model.Drink;
 import com.pl.donauturm.drinksmenu.model.Font;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Group;
 import com.pl.donauturm.drinksmenu.model.interfaces.Textable;
+import com.pl.donauturm.drinksmenu.view.preferences.color.ColorPreference;
 import com.pl.donauturm.drinksmenu.view.preferences.drink.DrinkPreference;
+import com.pl.donauturm.drinksmenu.view.preferences.font.FontPreference;
 
 public class OptionsEditorFragment extends Fragment {
 
@@ -107,18 +109,18 @@ public class OptionsEditorFragment extends Fragment {
         return false;
     }
 
-    public DrinkItem prepareDrink(){
+    public Drink prepareDrink(){
         if (item instanceof DrinkItem)
-            return (DrinkItem) item;
+            return DrinkRegistry.getInstance().getFromId(((DrinkItem) item).getDrinkId());
         return null;
     }
 
     public boolean onDrinkChange(Preference preference, Object newValue){
-        if (newValue instanceof DrinkItem){
-            DrinkItem drinkItem = ((DrinkItem) newValue);
+        if (newValue instanceof Drink){
+            Drink drink = ((Drink) newValue);
             if (callback instanceof OnDrinkChanged)
-                ((OnDrinkChanged) callback).onDrinkChanged(drinkItem);
-            ((DrinkPreference) preference).setValue(drinkItem);
+                ((OnDrinkChanged) callback).onDrinkChanged(drink);
+            ((DrinkPreference) preference).setValue(drink);
         }
         return false;
     }
@@ -537,7 +539,7 @@ public class OptionsEditorFragment extends Fragment {
     }
 
     public interface OnDrinkChanged extends OnOptionsChanged{
-        void onDrinkChanged(DrinkItem newDrinkItem);
+        void onDrinkChanged(Drink newDrink);
     }
 
     public interface OnBackgroundOptionsChanged extends OnOptionsChanged{

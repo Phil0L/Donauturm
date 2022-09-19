@@ -29,6 +29,12 @@ public class DrinksMenuCloud extends DrinksMenu {
     private final transient DrinksMenu original;
     private final transient PiSignageAPI api;
 
+    public DrinksMenuCloud() {
+        super();
+        this.original = null;
+        this.api = null;
+    }
+
     public DrinksMenuCloud(@NonNull DrinksMenu drinksMenu, @NonNull PiSignageAPI api) {
         super();
         this.original = drinksMenu;

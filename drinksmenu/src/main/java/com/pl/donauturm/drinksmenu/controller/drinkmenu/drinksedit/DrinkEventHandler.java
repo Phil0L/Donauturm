@@ -1,8 +1,9 @@
 package com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit;
 
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.DrinkBottomSheet;
-import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.Drink;
 import com.pl.donauturm.drinksmenu.model.Font;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Backgroundable;
 import com.pl.donauturm.drinksmenu.model.interfaces.Drinktextable;
@@ -124,13 +125,14 @@ public class DrinkEventHandler extends ItemEventHandler implements DrinkBottomSh
     }
 
     @Override
-    public void onDrinkChanged(DrinkItem newDrinkItem) {
+    public void onDrinkChanged(Drink newDrink) {
         onAnyChange();
         DrinksMenuItem item = provider.getCurrentItem();
         if (item instanceof DrinkItem){
-            item.setName(newDrinkItem.getName());
-            ((DrinkItem) item).setDescription(newDrinkItem.getDescription());
-            ((DrinkItem) item).setPrice(newDrinkItem.getPrice());
+            item.setName(newDrink.getName());
+            ((DrinkItem) item).setDrinkId(newDrink.getId());
+            ((DrinkItem) item).setDescription(newDrink.getDescription());
+            ((DrinkItem) item).setPrice(newDrink.getPrice());
         }
         provider.getSelectedView().notifyChanged();
     }

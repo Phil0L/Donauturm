@@ -8,10 +8,10 @@ import com.pl.donauturm.drinksmenu.util.json.JsonSubtype;
 import java.io.Serializable;
 import java.util.Objects;
 
-@JsonSubtype(field = "type", clazz = TextItem.class)
-@JsonSubtype(field = "type", clazz = ShapeItem.class)
-@JsonSubtype(field = "type", clazz = DrinkItem.class)
-@JsonSubtype(field = "type", clazz = DrinkGroupItem.class)
+@JsonSubtype(field = "type", old = "Text", clazz = TextItem.class)
+@JsonSubtype(field = "type", old = "Shape", clazz = ShapeItem.class)
+@JsonSubtype(field = "type", old = "Drink", clazz = DrinkItem.class)
+@JsonSubtype(field = "type", old = "DrinkGroup", clazz = DrinkGroupItem.class)
 public abstract class DrinksMenuItem implements Serializable, Cloneable, Id {
 
     private final String type;
