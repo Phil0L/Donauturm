@@ -87,4 +87,12 @@ public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder
             this.binding = binding;
         }
     }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        if (holder.getAdapterPosition() != expandedPosition) {
+            new Handler(Looper.getMainLooper()).post(() -> holder.binding.expContent.getRoot().setVisibility(View.GONE));
+        }
+    }
 }
