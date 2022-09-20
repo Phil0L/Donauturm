@@ -111,7 +111,7 @@ public class OptionsEditorFragment extends Fragment {
 
     public Drink prepareDrink(){
         if (item instanceof DrinkItem)
-            return DrinkRegistry.getInstance().getFromId(((DrinkItem) item).getDrinkId());
+            return DrinkRegistry.getInstance().get(((DrinkItem) item).getDrinkId());
         return null;
     }
 

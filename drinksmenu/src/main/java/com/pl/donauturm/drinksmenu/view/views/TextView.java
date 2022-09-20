@@ -45,7 +45,7 @@ public class TextView extends ItemView {
 
 
         public SingleAdapter(Context context, TextItem textItem) {
-            super(context, R.layout.pref_preview_text);
+            super(context, R.layout.pref_text);
             this.textItem = textItem;
             this.context = context;
         }
@@ -69,7 +69,7 @@ public class TextView extends ItemView {
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             if (convertView == null)
-                convertView = layoutInflater.inflate(R.layout.pref_preview_text, parent, false);
+                convertView = layoutInflater.inflate(R.layout.pref_text, parent, false);
 
             android.widget.TextView tv = convertView.findViewById(R.id.text);
             tv.setText(textItem.getName());

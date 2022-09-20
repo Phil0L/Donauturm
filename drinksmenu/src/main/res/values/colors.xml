@@ -17,5 +17,7 @@
     <color name="gray_700">#FF616161</color>
     <color name="gray_900">#FF212121</color>
     <color name="button_color">#FFFFFF</color>
+    <color name="delete">@color/pink_600</color>
+    <color name="activated">@color/teal_700</color>
 
 </resources>

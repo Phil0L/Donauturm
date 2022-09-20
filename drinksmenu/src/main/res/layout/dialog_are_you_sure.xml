@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:theme="@style/Theme.Donauturm.DrinksMenu.Editor">
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="Are you sure?"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.ncorti.slidetoact.SlideToActView
+        android:id="@+id/slide_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/vec_are_you_sure_outline"
+        android:outlineProvider="background"
+        app:animation_duration="250"
+        app:area_margin="4dp"
+        app:border_radius="2dp"
+        app:icon_margin="8dp"
+        app:inner_color="@color/delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"
+        app:outer_color="@color/transparent"
+        app:rotate_icon="false"
+        app:slider_height="48dp"
+        app:slider_icon="@drawable/ic_delete"
+        app:slider_icon_color="@color/white"
+        app:slider_locked="false"
+        app:text="Delete"
+        app:text_size="12sp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

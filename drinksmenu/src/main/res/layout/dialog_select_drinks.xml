@@ -25,5 +25,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/drink_search"
-        tools:listitem="@layout/pref_select_dialog_drinkchoice" />
+        tools:listitem="@layout/pref_dialog_select_drinkchoice" />
 </androidx.constraintlayout.widget.ConstraintLayout>

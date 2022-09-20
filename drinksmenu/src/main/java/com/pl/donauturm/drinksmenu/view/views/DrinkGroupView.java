@@ -50,7 +50,7 @@ public class DrinkGroupView extends ItemView {
 
 
         public GridAdapter(Context context, DrinkGroupItem drinkGroupItem) {
-            super(context, R.layout.pref_preview_drink);
+            super(context, R.layout.pref_drink);
             this.drinkGroupItem = drinkGroupItem;
             this.context = context;
         }
@@ -74,7 +74,7 @@ public class DrinkGroupView extends ItemView {
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             if (convertView == null)
-                convertView = layoutInflater.inflate(R.layout.pref_preview_drink, parent, false);
+                convertView = layoutInflater.inflate(R.layout.pref_drink, parent, false);
 
             DrinkItem drinkItem = drinkGroupItem.getItems().get(position);
             TextView drinkName = convertView.findViewById(R.id.drink_name);

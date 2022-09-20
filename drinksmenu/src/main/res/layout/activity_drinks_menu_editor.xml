@@ -165,7 +165,7 @@
 
     <include
         android:id="@+id/bottom_sheet_container"
-        layout="@layout/sheet_item_group"
+        layout="@layout/sheet_dgitem_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:behavior_hideable="true"

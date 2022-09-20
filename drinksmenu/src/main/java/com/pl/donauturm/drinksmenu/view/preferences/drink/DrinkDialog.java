@@ -163,7 +163,7 @@ public class DrinkDialog extends DialogFragment implements AdapterView.OnItemCli
 
                 // And inflate the view android.R.layout.select_dialog_singlechoice
                 // Why? See com.android.internal.app.AlertController method createListView()
-                view = inflater.inflate(R.layout.pref_select_dialog_drinkchoice, parent, false);
+                view = inflater.inflate(R.layout.pref_dialog_select_drinkchoice, parent, false);
             }
 
             if (view != null) {

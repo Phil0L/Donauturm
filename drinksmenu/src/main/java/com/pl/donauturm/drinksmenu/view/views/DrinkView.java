@@ -46,7 +46,7 @@ public class DrinkView extends ItemView {
 
 
         public SingleAdapter(Context context, DrinkItem drinkItem) {
-            super(context, R.layout.pref_preview_drink);
+            super(context, R.layout.pref_drink);
             this.drinkItem = drinkItem;
             this.context = context;
         }
@@ -70,7 +70,7 @@ public class DrinkView extends ItemView {
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater layoutInflater = LayoutInflater.from(context);
             if (convertView == null)
-                convertView = layoutInflater.inflate(R.layout.pref_preview_drink, parent, false);
+                convertView = layoutInflater.inflate(R.layout.pref_drink, parent, false);
 
             TextView drinkName = convertView.findViewById(R.id.drink_name);
             TextView drinkDesc = convertView.findViewById(R.id.drink_description);

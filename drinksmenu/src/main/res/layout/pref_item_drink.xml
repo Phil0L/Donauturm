@@ -29,7 +29,7 @@
 
             <include
                 android:id="@+id/exp_header"
-                layout="@layout/pref_preview_drink"
+                layout="@layout/pref_drink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

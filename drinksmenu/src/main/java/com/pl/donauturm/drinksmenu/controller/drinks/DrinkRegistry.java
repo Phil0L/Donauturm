@@ -34,8 +34,4 @@ public class DrinkRegistry extends RegistryMap<Drink> {
                 new Drink("Waldmeister", "Landhaus Waldmeister Likör", 1)
         );
     }
-
-    public Drink getFromId(String id){
-        return values().stream().filter(d -> d.getId().equals(id)).findFirst().orElse(null);
-    }
 }

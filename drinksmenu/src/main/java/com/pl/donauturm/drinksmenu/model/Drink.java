@@ -96,6 +96,22 @@ public class Drink implements Serializable, Id, Cloneable {
         this.price = price;
     }
 
+    public boolean isCrossedOut() {
+        return crossedOut;
+    }
+
+    public void setCrossedOut(boolean crossedOut) {
+        this.crossedOut = crossedOut;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
     @Override
     public Id createNewId() {
         this.id = newId();
