@@ -1,6 +1,8 @@
 package com.pl.donauturm.pisignageapi.apicontroller;
 
 import com.pl.donauturm.pisignageapi.model.Asset;
+import com.pl.donauturm.pisignageapi.model.Notice;
+import com.pl.donauturm.pisignageapi.model.files.data.NoticeData;
 import com.pl.donauturm.pisignageapi.model.files.messages.FileInfoMessage;
 import com.pl.donauturm.pisignageapi.model.files.messages.FileListInfoMessage;
 import com.pl.donauturm.pisignageapi.model.session.messages.LoginMessage;
@@ -74,6 +76,10 @@ public class PiSignageAPI {
   public void getAssetImage(String assetName, File destination){
     String url = Request.PROTOCOL + "://" + Request.HOST + "/media/" + getUsername() + "/" + assetName;
     new FileDownloadRequest(url, destination).request();
+  }
+
+  public void createNotice(Notice notice){
+    new NoticeUploadRequest((NoticeData) notice).request();
   }
 
   public static class Builder {

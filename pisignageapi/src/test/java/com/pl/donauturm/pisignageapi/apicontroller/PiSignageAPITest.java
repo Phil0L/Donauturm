@@ -3,6 +3,7 @@ package com.pl.donauturm.pisignageapi.apicontroller;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.pl.donauturm.pisignageapi.model.Asset;
+import com.pl.donauturm.pisignageapi.model.Notice;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +40,11 @@ public class PiSignageAPITest {
     @Test
     void getAssetImage() {
         api.getAssetImage("GetraenkeKarte.jpeg", new File("C:\\Users\\phill\\Downloads\\GetraenkeKarte.jpeg"));
+    }
+
+    @Test
+    void createNotice() {
+        api.createNotice(Notice.create("Test Notice", "This is a test notice", "This is a test notice footer", "generated"));
     }
 
 
