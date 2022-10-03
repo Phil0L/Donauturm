@@ -96,6 +96,13 @@ public abstract class RegistryMap<V extends Id> extends MapObservable<String, V>
         }
     }
 
+    @SafeVarargs
+    public final void put(V... values){
+        for (V value : values) {
+            put(value);
+        }
+    }
+
     @Nullable
     @Override
     public V put(String s, V v) {

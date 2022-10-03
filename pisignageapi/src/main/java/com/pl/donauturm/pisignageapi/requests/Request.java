@@ -1,6 +1,8 @@
 package com.pl.donauturm.pisignageapi.requests;
 
 import com.google.gson.Gson;
+import com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI;
+import com.pl.donauturm.pisignageapi.model.session.messages.LoginMessage;
 import com.pl.donauturm.pisignageapi.util.ConnectionManager;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +26,8 @@ public abstract class Request<Q, S>{
   public static final String PROTOCOL = "https";
   public static       String HOST = "philippletschka.pisignage.com";
   public static final List<String> PATH = Collections.singletonList("api");
+  public static       boolean LAZY_ASYNC_LOGIN = false;
+  public static       String lazyLoginUsername, lazyLoginPassword;
   public static final BiPredicate<String,String> ACCEPT_ALL = (x, y) -> true;
 
   private final Q requestMessage;
@@ -31,7 +35,13 @@ public abstract class Request<Q, S>{
 
   public Request(Q requestMessage) {
     this.requestMessage = requestMessage;
-    if (requiresToken()) ConnectionManager.single().getToken();
+    if (requiresToken() && !LAZY_ASYNC_LOGIN) ConnectionManager.single().getToken();
+  }
+
+  public static void enableLazyAsyncLogin(String username, String password) {
+    lazyLoginUsername = username;
+    lazyLoginPassword = password;
+    LAZY_ASYNC_LOGIN = true;
   }
 
   public RequestBody bodyPublisher() {
@@ -77,7 +87,25 @@ public abstract class Request<Q, S>{
 
   protected abstract Class<? extends S> provideResultClass(String body);
 
+  private void login() {
+    if (isNotLoggedIn())
+      new SessionRequest(new LoginMessage(lazyLoginUsername, lazyLoginPassword)).request();
+  }
+
+  private void loginAsync(AsyncPiSignageAPI.APICallback<Void> cb) {
+    if (isNotLoggedIn())
+      new SessionRequest(new LoginMessage(lazyLoginUsername, lazyLoginPassword)).requestAsync(rm -> cb.onData(null));
+  }
+
+  private boolean isNotLoggedIn() {
+    return !ConnectionManager.single().hasToken();
+  }
+
   public S request() {
+    if (requiresToken() && isNotLoggedIn()) {
+      login();
+      return request();
+    }
     logOutgoing();
     OkHttpClient client = ConnectionManager.single().getClient();
     okhttp3.Request request = new okhttp3.Request.Builder()
@@ -101,6 +129,10 @@ public abstract class Request<Q, S>{
   }
 
   public void requestAsync(ResponseCallback<S> callback){
+    if (requiresToken() && isNotLoggedIn()) {
+      loginAsync(rm -> requestAsync(callback));
+      return;
+    }
     logOutgoing();
     OkHttpClient client = ConnectionManager.single().getClient();
     okhttp3.Request request = new okhttp3.Request.Builder()

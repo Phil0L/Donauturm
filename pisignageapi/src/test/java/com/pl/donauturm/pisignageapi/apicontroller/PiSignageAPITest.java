@@ -1,9 +1,11 @@
 package com.pl.donauturm.pisignageapi.apicontroller;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.pl.donauturm.pisignageapi.model.Asset;
-import com.pl.donauturm.pisignageapi.model.Notice;
+import com.pl.donauturm.pisignageapi.model.files.messages.NoticeUploadMessage;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +46,11 @@ public class PiSignageAPITest {
 
     @Test
     void createNotice() {
-        api.createNotice(Notice.create("Test Notice", "This is a test notice", "This is a test notice footer", "generated"));
+        String filename = api.createNotice(new NoticeUploadMessage("Test Notice", "This is a test notice", "This is a test notice footer", "generated"));
+        assertNotNull(filename);
+        assertFalse(filename.isEmpty());
+        System.out.println(filename);
+        api.deleteNotice(filename);
     }
 
 

@@ -22,6 +22,8 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.pl.donauturm.drinksmenu.R;
+import com.pl.donauturm.drinksmenu.controller.util.CloudState;
+import com.pl.donauturm.drinksmenu.controller.util.CloudState.OnCloudStateChangedListener;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksMenuBinding;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
@@ -29,6 +31,7 @@ import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
 import com.pl.donauturm.drinksmenu.util.MapObservable;
 import com.pl.donauturm.drinksmenu.view.dialogs.NewDrinksmenuDialog;
 import com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI;
+import com.pl.donauturm.pisignageapi.requests.Request;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +45,7 @@ import java.util.Map;
 
 public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
         MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy,
-        SwipeRefreshLayout.OnRefreshListener, DrinksMenu.OnCloudStateChangedListener {
+        SwipeRefreshLayout.OnRefreshListener, OnCloudStateChangedListener {
 
     private FragmentDrinksMenuBinding binding;
     private DrinksMenuAdapter drinksMenuAdapter;
@@ -75,6 +78,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     }
 
     private void pull() {
+        Request.enableLazyAsyncLogin("philippletschka", "S4T2x9F@yEKYnA3");
         api = DrinksMenuAPI.simple("philippletschka", "S4T2x9F@yEKYnA3", getContext());
 //        if (drinksMenuAdapter.getItems().isEmpty())
 //            drinksMenuAdapter.showALoadingFragment(true);
@@ -90,7 +94,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         binding.swipeRefresh.setRefreshing(true);
         DrinkMenuRegistry.getInstance().values().forEach(dm -> {
             if (dm.getCloudState().isAbleToOverwrite())
-                dm.setCloudState(DrinksMenu.CloudState.PULLING);
+                dm.setCloudState(CloudState.PULLING);
         });
         api.asynchronous.getAllDrinkMenusIterated(this, list -> {
             binding.swipeRefresh.setRefreshing(false);
@@ -195,7 +199,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     }
 
     @Override
-    public void onCloudStateChanged(DrinksMenu.CloudState state) {
+    public void onCloudStateChanged(CloudState state) {
         if (getActivity() != null)
             getActivity().invalidateOptionsMenu();
     }
@@ -213,7 +217,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         dialog.setOnTextSelectedListener(name -> {
             DrinksMenu drinksMenu = new DrinksMenu(name, requireContext()).createNewId();
             drinksMenu.onCloudStateChanged(this);
-            drinksMenu.setCloudState(DrinksMenu.CloudState.READY_FOR_PUSH);
+            drinksMenu.setCloudState(CloudState.READY_FOR_PUSH);
             DrinkMenuRegistry.getInstance().put(name, drinksMenu);
         });
         dialog.show(getChildFragmentManager(), "NewDrinksmenuDialog");
@@ -228,7 +232,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         dialog.setOnTextSelectedListener(name -> {
             DrinksMenu drinksMenu = cDrinksMenu.clone(name);
             drinksMenu.onCloudStateChanged(this);
-            drinksMenu.setCloudState(DrinksMenu.CloudState.READY_FOR_PUSH);
+            drinksMenu.setCloudState(CloudState.READY_FOR_PUSH);
             DrinkMenuRegistry.getInstance().put(name, drinksMenu);
         });
         dialog.show(getChildFragmentManager(), "NewDrinksmenuDialog");

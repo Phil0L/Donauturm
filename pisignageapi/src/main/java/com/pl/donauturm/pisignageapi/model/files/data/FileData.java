@@ -118,4 +118,24 @@ public class FileData implements Asset {
   public String get__v() {
     return __v;
   }
+
+  @Override
+  public String toString() {
+    return "FileData{" +
+            "resolution=" + resolution +
+            ", createdBy=" + createdBy +
+            ", labels=" + labels +
+            ", playlists=" + playlists +
+            ", groupIds=" + groupIds +
+            ", installation='" + installation + '\'' +
+            ", _id='" + _id + '\'' +
+            ", createdAt='" + createdAt + '\'' +
+            ", name='" + name + '\'' +
+            ", type='" + type + '\'' +
+            ", duration='" + duration + '\'' +
+            ", size='" + size + '\'' +
+            ", thumbnail='" + thumbnail + '\'' +
+            ", __v='" + __v + '\'' +
+            '}';
+  }
 }

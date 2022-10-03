@@ -2,11 +2,22 @@ package com.pl.donauturm.pisignageapi.apicontroller;
 
 import com.pl.donauturm.pisignageapi.model.Asset;
 import com.pl.donauturm.pisignageapi.model.Notice;
-import com.pl.donauturm.pisignageapi.model.files.data.NoticeData;
 import com.pl.donauturm.pisignageapi.model.files.messages.FileInfoMessage;
 import com.pl.donauturm.pisignageapi.model.files.messages.FileListInfoMessage;
+import com.pl.donauturm.pisignageapi.model.files.messages.NoticeInfoMessage;
+import com.pl.donauturm.pisignageapi.model.files.messages.NoticeUploadMessage;
 import com.pl.donauturm.pisignageapi.model.session.messages.LoginMessage;
-import com.pl.donauturm.pisignageapi.requests.*;
+import com.pl.donauturm.pisignageapi.requests.FileDeleteRequest;
+import com.pl.donauturm.pisignageapi.requests.FileDownloadRequest;
+import com.pl.donauturm.pisignageapi.requests.FileInfoRequest;
+import com.pl.donauturm.pisignageapi.requests.FileListRequest;
+import com.pl.donauturm.pisignageapi.requests.NoticeDeleteRequest;
+import com.pl.donauturm.pisignageapi.requests.NoticeInfoRequest;
+import com.pl.donauturm.pisignageapi.requests.NoticeRenameRequest;
+import com.pl.donauturm.pisignageapi.requests.NoticeUploadRequest;
+import com.pl.donauturm.pisignageapi.requests.Request;
+import com.pl.donauturm.pisignageapi.requests.SessionRemoveRequest;
+import com.pl.donauturm.pisignageapi.requests.SessionRequest;
 import com.pl.donauturm.pisignageapi.util.ConnectionManager;
 
 import java.io.File;
@@ -78,8 +89,33 @@ public class PiSignageAPI {
     new FileDownloadRequest(url, destination).request();
   }
 
-  public void createNotice(Notice notice){
-    new NoticeUploadRequest((NoticeData) notice).request();
+  public List<String> getAllNoticeNames(){
+    return getAllAssets().stream().filter(a -> a.getType().equals("notice")).map(Asset::getName).collect(Collectors.toList());
+  }
+
+  public String createNotice(NoticeUploadMessage notice){
+    new NoticeUploadRequest(notice).request();
+    List<String> noticeNames = getAllNoticeNames();
+    for (String noticeName : noticeNames) {
+      Notice noticeG = getNotice(noticeName);
+      if (notice.getFormdata().getTitle().equals(noticeG.getTitle())) {
+        return noticeName;
+      }
+    }
+    return null;
+  }
+
+  public Notice getNotice(String noticeName){
+    NoticeInfoMessage infoMessage = new NoticeInfoRequest(noticeName).request();
+    return infoMessage.getData().getData();
+  }
+
+  public void renameNotice(String noticeName, String newNoticeName){
+    new NoticeRenameRequest(noticeName, newNoticeName).request();
+  }
+
+  public void deleteNotice(String noticeName){
+    new NoticeDeleteRequest(noticeName).request();
   }
 
   public static class Builder {

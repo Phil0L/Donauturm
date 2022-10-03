@@ -1,22 +1,24 @@
 package com.pl.donauturm.pisignageapi.requests;
 
-import com.pl.donauturm.pisignageapi.model.files.messages.NoticeUploadMessage;
 import com.pl.donauturm.pisignageapi.model.universal.StringResponseMessage;
 
-public class NoticeUploadRequest extends Request<NoticeUploadMessage, StringResponseMessage>{
+public class NoticeDeleteRequest extends Request<String, StringResponseMessage> {
 
-    public NoticeUploadRequest(NoticeUploadMessage requestMessage) {
-        super(requestMessage);
+    public String filename;
+
+    public NoticeDeleteRequest(String filename) {
+        super(null);
+        this.filename = filename;
     }
 
     @Override
     protected RequestMethod requestMethod() {
-        return RequestMethod.POST;
+        return RequestMethod.DELETE;
     }
 
     @Override
     protected String requestPath() {
-        return "notices";
+        return "notices/" + filename;
     }
 
     @Override
@@ -24,3 +26,4 @@ public class NoticeUploadRequest extends Request<NoticeUploadMessage, StringResp
         return StringResponseMessage.class;
     }
 }
+

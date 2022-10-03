@@ -3,11 +3,16 @@ package com.pl.donauturm.drinksmenu.controller.util.api;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.google.gson.Gson;
+import com.pl.donauturm.drinksmenu.model.Drink;
+import com.pl.donauturm.drinksmenu.model.DrinkList;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
 import com.pl.donauturm.drinksmenu.util.BitmapDownloadRequest;
 import com.pl.donauturm.pisignageapi.apicontroller.PiSignageAPI;
 import com.pl.donauturm.pisignageapi.model.Asset;
+import com.pl.donauturm.pisignageapi.model.Notice;
+import com.pl.donauturm.pisignageapi.model.files.messages.NoticeUploadMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +60,27 @@ public class DrinksMenuAPI extends PiSignageAPI {
     public Bitmap getBitmap(String url) {
         if (url == null) return null;
         return new BitmapDownloadRequest(url).request();
+    }
+
+    public List<Drink> getAllDrinks(){
+        final String DRINKS_FILENAME = "Drinks";
+        Notice notice = getNotice(DRINKS_FILENAME);
+        if (notice == null) return null;
+        String json = notice.getDescription();
+        Gson gson = new Gson();
+        DrinkList drinkList = gson.fromJson(json, DrinkList.class);
+        return drinkList.getDrinks();
+    }
+
+    public void saveAllDrinks(List<Drink> drinks){
+        final String DRINKS_FILENAME = "Drinks";
+        Gson gson = new Gson();
+        DrinkList drinkList = new DrinkList(drinks);
+        String json = gson.toJson(drinkList);
+        deleteNotice(DRINKS_FILENAME);
+        NoticeUploadMessage num = new NoticeUploadMessage("All Drinks", json, "This is a list of all drinks as a database", "generated");
+        String randomFilename = createNotice(num);
+        renameNotice(randomFilename, DRINKS_FILENAME);
     }
 
 }

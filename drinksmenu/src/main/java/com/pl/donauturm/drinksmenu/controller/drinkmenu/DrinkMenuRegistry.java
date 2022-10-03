@@ -2,6 +2,7 @@ package com.pl.donauturm.drinksmenu.controller.drinkmenu;
 
 import androidx.annotation.Nullable;
 
+import com.pl.donauturm.drinksmenu.controller.util.CloudState;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuLocal;
@@ -35,10 +36,10 @@ public class DrinkMenuRegistry extends RegistryMap<DrinksMenu> {
 
     private DrinksMenu checkBeforePut(DrinksMenu drinksMenu) {
         if (drinksMenu instanceof DrinksMenuLocal) {
-            drinksMenu.setCloudState(DrinksMenu.CloudState.PULLING);
+            drinksMenu.setCloudState(CloudState.PULLING);
         }
         if (drinksMenu instanceof DrinksMenuCloud) {
-            drinksMenu.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+            drinksMenu.setCloudState(CloudState.UP_TO_DATE);
         }
         return drinksMenu;
     }
@@ -56,10 +57,10 @@ public class DrinkMenuRegistry extends RegistryMap<DrinksMenu> {
                 if (newer.hasGreaterVersionThan(older.getVersion())) {
                     //cloud is newer, replace local with cloud
                     replace(newer.getName(), newer);
-                    newer.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+                    newer.setCloudState(CloudState.UP_TO_DATE);
                     return newer;
                 }
-                older.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+                older.setCloudState(CloudState.UP_TO_DATE);
                 return older;
             } else if (newer.hasGreaterVersionThan(((DrinksMenuLocal) older).getCloudVersion())) {
                 //local and cloud have some changes, TODO give user comparison
@@ -67,11 +68,11 @@ public class DrinkMenuRegistry extends RegistryMap<DrinksMenu> {
 
             } else if (older.hasGreaterVersionThan(newer.getVersion())) {
                 //local is newer, set ready to push
-                older.setCloudState(DrinksMenu.CloudState.READY_FOR_PUSH);
+                older.setCloudState(CloudState.READY_FOR_PUSH);
                 return older;
             } else {
                 //local is up to date with cloud
-                older.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+                older.setCloudState(CloudState.UP_TO_DATE);
                 return older;
 
             }
@@ -94,7 +95,7 @@ public class DrinkMenuRegistry extends RegistryMap<DrinksMenu> {
         // if the newer is more recent than the older
         if (newer.hasGreaterVersionThan(older.getVersion())) {
             replace(newer.getName(), newer);
-            newer.setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+            newer.setCloudState(CloudState.UP_TO_DATE);
             return newer;
         }
 

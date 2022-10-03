@@ -7,4 +7,10 @@
         android:icon="@drawable/ic_add"
         android:title="Add drink"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/cloud"
+        android:icon="@drawable/ic_cloud"
+        android:title="Cloud"
+        app:showAsAction="ifRoom" />
 </menu>

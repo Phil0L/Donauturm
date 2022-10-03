@@ -138,6 +138,15 @@ public class DrinksAdapter extends RecyclerView.Adapter<DrinksAdapter.ViewHolder
         return drinks.size();
     }
 
+    public int getPositionFromId(String id){
+        for (int i = 0; i < drinks.size(); i++) {
+            if (drinks.get(i).getId().equals(id)){
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public void addOnActionListener(OnActionListener onActionListener){
         onActionListeners.add(onActionListener);
     }

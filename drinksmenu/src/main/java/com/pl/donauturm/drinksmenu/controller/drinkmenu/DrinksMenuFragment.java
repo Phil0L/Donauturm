@@ -22,8 +22,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
+import com.pl.donauturm.drinksmenu.controller.util.CloudState;
+import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuLocal;
 import com.pl.donauturm.drinksmenu.view.popup.UpToDateInfo;
@@ -124,9 +125,9 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
 
 
     void uploadDrinksMenu(DrinksMenuAPI api) {
-        getDrinksMenu().setCloudState(DrinksMenu.CloudState.PUSHING);
+        getDrinksMenu().setCloudState(CloudState.PUSHING);
         api.asynchronous.uploadDrinkMenu(drinksMenu, (v) -> {
-            getDrinksMenu().setCloudState(DrinksMenu.CloudState.UP_TO_DATE);
+            getDrinksMenu().setCloudState(CloudState.UP_TO_DATE);
             DrinksMenuLocal local = new DrinksMenuLocal(getDrinksMenu());
             local.setCloudVersion(getDrinksMenu().getVersion());
             LocalDrinksMenuManager.saveLocalSaveAsync(getContext(), local);
@@ -166,7 +167,7 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
                 DrinkMenuRegistry.getInstance().put(result.getName(), result);
                 LocalDrinksMenuManager.saveLocalSaveAsync(getContext(), result);
                 drinksMenu = result;
-                drinksMenu.setCloudState(DrinksMenu.CloudState.READY_FOR_PUSH);
+                drinksMenu.setCloudState(CloudState.READY_FOR_PUSH);
                 drinksMenu.provideBackGround(drinksMenu.getBackGround()); //hack to set loading to false
                 reloadImage(null);
             });

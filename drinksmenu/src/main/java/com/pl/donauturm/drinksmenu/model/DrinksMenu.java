@@ -10,6 +10,8 @@ import androidx.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.pl.donauturm.drinksmenu.R;
+import com.pl.donauturm.drinksmenu.controller.util.CloudState;
+import com.pl.donauturm.drinksmenu.controller.util.CloudState.OnCloudStateChangedListener;
 import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Id;
 import com.pl.donauturm.drinksmenu.util.json.BitmapDeSerializer;
@@ -368,34 +370,5 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         void onMenuLoaded(DrinksMenu menu);
     }
 
-    @SuppressWarnings("unused")
-    public enum CloudState {
-        UNKNOWN(R.drawable.ic_cloud, true),
-        UP_TO_DATE(R.drawable.ic_cloud_done, true),
-        READY_FOR_PUSH(R.drawable.ic_cloud_upload, false),
-        PUSHING(R.drawable.ic_cloud_loading, false),
-        READY_FOR_PULL(R.drawable.ic_cloud_download, true),
-        PULLING(R.drawable.ic_cloud_loading, true),
-        NO_CONNECTION(R.drawable.ic_cloud_error, false);
 
-        private final int iconResource;
-        private final boolean overwrite;
-
-        public int getIconResource() {
-            return iconResource;
-        }
-
-        public boolean isAbleToOverwrite() {
-            return overwrite;
-        }
-
-        CloudState(int iconResource, boolean overwrite) {
-            this.iconResource = iconResource;
-            this.overwrite = overwrite;
-        }
-    }
-
-    public interface OnCloudStateChangedListener {
-        void onCloudStateChanged(CloudState state);
-    }
 }
