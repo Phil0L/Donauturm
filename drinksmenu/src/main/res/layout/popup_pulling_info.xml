@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.pl.donauturm.drinksmenu.util.popupbubble.BubbleLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    app:bl_arrowDirection="top"
+    app:bl_arrowHeight="8dp"
+    app:bl_arrowWidth="8dp"
+    app:bl_cornersRadius="8dp"
+    app:bl_strokeWidth="1dp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Currently updating the drinks menu."
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="@color/pink_600"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</com.pl.donauturm.drinksmenu.util.popupbubble.BubbleLayout>

@@ -21,6 +21,9 @@ import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksBinding;
 import com.pl.donauturm.drinksmenu.model.Drink;
 import com.pl.donauturm.drinksmenu.util.MapObservable;
+import com.pl.donauturm.drinksmenu.util.popupbubble.BubblePopup;
+import com.pl.donauturm.drinksmenu.view.popup.LoadingCloudInfo;
+import com.pl.donauturm.drinksmenu.view.popup.NoConnectionInfo;
 import com.pl.donauturm.drinksmenu.view.popup.UpToDateInfo;
 import com.pl.donauturm.pisignageapi.requests.Request;
 
@@ -31,6 +34,7 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
 
     private DrinksAdapter adapter;
     private CloudState cloudState;
+    private boolean inSync = false;
     private DrinksMenuAPI api;
 
     @Nullable
@@ -54,12 +58,7 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        load();
         pull();
-    }
-
-    private void load() {
-        //TODO: END OF SHIFT
     }
 
     private void pull() {
@@ -76,10 +75,25 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
                     DrinkRegistry.getInstance().put(drink);
                 }
             }
-            cloudState = CloudState.UP_TO_DATE;
-            requireActivity().invalidateOptionsMenu();
+            onFinishedPulling();
+            // TODO: check for deleted (and added) items on the cloud
         });
-        // TODO: check for deleted (and added) items on the cloud
+    }
+
+    private void pullAgain(){
+        pull();
+    }
+
+    private void onFinishedPulling(){
+        cloudState = CloudState.UP_TO_DATE;
+        inSync = true;
+        requireActivity().invalidateOptionsMenu();
+    }
+
+    private void onErrorPulling(){
+        cloudState = CloudState.NO_CONNECTION;
+        requireActivity().invalidateOptionsMenu();
+        new NoConnectionInfo(getActivity(), v -> pullAgain()).show(requireActivity().findViewById(R.id.cloud));
     }
 
     @Override
@@ -93,6 +107,13 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
         MenuItem cloudItem = menu.findItem(R.id.cloud);
         if (cloudItem != null && cloudState != null)
             cloudItem.setIcon(cloudState.getIconResource());
+        MenuItem addDrinkItem = menu.findItem(R.id.add_drink);
+        addDrinkItem.setVisible(inSync);
+        boolean hasShowingPopup = BubblePopup.hasShowingPopup();
+        BubblePopup.dismissAll();
+        if (hasShowingPopup) {
+            cloudClicked(requireActivity().findViewById(R.id.cloud));
+        }
     }
 
     @Override
@@ -112,15 +133,34 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
     private void cloudClicked(View view) {
         switch (cloudState) {
             case UNKNOWN:
+                break;
             case PULLING:
+                new LoadingCloudInfo(getActivity(), "Currently downloading the drinks.", v -> {
+                    cloudState = CloudState.READY_FOR_PULL;
+                    requireActivity().invalidateOptionsMenu();
+                }).show(view);
+                break;
             case PUSHING:
+                new LoadingCloudInfo(getActivity(), "Currently uploading the drinks.", v -> {
+                    cloudState = CloudState.READY_FOR_PUSH;
+                    requireActivity().invalidateOptionsMenu();
+                }).show(view);
+                break;
             case READY_FOR_PULL:
+                pullAgain();
                 break;
             case UP_TO_DATE:
-                new UpToDateInfo(getActivity(), "Drinks are in sync with the server.").show(view);
+                new UpToDateInfo(getActivity(), "Drinks are in sync with the server.", v -> {
+                    uploadDrinks(api);
+                }).show(view);
                 break;
             case READY_FOR_PUSH:
                 uploadDrinks(api);
+                break;
+            case NO_CONNECTION:
+                new NoConnectionInfo(getActivity(), v -> {
+                    pullAgain();
+                }).show(view);
                 break;
         }
     }

@@ -18,6 +18,9 @@ import android.widget.PopupWindow;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SuppressWarnings("unused")
 public abstract class BubblePopup {
 
@@ -107,12 +110,30 @@ public abstract class BubblePopup {
 
     private final Activity context;
     private BubbleLayout bubbleLayout;
+    private PopupWindow popupWindow;
 
     private PopupWindow.OnDismissListener dismissListener;
+    private static List<PopupWindow> popupWindowsCache = new ArrayList<>();
     private View.OnClickListener clickListener;
 
     public BubblePopup(Activity context) {
         this.context = context;
+    }
+
+    public static void dismissAll(){
+        popupWindowsCache.forEach(PopupWindow::dismiss);
+        popupWindowsCache = new ArrayList<>();
+    }
+
+    public static boolean hasShowingPopup(){
+        boolean hasShowingPopup = false;
+        for (PopupWindow popupWindow : popupWindowsCache) {
+            if (popupWindow.isShowing()) {
+                hasShowingPopup = true;
+                break;
+            }
+        }
+        return hasShowingPopup;
     }
 
     protected abstract BubbleLayout onCreateView(@NonNull View anchor, @NonNull LayoutInflater inflater, @Nullable BubbleLayout cachedView);
@@ -123,6 +144,17 @@ public abstract class BubblePopup {
 
     protected boolean isOutsideTouchable() {
         return true;
+    }
+
+    protected boolean isShown() {
+        return popupWindow != null && popupWindow.isShowing();
+    }
+
+    protected void dismiss(){
+        if (isShown()) {
+            popupWindow.dismiss();
+            popupWindow = null;
+        }
     }
 
     protected Drawable getBackground() {
@@ -229,7 +261,8 @@ public abstract class BubblePopup {
         bubbleLayout.setArrowPosition(arrowOffset);
         if (clickListener != null)
             bubbleLayout.setOnClickListener(clickListener);
-        PopupWindow popupWindow = _create();
+        popupWindow = _create();
+        popupWindowsCache.add(popupWindow);
         if (dismissListener != null)
             popupWindow.setOnDismissListener(dismissListener);
         popupWindow.showAtLocation(anchor, Gravity.NO_GRAVITY, left, top);

@@ -16,15 +16,30 @@ import com.pl.donauturm.drinksmenu.util.popupbubble.BubblePopup;
 public class UpToDateInfo extends BubblePopup {
 
     private final String message;
+    private final BubbleActionCallback<?> onUpload;
 
     public UpToDateInfo(Activity context) {
         super(context);
         this.message = "Drinks menu is in sync with the server.";
+        this.onUpload = null;
+    }
+
+    public UpToDateInfo(Activity context, BubbleActionCallback<?> onUpload) {
+        super(context);
+        this.message = "Drinks menu is in sync with the server.";
+        this.onUpload = onUpload;
     }
 
     public UpToDateInfo(Activity context, String message) {
         super(context);
         this.message = message;
+        this.onUpload = null;
+    }
+
+    public UpToDateInfo(Activity context, String message, BubbleActionCallback<?> onUpload) {
+        super(context);
+        this.message = message;
+        this.onUpload = onUpload;
     }
 
     @Override
@@ -38,6 +53,9 @@ public class UpToDateInfo extends BubblePopup {
     }
 
     private void forceUpload(View v) {
-        //TODO: upload the drinks menu
+        if (onUpload != null) {
+            onUpload.onClicked(null);
+            dismiss();
+        }
     }
 }
