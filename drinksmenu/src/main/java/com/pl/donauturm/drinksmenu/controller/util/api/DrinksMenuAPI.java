@@ -79,8 +79,7 @@ public class DrinksMenuAPI extends PiSignageAPI {
         String json = gson.toJson(drinkList);
         deleteNotice(DRINKS_FILENAME);
         NoticeUploadMessage num = new NoticeUploadMessage("All Drinks", json, "This is a list of all drinks as a database", "generated");
-        String randomFilename = createNotice(num);
-        renameNotice(randomFilename, DRINKS_FILENAME);
+        createNotice(num);
     }
 
 }

@@ -46,7 +46,7 @@ public class PiSignageAPITest {
 
     @Test
     void createNotice() {
-        String filename = api.createNotice(new NoticeUploadMessage("Test Notice", "This is a test notice", "This is a test notice footer", "generated"));
+        String filename = api.createNoticeReturnName(new NoticeUploadMessage("Test Notice", "This is a test notice", "This is a test notice footer", "generated"));
         assertNotNull(filename);
         assertFalse(filename.isEmpty());
         System.out.println(filename);

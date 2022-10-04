@@ -93,7 +93,11 @@ public class PiSignageAPI {
     return getAllAssets().stream().filter(a -> a.getType().equals("notice")).map(Asset::getName).collect(Collectors.toList());
   }
 
-  public String createNotice(NoticeUploadMessage notice){
+  public void createNotice(NoticeUploadMessage notice){
+    new NoticeUploadRequest(notice).request();
+  }
+
+  public String createNoticeReturnName(NoticeUploadMessage notice){
     new NoticeUploadRequest(notice).request();
     List<String> noticeNames = getAllNoticeNames();
     for (String noticeName : noticeNames) {
