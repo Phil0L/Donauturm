@@ -1,4 +1,4 @@
-package com.pl.donauturm.drinksmenu.controller.drinks;
+package com.pl.donauturm.drinksmenu.view.dialogs;
 
 import android.content.Context;
 import android.os.Bundle;

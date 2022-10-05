@@ -10,6 +10,7 @@ import com.pl.donauturm.drinksmenu.controller.drinks.routines.SaveAllDrinksRouti
 import com.pl.donauturm.drinksmenu.model.Drink;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
+import com.pl.donauturm.drinksmenu.util.BitmapDownloadRequest;
 import com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI;
 import com.pl.donauturm.pisignageapi.model.Asset;
 
@@ -149,6 +150,8 @@ public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
     }
 
 
-
-
+    public void getBitmap(String url, APICallback<Bitmap> cb) {
+        if (url == null) return;
+        new BitmapDownloadRequest(url).requestAsync(cb::onData);
+    }
 }

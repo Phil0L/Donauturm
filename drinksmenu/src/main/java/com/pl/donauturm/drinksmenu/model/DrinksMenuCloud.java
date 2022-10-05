@@ -7,10 +7,10 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.util.json.BitmapDeSerializer;
 import com.pl.donauturm.drinksmenu.util.json.PolymorphicDeserializer;
-import com.pl.donauturm.pisignageapi.apicontroller.PiSignageAPI;
 import com.pl.donauturm.pisignageapi.requests.Request;
 
 import org.jetbrains.annotations.TestOnly;
@@ -27,7 +27,7 @@ public class DrinksMenuCloud extends DrinksMenu {
     public String imageUrl;
 
     private final transient DrinksMenu original;
-    private final transient PiSignageAPI api;
+    private transient DrinksMenuAPI api;
 
     public DrinksMenuCloud() {
         super();
@@ -35,7 +35,7 @@ public class DrinksMenuCloud extends DrinksMenu {
         this.api = null;
     }
 
-    public DrinksMenuCloud(@NonNull DrinksMenu drinksMenu, @NonNull PiSignageAPI api) {
+    public DrinksMenuCloud(@NonNull DrinksMenu drinksMenu, @NonNull DrinksMenuAPI api) {
         super();
         this.original = drinksMenu;
         this.api = api;
@@ -109,6 +109,19 @@ public class DrinksMenuCloud extends DrinksMenu {
         File f = bitmapToFile(bitmap, context, friendly(name) + ".png");
         api.uploadAsset(f).withLabels("generated", "drinksmenu", "data:" + serializer().toJson(this)).upload();
 
+    }
+
+    public void provideApi(DrinksMenuAPI api) {
+        if (api != null)
+            this.api = api;
+    }
+
+    @Override
+    public void loadBackground(Context context, OnMenuLoadedListener cb) {
+        api.asynchronous.getBitmap(backgroundUrl, (bitmap) -> {
+            provideBackGround(bitmap);
+            cb.onMenuLoaded(this);
+        });
     }
 
     private String friendly(String s) {

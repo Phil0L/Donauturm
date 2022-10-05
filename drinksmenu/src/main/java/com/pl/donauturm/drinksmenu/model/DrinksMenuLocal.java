@@ -2,6 +2,7 @@ package com.pl.donauturm.drinksmenu.model;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
 
@@ -113,6 +114,20 @@ public class DrinksMenuLocal extends DrinksMenu {
         if (Integer.parseInt(self[1]) > Integer.parseInt(some[1])) return true;
         if (Integer.parseInt(self[1]) < Integer.parseInt(some[1])) return false;
         return Integer.parseInt(self[2]) > Integer.parseInt(some[2]);
+    }
+
+    @Override
+    public void loadBackground(Context context, OnMenuLoadedListener cb) {
+        File dmDir = new File(context.getFilesDir(), mainDir());
+        if (!dmDir.exists()) return;
+        File dmDirFile = new File(dmDir, name);
+        if (!dmDirFile.exists()) return;
+        // load the background
+        File bgFile = new File(dmDirFile, friendly(getName()) + "Background.png");
+        if (!bgFile.exists()) return;
+        Bitmap bg = BitmapFactory.decodeFile(bgFile.getAbsolutePath());
+        if (bg == null) return;
+        provideBackGround(bg);
     }
 
     public static String friendly(String s) {

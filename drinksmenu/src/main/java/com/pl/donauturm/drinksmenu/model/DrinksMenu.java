@@ -12,6 +12,8 @@ import com.google.gson.GsonBuilder;
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState.OnCloudStateChangedListener;
+import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Id;
 import com.pl.donauturm.drinksmenu.util.json.BitmapDeSerializer;
@@ -211,6 +213,15 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         if (loading) setLoading(false);
     }
 
+    public List<DrinkItem> getAllDrinks() {
+        List<DrinkItem> drinks = new ArrayList<>();
+        items.forEach(i -> {
+            if (i instanceof DrinkItem) drinks.add((DrinkItem) i);
+            else if (i instanceof DrinkGroupItem) drinks.addAll(((DrinkGroupItem) i).getItems());
+        });
+        return drinks;
+    }
+
     public List<Bitmap> getAllBitmaps() {
         List<Bitmap> bitmaps = new ArrayList<>(List.of(menuImage, backGround));
         items.forEach(i -> {
@@ -364,6 +375,10 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     public DrinksMenu createNewId() {
         this.id = newId();
         return this;
+    }
+
+    public void loadBackground(Context context, OnMenuLoadedListener cb) {
+        cb.onMenuLoaded(this);
     }
 
     public interface OnMenuLoadedListener {
