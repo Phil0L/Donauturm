@@ -1,6 +1,5 @@
 package com.pl.donauturm.drinksmenu.controller.drinkmenu;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +21,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.pl.donauturm.drinksmenu.R;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState.OnCloudStateChangedListener;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
@@ -80,6 +80,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     private void pull() {
         Request.enableLazyAsyncLogin("philippletschka", "S4T2x9F@yEKYnA3");
         api = DrinksMenuAPI.simple("philippletschka", "S4T2x9F@yEKYnA3", getContext());
+        DrinksMenuEditorActivity.provideApi(api);
 //        if (drinksMenuAdapter.getItems().isEmpty())
 //            drinksMenuAdapter.showALoadingFragment(true);
         binding.swipeRefresh.setEnabled(false);
@@ -125,8 +126,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
             if (drinksMenu.getBackGround() == null) {
                 // image is not yet loaded
                 menu.setLoading();
-                Bitmap background = api.getBitmap(menu.getBackgroundUrl());
-                menu.provideBackGround(background);
+                api.asynchronous.getBitmap(menu.getBackgroundUrl(), menu::provideBackGround);
             }
         }
     }
@@ -135,6 +135,10 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     public void onAddition(int index, String source, DrinksMenu element, Map<String, DrinksMenu> map) {
         element.onCloudStateChanged(this);
         drinksMenuAdapter.addItem(element);
+        if (element.isLoading()){
+            element.onLoaded(el -> LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), element));
+            return;
+        }
         LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), element);
     }
 
@@ -148,6 +152,10 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     public void onUpdate(int index, String source, DrinksMenu oldElement, DrinksMenu newElement, Map<String, DrinksMenu> map) {
         newElement.onCloudStateChanged(this);
         drinksMenuAdapter.updateItemAt(index, newElement);
+        if (newElement.isLoading()){
+            newElement.onLoaded(el -> LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), newElement));
+            return;
+        }
         LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), newElement);
     }
 
@@ -165,7 +173,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         DrinksMenuFragment currentFragment = getCurrentDrinksMenuFragment();
         if (currentFragment == null) {
             cloudItem.setVisible(false);
-            addItem.setVisible(false);
+            addItem.setVisible(true);
             cloneItem.setVisible(false);
         } else {
             cloudItem.setVisible(true);

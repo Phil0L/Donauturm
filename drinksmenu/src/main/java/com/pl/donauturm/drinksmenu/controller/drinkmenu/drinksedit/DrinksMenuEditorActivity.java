@@ -39,11 +39,14 @@ import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.Dri
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.DrinkGroupGenerator;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.ShapeGenerator;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.TextGenerator;
+import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
+import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.ActivityDrinksMenuEditorBinding;
+import com.pl.donauturm.drinksmenu.model.Drink;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
-import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
-import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.content.ShapeItem;
 import com.pl.donauturm.drinksmenu.model.content.TextItem;
 import com.pl.donauturm.drinksmenu.util.KeyboardListener;
@@ -61,10 +64,12 @@ import java.util.ArrayList;
 
 import lv.chi.photopicker.PhotoPickerFragment;
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings("FieldCanBeLocal, StaticFieldLeak")
 public class DrinksMenuEditorActivity extends AppCompatActivity implements
         ItemView.OnSelect, ItemEventHandler.EditorProvider, ViewTreeObserver.OnGlobalLayoutListener,
         KeyboardListener.SoftKeyboardToggleListener, PhotoPickerFragment.Callback {
+
+    private static DrinksMenuAPI api;
 
     private DrinksMenu drinksMenu;
     private ItemView selectedView;
@@ -77,6 +82,10 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
     private View mRoot;
     private android.widget.TextView headerLeft, headerRight;
     private LinearLayout mLayoutBottomSheet;
+
+    public static void provideApi(DrinksMenuAPI api) {
+        DrinksMenuEditorActivity.api = api;
+    }
 
 
     @Override
@@ -373,7 +382,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         ItemSelectorDialog itemSelectorDialog = ItemSelectorDialog.newInstance();
         itemSelectorDialog.setOnItemSelectedListener(itemClass -> {
             switch (itemClass.getSimpleName()) {
-                case "Drink":
+                case "DrinkItem":
                     AddDrinkDialog addDrinkDialog = AddDrinkDialog.newInstance();
                     addDrinkDialog.setOnDrinkSelectedListener(drink -> {
                         drinksMenu.addItem(drink);
@@ -385,9 +394,20 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
                             onSelect(newView);
                         });
                     });
+                    if (DrinkRegistry.getInstance().isEmpty()){
+                        if (api == null){
+                            Toast.makeText(this, "No drinks found", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        api.asynchronous.getAllDrinks(drinks -> {
+                            DrinkRegistry.getInstance().put(drinks.toArray(new Drink[0]));
+                            addDrinkDialog.show(getSupportFragmentManager(), getClass().getSimpleName());
+                        });
+                        return;
+                    }
                     addDrinkDialog.show(getSupportFragmentManager(), getClass().getSimpleName());
                     break;
-                case "DrinkGroup":
+                case "DrinkGroupItem":
                     AddDrinkGroupDialog addDrinkGroupDialog = AddDrinkGroupDialog.newInstance();
                     addDrinkGroupDialog.setOnDrinkGroupSelectedListener(drinkGroup -> {
                         drinksMenu.addItem(drinkGroup);
@@ -399,9 +419,20 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
                             onSelect(newView);
                         });
                     });
+                    if (DrinkRegistry.getInstance().isEmpty()){
+                        if (api == null){
+                            Toast.makeText(this, "No drinks found", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        api.asynchronous.getAllDrinks(drinks -> {
+                            DrinkRegistry.getInstance().put(drinks.toArray(new Drink[0]));
+                            addDrinkGroupDialog.show(getSupportFragmentManager(), getClass().getSimpleName());
+                        });
+                        return;
+                    }
                     addDrinkGroupDialog.show(getSupportFragmentManager(), getClass().getSimpleName());
                     break;
-                case "Text":
+                case "TextItem":
                     AddTextDialog addTextDialog = AddTextDialog.newInstance();
                     addTextDialog.setOnTextSelectedListener(text -> {
                         drinksMenu.addItem(text);
@@ -415,7 +446,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
                     });
                     addTextDialog.show(getSupportFragmentManager(), getClass().getSimpleName());
                     break;
-                case "Shape":
+                case "ShapeItem":
                     ShapeItem shapeItem = new ShapeItem("New Shape", Color.WHITE, 100);
                     shapeItem.createNewId();
                     drinksMenu.addItem(shapeItem);

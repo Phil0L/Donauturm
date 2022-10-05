@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment;
 
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
+import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
@@ -104,6 +105,8 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
     }
 
     public void edit(View v) {
+        if (DrinkRegistry.getInstance().isEmpty()){
+        }
         this.editor.launch(drinksMenu);
     }
 
