@@ -102,4 +102,13 @@ public class DrinkMenuRegistry extends RegistryMap<DrinksMenu> {
         return older;
     }
 
+    @Override
+    public boolean containsValue(@Nullable Object o) {
+        if (o instanceof DrinksMenu) {
+            DrinksMenu d = (DrinksMenu) o;
+            return keySet().stream().anyMatch(key -> key.equals(d.getId()));
+        }
+        return super.containsValue(o);
+    }
+
 }

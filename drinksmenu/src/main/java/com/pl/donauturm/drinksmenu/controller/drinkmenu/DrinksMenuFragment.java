@@ -23,7 +23,6 @@ import androidx.fragment.app.Fragment;
 
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
-import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
@@ -40,6 +39,7 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
 
     private Button mEditButton;
     private TextView mVersionTextView;
+    private TextView mIdTextView;
     private ImageView mMenuView;
     private DrinksMenu drinksMenu;
 
@@ -80,6 +80,7 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
         this.mEditButton = view.findViewById(R.id.edit_button);
         this.mMenuView = view.findViewById(R.id.drinkmenu_preview);
         this.mVersionTextView = view.findViewById(R.id.drinksmenu_version);
+        this.mIdTextView = view.findViewById(R.id.drinksmenu_id);
         this.mEditButton.setOnClickListener(this::edit);
         this.mMenuView.setOnClickListener(this::reloadImage);
         if (drinksMenu.isLoading()) {
@@ -98,6 +99,7 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
     public void reloadImage(View v) {
         if (drinksMenu.isLoading()) return;
         this.mVersionTextView.setText("v." + drinksMenu.getVersion());
+        this.mIdTextView.setText("id." + drinksMenu.getId());
         new DrinksMenuRenderer().renderFromMenu(getContext(), drinksMenu, bm -> {
             this.mMenuView.setImageBitmap(bm);
             this.mMenuView.postInvalidate();
@@ -105,8 +107,6 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
     }
 
     public void edit(View v) {
-        if (DrinkRegistry.getInstance().isEmpty()){
-        }
         this.editor.launch(drinksMenu);
     }
 
@@ -140,9 +140,12 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
     @Override
     public void onMenuLoaded(DrinksMenu menu) {
         this.drinksMenu = menu;
-        this.mMenuView.post(() -> this.reloadImage(null));
-        this.mEditButton.setVisibility(View.VISIBLE);
-        this.mMenuView.setAlpha(1f);
+        this.mMenuView.post(() -> {
+            this.mEditButton.setVisibility(View.VISIBLE);
+            this.mMenuView.setAlpha(1f);
+            this.reloadImage(null);
+        });
+
     }
 
     final ActivityResultLauncher<DrinksMenu> editor = registerForActivityResult(new ActivityResultContract<DrinksMenu, DrinksMenu>() {
