@@ -22,4 +22,10 @@
         android:name="com.pl.donauturm.drinksmenu.controller.drinks.MainFragmentDrinks"
         android:label="@string/menu_drinks"
         tools:layout="@layout/fragment_drinks" />
+
+    <fragment
+        android:id="@+id/nav_pisignage"
+        android:name="com.pl.donauturm.drinksmenu.controller.pisignage.MainFragmentPisignage"
+        android:label="@string/menu_pisignage"
+        tools:layout="@layout/fragment_pisignage" />
 </navigation>
