@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -25,10 +24,10 @@ public class DrinksMenuAdapter extends FragmentStateAdapter {
     private int loadingPos = 0;
 
     @SuppressWarnings("unused")
-    public DrinksMenuAdapter(@NonNull FragmentActivity fragmentActivity) {
+    public DrinksMenuAdapter(@NonNull Fragment fragmentActivity) {
         super(fragmentActivity);
         this.items = new ArrayList<>();
-        this.fragmentManager = fragmentActivity.getSupportFragmentManager();
+        this.fragmentManager = fragmentActivity.getChildFragmentManager();
         this.fragmentCache = new HashMap<>();
     }
 
@@ -70,15 +69,17 @@ public class DrinksMenuAdapter extends FragmentStateAdapter {
     @SuppressWarnings("unused")
     public void updateItem(DrinksMenu item){
         int index = items.indexOf(item);
-        if (index != -1) {
+        if (index >= 0 && index < items.size()) {
             items.set(index, item);
             notifyFragmentDataChanged(index, item);
         }
     }
 
     public void updateItemAt(int index, DrinksMenu item){
-        items.set(index, item);
-        notifyFragmentDataChanged(index, item);
+        if (index >= 0 && index < items.size()) {
+            items.set(index, item);
+            notifyFragmentDataChanged(index, item);
+        }
     }
 
     public List<DrinksMenu> getItems() {
@@ -115,6 +116,9 @@ public class DrinksMenuAdapter extends FragmentStateAdapter {
             return new DrinksMenuFragment.LoadingFragment();
         }
         if (position < 0 || position >= items.size())
+            return null;
+        DrinksMenu item = items.get(position);
+        if (item == null)
             return null;
         DrinksMenuFragment drinksMenuFragment = DrinksMenuFragment.newInstance(items.get(position));
         fragmentCache.put(position, drinksMenuFragment);

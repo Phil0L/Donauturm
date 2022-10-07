@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,7 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
      * @return A new instance of fragment DrinksMenuFragment.
      */
     public static DrinksMenuFragment newInstance(DrinksMenu drinksMenu) {
+        if (drinksMenu == null) return null;
         return new DrinksMenuFragment(drinksMenu);
     }
 
@@ -81,6 +83,10 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
         this.mMenuView = view.findViewById(R.id.drinkmenu_preview);
         this.mVersionTextView = view.findViewById(R.id.drinksmenu_version);
         this.mIdTextView = view.findViewById(R.id.drinksmenu_id);
+        if (drinksMenu == null){
+            Log.e("DrinksMenuFragment", "DrinksMenu is null");
+            return;
+        }
         this.mEditButton.setOnClickListener(this::edit);
         this.mMenuView.setOnClickListener(this::reloadImage);
         if (drinksMenu.isLoading()) {

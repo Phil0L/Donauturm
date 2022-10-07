@@ -27,8 +27,10 @@ public class WelcomeFragment extends Fragment implements DrawerLayout.DrawerList
         Activity activity = getActivity();
         if (activity instanceof DonauturmActivity) {
             DonauturmActivity donauturmActivity = (DonauturmActivity) activity;
-            donauturmActivity.drawerLayout.addDrawerListener(this);
-            binding.button.setOnClickListener(v -> donauturmActivity.drawerLayout.openDrawer(donauturmActivity.binding.navView));
+            if (donauturmActivity.drawerLayout != null) {
+                donauturmActivity.drawerLayout.addDrawerListener(this);
+                binding.button.setOnClickListener(v -> donauturmActivity.drawerLayout.openDrawer(donauturmActivity.binding.navView));
+            }
         }
         return binding.getRoot();
     }
@@ -50,7 +52,9 @@ public class WelcomeFragment extends Fragment implements DrawerLayout.DrawerList
         Activity activity = getActivity();
         if (activity instanceof DonauturmActivity) {
             DonauturmActivity donauturmActivity = (DonauturmActivity) activity;
-            donauturmActivity.drawerLayout.removeDrawerListener(this);
+            if (donauturmActivity.drawerLayout != null) {
+                donauturmActivity.drawerLayout.removeDrawerListener(this);
+            }
         }
     }
 

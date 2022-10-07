@@ -56,7 +56,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         binding = FragmentDrinksMenuBinding.inflate(inflater, container, false);
-        drinksMenuAdapter = new DrinksMenuAdapter(requireActivity().getSupportFragmentManager(), getLifecycle());
+        drinksMenuAdapter = new DrinksMenuAdapter(getChildFragmentManager(), getLifecycle());
         drinksMenuAdapter.setItems(new ArrayList<>());
         binding.drinksMenuPager.setAdapter(drinksMenuAdapter);
         binding.drinksMenuPager.registerOnPageChangeCallback(new PageChangeListener());
@@ -65,6 +65,12 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(binding.drinksMenuTabs, binding.drinksMenuPager, this);
         tabLayoutMediator.attach();
         return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        DrinkMenuRegistry.getInstance().observers.remove(this);
+        super.onDestroyView();
     }
 
     @Override

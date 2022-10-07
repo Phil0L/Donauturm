@@ -4,14 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:theme="@style/Theme.Donauturm.AppLayout">
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginTop="?attr/actionBarSize"
-        android:fitsSystemWindows="true"
+        android:layout_marginTop="-24dp"
+        app:elevation="0dp"
         app:headerLayout="@layout/nav_header_donauturm"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,12 +24,11 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/nav_view"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5"
         tools:context=".controller.DonauturmActivity">
@@ -35,14 +36,19 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/Theme.Donauturm">
+            android:background="@color/white"
+            android:elevation="0dp"
+            android:theme="@style/Theme.Donauturm.AppLayout">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                app:popupTheme="@style/Theme.Donauturm" />
+                android:elevation="0dp"
+                android:theme="@style/Theme.Donauturm.BasicActivity"
+                app:popupTheme="@style/Theme.Donauturm.PopupOverlay">
+
+            </androidx.appcompat.widget.Toolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -60,5 +66,16 @@
         app:layout_constraintStart_toEndOf="@+id/nav_view"
         app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/mobile_navigation" />
+
+    <ImageView
+        android:id="@+id/status_fade"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/status_bar_fade_size"
+        android:contentDescription="@string/design_only"
+        android:scaleType="matrix"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/top_gradient_status_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

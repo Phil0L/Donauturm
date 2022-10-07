@@ -43,6 +43,8 @@ public class DonauturmActivity extends AppCompatActivity {
                 binding.drawerLayout.addDrawerListener(toggle);
                 toggle.setDrawerIndicatorEnabled(true);
                 toggle.syncState();
+            }else{
+                getWindow().setStatusBarColor(MaterialColors.getColor(this, R.attr.statusBarBackground, "Error loading status bar color"));
             }
         }
     }
