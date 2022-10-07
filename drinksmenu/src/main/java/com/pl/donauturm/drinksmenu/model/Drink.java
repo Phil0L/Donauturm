@@ -21,7 +21,7 @@ public class Drink implements Serializable, Id, Cloneable {
 
     @CreatorConstructor
     public Drink() {
-        this.createNewId();
+        this.createNewIdIfNull(id);
         this.name = "Drink";
         this.description = "This is a drink";
         this.price = new BigDecimal(0);
@@ -30,7 +30,7 @@ public class Drink implements Serializable, Id, Cloneable {
     }
 
     public Drink(String name, String description, BigDecimal price) {
-        this.createNewId();
+        this.createNewIdIfNull(id);
         this.name = name;
         this.description = description;
         this.price = price;
@@ -39,7 +39,7 @@ public class Drink implements Serializable, Id, Cloneable {
     }
 
     public Drink(String name, String description, int price) {
-        this.createNewId();
+        this.createNewIdIfNull(id);
         this.name = name;
         this.description = description;
         this.price = new BigDecimal(price);
@@ -48,7 +48,7 @@ public class Drink implements Serializable, Id, Cloneable {
     }
 
     public Drink(String name, String description, float price) {
-        this.createNewId();
+        this.createNewIdIfNull(id);
         this.name = name;
         this.description = description;
         this.price = new BigDecimal(price);

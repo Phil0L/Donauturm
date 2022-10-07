@@ -30,7 +30,7 @@ public class DrinksMenuLocal extends DrinksMenu {
     }
 
     public DrinksMenuLocal(@NonNull DrinksMenu drinksMenu) {
-        super();
+        super.id = drinksMenu.id;
         super.name = drinksMenu.name;
         super.items = drinksMenu.items;
         super.height = drinksMenu.height;

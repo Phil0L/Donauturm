@@ -17,6 +17,12 @@ public interface Id {
 
     Id createNewId();
 
+    default void createNewIdIfNull(String id){
+        if (id == null) {
+            createNewId();
+        }
+    }
+
     @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.CONSTRUCTOR})
     @interface CreatorConstructor {

@@ -36,9 +36,9 @@ public class DrinksMenuCloud extends DrinksMenu {
     }
 
     public DrinksMenuCloud(@NonNull DrinksMenu drinksMenu, @NonNull DrinksMenuAPI api) {
-        super();
         this.original = drinksMenu;
         this.api = api;
+        super.id = drinksMenu.id;
         super.name = drinksMenu.name;
         super.items = drinksMenu.items;
         super.height = drinksMenu.height;

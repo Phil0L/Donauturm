@@ -132,8 +132,18 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
             if (drinksMenu.getBackGround() == null) {
                 // image is not yet loaded
                 menu.setLoading();
-                api.asynchronous.getBitmap(menu.getBackgroundUrl(), menu::provideBackGround);
+                api.asynchronous.getBitmap(menu.getBackgroundUrl(), bitmap -> {
+                    menu.provideBackGround(bitmap);
+                    drinksMenu.setCloudState(CloudState.UP_TO_DATE);
+                    requireActivity().invalidateOptionsMenu();
+                });
+            }else {
+                drinksMenu.setCloudState(CloudState.UP_TO_DATE);
+                requireActivity().invalidateOptionsMenu();
             }
+        }else if (drinksMenu != null){
+            drinksMenu.setCloudState(CloudState.UP_TO_DATE);
+            requireActivity().invalidateOptionsMenu();
         }
     }
 

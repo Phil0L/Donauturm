@@ -24,7 +24,6 @@ import org.jetbrains.annotations.TestOnly;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -50,14 +49,14 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     private transient List<OnCloudStateChangedListener> onCloudStateChangedListeners = new ArrayList<>();
 
     public DrinksMenu() {
-        if (id == null)
-            createNewId();
+        this.createNewIdIfNull(id);
         setLoading(true);
     }
 
     @CreatorConstructor
-    private DrinksMenu(String name, Context context) {
+    public DrinksMenu(String name, Context context) {
         this();
+        this.createNewIdIfNull(id);
         this.name = name;
         this.items = new ArrayList<>();
         this.backGround = BitmapFactory.decodeResource(context.getResources(), R.drawable.png_background);
@@ -79,9 +78,9 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     }
 
     @TestOnly
-    public DrinksMenu(String name, DrinksMenuItem... items) {
+    public DrinksMenu(String name, List<DrinksMenuItem> items) {
         this.name = name;
-        this.items = new ArrayList<>(Arrays.asList(items));
+        this.items = new ArrayList<>(items);
         this.backGround = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888, true);
         this.width = 1920;
         this.height = 1080;
@@ -89,9 +88,9 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     }
 
     @TestOnly
-    public DrinksMenu(String name, Context context, DrinksMenuItem... items) {
+    public DrinksMenu(String name, Context context, List<DrinksMenuItem> items) {
         this.name = name;
-        this.items = new ArrayList<>(Arrays.asList(items));
+        this.items = new ArrayList<>(items);
         this.backGround = BitmapFactory.decodeResource(context.getResources(), R.drawable.png_background);
         this.width = 1920;
         this.height = (int) (backGround.getHeight() * (1920f / backGround.getWidth())); // keep aspect ratio

@@ -28,7 +28,7 @@ public abstract class DrinksMenuItem implements Serializable, Cloneable, Id {
     private boolean positionLocked;
 
     public DrinksMenuItem() {
-        this.createNewId();
+        this.createNewIdIfNull(id);
         this.left = 0;
         this.top = 0;
         this.width = 200;
@@ -40,7 +40,7 @@ public abstract class DrinksMenuItem implements Serializable, Cloneable, Id {
     }
 
     public DrinksMenuItem(float left, float top, float width, float height) {
-        this.createNewId();
+        this.createNewIdIfNull(id);
         this.left = left;
         this.top = top;
         this.width = width;
@@ -52,7 +52,7 @@ public abstract class DrinksMenuItem implements Serializable, Cloneable, Id {
     }
 
     public DrinksMenuItem(String name) {
-        this.createNewId();
+        this.createNewIdIfNull(id);
         this.left = 0;
         this.top = 0;
         this.width = 200;

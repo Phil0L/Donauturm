@@ -93,8 +93,9 @@ public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
                         gsonData.set(l.substring(5));
                     }
                 });
-                if (gsonData.get() == null) continue;
-                DrinksMenuCloud drinksMenuCloud = DrinksMenuCloud.deserializer().fromJson(gsonData.get(), DrinksMenuCloud.class);
+                String jsonData = gsonData.get();
+                if (jsonData == null) continue;
+                DrinksMenuCloud drinksMenuCloud = DrinksMenuCloud.deserializer().fromJson(jsonData, DrinksMenuCloud.class);
                 if (drinksMenuCloud == null) continue;
                 drinksMenus.add(drinksMenuCloud);
                 if (cb != null)
