@@ -39,8 +39,8 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     protected int width;
     protected int height;
     protected String version;
-    protected Bitmap backGround;
 
+    protected transient Bitmap backGround;
     protected transient Bitmap menuImage;
 
     private transient boolean loading = false;
@@ -195,6 +195,7 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
             this.menuImage = bitmap;
             return;
         }
+        if (!testAspectRation(bitmap)) return;
         this.width = 1920;
         this.height = (int) (bitmap.getHeight() * (1920f / bitmap.getWidth())); // keep aspect ratio
         this.menuImage = Bitmap.createScaledBitmap(bitmap, width, height, true);
@@ -206,10 +207,19 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
             if (loading) setLoading(false);
             return;
         }
+        if (!testAspectRation(bitmap)) return;
         this.width = 1920;
         this.height = (int) (bitmap.getHeight() * (1920f / bitmap.getWidth())); // keep aspect ratio
         this.backGround = Bitmap.createScaledBitmap(bitmap, width, height, true);
         if (loading) setLoading(false);
+    }
+
+    private boolean testAspectRation(Bitmap bitmap) {
+        if (bitmap.getWidth() == 1920) return true;
+        if (bitmap.getHeight() > bitmap.getWidth()) return false;
+        int width = 1920;
+        int height = (int) (bitmap.getHeight() * (1920f / bitmap.getWidth()));
+        return width / height < 3;
     }
 
     public List<DrinkItem> getAllDrinks() {
@@ -301,12 +311,14 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
                 '}';
     }
 
+    @Deprecated
     public static Gson serializer(Context context) {
         return new GsonBuilder()
                 .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toLocalFile(context))
                 .create();
     }
 
+    @Deprecated
     public static Gson deserializer(Context context) {
         return new GsonBuilder()
                 .registerTypeAdapter(DrinksMenuItem.class, new PolymorphicDeserializer<DrinksMenuItem>())
@@ -315,15 +327,12 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     }
 
     public static Gson serializer() {
-        return new GsonBuilder()
-                .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
-                .create();
+        return new GsonBuilder().create();
     }
 
     public static Gson deserializer() {
         return new GsonBuilder()
                 .registerTypeAdapter(DrinksMenuItem.class, new PolymorphicDeserializer<DrinksMenuItem>())
-                .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
                 .create();
     }
 

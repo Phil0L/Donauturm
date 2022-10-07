@@ -1,5 +1,7 @@
 package com.pl.donauturm.drinksmenu.util.json;
 
+import static android.util.Base64.NO_WRAP;
+
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
@@ -28,8 +30,7 @@ import java.io.FileOutputStream;
 import java.lang.reflect.Type;
 import java.util.UUID;
 
-import static android.util.Base64.NO_WRAP;
-
+@Deprecated
 public final class BitmapDeSerializer implements JsonSerializer<Bitmap>, JsonDeserializer<Bitmap> {
 
     private boolean ignored = false;

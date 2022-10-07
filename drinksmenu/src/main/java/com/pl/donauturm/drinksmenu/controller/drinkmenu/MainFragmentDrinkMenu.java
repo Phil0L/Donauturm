@@ -57,7 +57,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         setHasOptionsMenu(true);
         binding = FragmentDrinksMenuBinding.inflate(inflater, container, false);
         drinksMenuAdapter = new DrinksMenuAdapter(getChildFragmentManager(), getLifecycle());
-        drinksMenuAdapter.setItems(new ArrayList<>());
+        drinksMenuAdapter.setItems(new ArrayList<>(DrinkMenuRegistry.getInstance().values()));
         binding.drinksMenuPager.setAdapter(drinksMenuAdapter);
         binding.drinksMenuPager.registerOnPageChangeCallback(new PageChangeListener());
         binding.swipeRefresh.setOnRefreshListener(this);
@@ -195,9 +195,10 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
             cloudItem.setVisible(true);
             addItem.setVisible(true);
             cloneItem.setVisible(true);
-            cloudItem.setIcon(currentFragment.getDrinksMenu().getCloudState().getIconResource());
+            if (currentFragment.getDrinksMenu() != null && currentFragment.getDrinksMenu().getCloudState() != null) {
+                cloudItem.setIcon(currentFragment.getDrinksMenu().getCloudState().getIconResource());
+            }
         }
-
     }
 
     @Override

@@ -6,19 +6,14 @@ import android.graphics.BitmapFactory;
 
 import androidx.annotation.NonNull;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
-import com.pl.donauturm.drinksmenu.util.json.BitmapDeSerializer;
-import com.pl.donauturm.drinksmenu.util.json.PolymorphicDeserializer;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 @SuppressWarnings("unused")
-public class DrinksMenuLocal extends DrinksMenu {
+public class DrinksMenuLocal extends DrinksMenu implements Serializable {
 
     public String cloudVersion;
     public String backgroundPath;
@@ -147,19 +142,6 @@ public class DrinksMenuLocal extends DrinksMenu {
 
     private String directory(String s) {
         return mainDir() + File.separator + friendly(s);
-    }
-
-    public static Gson serializer() {
-        return new GsonBuilder()
-                .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
-                .create();
-    }
-
-    public static Gson deserializer() {
-        return new GsonBuilder()
-                .registerTypeAdapter(DrinksMenuItem.class, new PolymorphicDeserializer<DrinksMenuItem>())
-                .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
-                .create();
     }
 
 

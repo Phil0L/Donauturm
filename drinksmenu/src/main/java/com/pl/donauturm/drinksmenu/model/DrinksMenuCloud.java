@@ -5,12 +5,7 @@ import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
-import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
-import com.pl.donauturm.drinksmenu.util.json.BitmapDeSerializer;
-import com.pl.donauturm.drinksmenu.util.json.PolymorphicDeserializer;
 import com.pl.donauturm.pisignageapi.requests.Request;
 
 import org.jetbrains.annotations.TestOnly;
@@ -19,9 +14,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 @SuppressWarnings("unused")
-public class DrinksMenuCloud extends DrinksMenu {
+public class DrinksMenuCloud extends DrinksMenu implements Serializable {
 
     public String backgroundUrl;
     public String imageUrl;
@@ -133,18 +129,5 @@ public class DrinksMenuCloud extends DrinksMenu {
                 .replace("Ö", "Oe")
                 .replace("Ü", "Ue")
                 .replace(" ", "_");
-    }
-
-    public static Gson serializer() {
-        return new GsonBuilder()
-                .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
-                .create();
-    }
-
-    public static Gson deserializer() {
-        return new GsonBuilder()
-                .registerTypeAdapter(DrinksMenuItem.class, new PolymorphicDeserializer<DrinksMenuItem>())
-                .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toNull())
-                .create();
     }
 }

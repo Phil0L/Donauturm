@@ -6,6 +6,7 @@ import static com.pl.donauturm.drinksmenu.model.DrinksMenu.serializer;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +24,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.pl.donauturm.drinksmenu.R;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DMEBitmapStorage;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
@@ -65,13 +67,10 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (savedInstanceState != null && drinksMenu == null) {
+            drinksMenu = (DrinksMenu) savedInstanceState.getSerializable("drinksMenu");
+        }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_drinks_menu_page, container, false);
     }
@@ -95,6 +94,17 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
             this.drinksMenu.onLoaded(this);
         } else
             this.mMenuView.post(() -> this.reloadImage(null));
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable("drinksMenu", drinksMenu);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
     public DrinksMenu getDrinksMenu() {
@@ -160,8 +170,9 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
         @Override
         public Intent createIntent(@NonNull Context context, DrinksMenu input) {
             Intent intent = new Intent(getActivity(), DrinksMenuEditorActivity.class);
-            String menuString = serializer(context).toJson(drinksMenu);
+            String menuString = serializer().toJson(drinksMenu);
             intent.putExtra("menu", menuString);
+            DMEBitmapStorage.getInstance().setBackground(drinksMenu.getBackGround());
             return intent;
         }
 
@@ -171,7 +182,11 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
             if (resultCode == DrinksMenuEditorActivity.RESULT_CANCELED || intent == null)
                 return drinksMenu;
             String menuString = intent.getStringExtra("menu");
-            return deserializer(getContext()).fromJson(menuString, DrinksMenu.class);
+            Bitmap background = DMEBitmapStorage.getInstance().getBackground();
+            DrinksMenu drinksMenu = deserializer().fromJson(menuString, DrinksMenu.class);
+            drinksMenu.provideBackGround(background);
+            DMEBitmapStorage.getInstance().clear();
+            return drinksMenu;
         }
     }, result -> {
         if (result != null) {

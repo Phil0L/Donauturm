@@ -11,6 +11,8 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -151,9 +153,11 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         this.binding = ActivityDrinksMenuEditorBinding.inflate(getLayoutInflater());
         super.setContentView(binding.getRoot());
 
+        this.drinksMenu = deserializer().fromJson(getIntent().getStringExtra("menu"), DrinksMenu.class);
+        this.drinksMenu.provideBackGround(DMEBitmapStorage.getInstance().getBackground());
+
         // action bar
         super.setSupportActionBar(binding.toolbar);
-        this.drinksMenu = deserializer(this).fromJson(getIntent().getStringExtra("menu"), DrinksMenu.class);
         if (getSupportActionBar() != null) {
             super.getSupportActionBar().setTitle(drinksMenu.getName());
             super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -394,8 +398,8 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
                             onSelect(newView);
                         });
                     });
-                    if (DrinkRegistry.getInstance().isEmpty()){
-                        if (api == null){
+                    if (DrinkRegistry.getInstance().isEmpty()) {
+                        if (api == null) {
                             Toast.makeText(this, "No drinks found", Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -419,8 +423,8 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
                             onSelect(newView);
                         });
                     });
-                    if (DrinkRegistry.getInstance().isEmpty()){
-                        if (api == null){
+                    if (DrinkRegistry.getInstance().isEmpty()) {
+                        if (api == null) {
                             Toast.makeText(this, "No drinks found", Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -467,19 +471,22 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
 
     @Override
     public void generateImage() {
+        Handler handler = new Handler(Looper.getMainLooper());
         updateInfo();
         binding.generatedMenu.setImageBitmap(drinksMenu.getBackGround());
         new DrinksMenuRenderer().renderAsyncFromView(binding.previewHolder, bm -> {
             drinksMenu.provideMenuImage(bm);
-            binding.generatedMenu.post(() -> binding.generatedMenu.setImageBitmap(bm));
+            if (drinksMenu.getMenuImage() != null)
+                handler.post(() -> binding.generatedMenu.setImageBitmap(drinksMenu.getMenuImage()));
         });
     }
 
     public void save() {
         drinksMenu.increaseVersion();
         Intent intent = new Intent();
-        String menuString = serializer(this).toJson(drinksMenu);
+        String menuString = serializer().toJson(drinksMenu);
         intent.putExtra("menu", menuString);
+        DMEBitmapStorage.getInstance().setBackground(drinksMenu.getBackGround());
         setResult(RESULT_OK, intent);
         finish();
 
