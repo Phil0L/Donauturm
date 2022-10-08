@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:ignore="MissingDefaultResource" >
+
+    <item
+        android:id="@+id/option_original"
+        android:title="Original"
+        android:checkable="true"
+        app:showAsAction="never" />
+
+</menu>
