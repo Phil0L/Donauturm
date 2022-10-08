@@ -2,6 +2,8 @@ package com.pl.donauturm.drinksmenu.controller.drinkmenu;
 
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,12 +26,14 @@ import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState.OnCloudStateChangedListener;
+import com.pl.donauturm.drinksmenu.controller.util.api.DMCredentials;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksMenuBinding;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
 import com.pl.donauturm.drinksmenu.util.MapObservable;
 import com.pl.donauturm.drinksmenu.view.dialogs.NewDrinksmenuDialog;
+import com.pl.donauturm.drinksmenu.view.dialogs.SetEditDMCDialog;
 import com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI;
 import com.pl.donauturm.pisignageapi.requests.Request;
 
@@ -50,20 +54,12 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     private FragmentDrinksMenuBinding binding;
     private DrinksMenuAdapter drinksMenuAdapter;
     private DrinksMenuAPI api;
+    private DMCredentials credentials;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
         binding = FragmentDrinksMenuBinding.inflate(inflater, container, false);
-        drinksMenuAdapter = new DrinksMenuAdapter(getChildFragmentManager(), getLifecycle());
-        drinksMenuAdapter.setItems(new ArrayList<>(DrinkMenuRegistry.getInstance().values()));
-        binding.drinksMenuPager.setAdapter(drinksMenuAdapter);
-        binding.drinksMenuPager.registerOnPageChangeCallback(new PageChangeListener());
-        binding.swipeRefresh.setOnRefreshListener(this);
-        DrinkMenuRegistry.getInstance().observe(this);
-        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(binding.drinksMenuTabs, binding.drinksMenuPager, this);
-        tabLayoutMediator.attach();
         return binding.getRoot();
     }
 
@@ -75,8 +71,31 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        load();
-        pull();
+        credentials = DMCredentials.getCredentials(requireContext());
+        if (credentials == null) {
+            SetEditDMCDialog.newInstance(requireContext()).setOnSavedListener((u, p) -> {
+                DMCredentials creds = new DMCredentials(u, p);
+                creds.save(requireContext());
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(() -> onViewCreated(view, savedInstanceState));
+            }).show(getParentFragmentManager(), "SetEditDMCDialog");
+            return;
+        }
+        setHasOptionsMenu(true);
+        drinksMenuAdapter = new DrinksMenuAdapter(getChildFragmentManager(), getLifecycle());
+        drinksMenuAdapter.setItems(new ArrayList<>(DrinkMenuRegistry.getInstance().values()));
+        binding.drinksMenuPager.setAdapter(drinksMenuAdapter);
+        binding.drinksMenuPager.registerOnPageChangeCallback(new PageChangeListener());
+        binding.swipeRefresh.setOnRefreshListener(this);
+        DrinkMenuRegistry.getInstance().observe(this);
+        TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(binding.drinksMenuTabs, binding.drinksMenuPager, this);
+        tabLayoutMediator.attach();
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(() -> {
+            load();
+            pull();
+        });
+
     }
 
     private void load() {
@@ -84,8 +103,8 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     }
 
     private void pull() {
-        Request.enableLazyAsyncLogin("philippletschka", "S4T2x9F@yEKYnA3");
-        api = DrinksMenuAPI.simple("philippletschka", "S4T2x9F@yEKYnA3", getContext());
+        Request.enableLazyAsyncLogin(credentials.getUsername(), credentials.getPassword());
+        api = DrinksMenuAPI.simple(credentials.getUsername(), credentials.getPassword(), getContext());
         DrinksMenuEditorActivity.provideApi(api);
 //        if (drinksMenuAdapter.getItems().isEmpty())
 //            drinksMenuAdapter.showALoadingFragment(true);

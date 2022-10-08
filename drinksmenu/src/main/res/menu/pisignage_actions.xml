@@ -6,8 +6,13 @@
 
     <item
         android:id="@+id/option_original"
-        android:title="Original"
+        android:title="Original view"
         android:checkable="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/edit_credentials"
+        android:title="Edit credentials"
         app:showAsAction="never" />
 
 </menu>

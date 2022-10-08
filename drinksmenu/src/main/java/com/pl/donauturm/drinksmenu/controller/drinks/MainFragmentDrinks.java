@@ -1,6 +1,8 @@
 package com.pl.donauturm.drinksmenu.controller.drinks;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.ArraySet;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +21,7 @@ import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinkMenuRegistry;
 import com.pl.donauturm.drinksmenu.controller.util.AreYouSure;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState;
+import com.pl.donauturm.drinksmenu.controller.util.api.DMCredentials;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksBinding;
 import com.pl.donauturm.drinksmenu.model.Drink;
@@ -26,6 +29,7 @@ import com.pl.donauturm.drinksmenu.util.MapObservable;
 import com.pl.donauturm.drinksmenu.util.popupbubble.BubblePopup;
 import com.pl.donauturm.drinksmenu.view.dialogs.AddEditDrinkDialog;
 import com.pl.donauturm.drinksmenu.view.dialogs.AutomaticMenuUpdateDialog;
+import com.pl.donauturm.drinksmenu.view.dialogs.SetEditDMCDialog;
 import com.pl.donauturm.drinksmenu.view.popup.LoadingCloudInfo;
 import com.pl.donauturm.drinksmenu.view.popup.NoConnectionInfo;
 import com.pl.donauturm.drinksmenu.view.popup.UpToDateInfo;
@@ -38,17 +42,34 @@ import java.util.Set;
 
 public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActionListener, MapObservable.MapObserver<String, Drink> {
 
+    private FragmentDrinksBinding binding;
     private DrinksAdapter adapter;
     private CloudState cloudState;
     private boolean inSync = false;
     private DrinksMenuAPI api;
     private final Set<String> editedDrinks = new ArraySet<>();
+    private DMCredentials credentials;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        binding = FragmentDrinksBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        credentials = DMCredentials.getCredentials(requireContext());
+        if (credentials == null) {
+            SetEditDMCDialog.newInstance(requireContext()).setOnSavedListener((u, p) -> {
+                DMCredentials creds = new DMCredentials(u, p);
+                creds.save(requireContext());
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(() -> onViewCreated(view, savedInstanceState));
+            }).show(getParentFragmentManager(), "SetEditDMCDialog");
+            return;
+        }
         setHasOptionsMenu(true);
-        FragmentDrinksBinding binding = FragmentDrinksBinding.inflate(inflater, container, false);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         binding.recyclerDrinks.setLayoutManager(layoutManager);
@@ -60,20 +81,16 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
             ((SimpleItemAnimator) binding.recyclerDrinks.getItemAnimator()).setSupportsChangeAnimations(false);
         }
         DrinkRegistry.getInstance().observe(this);
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        pull();
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(this::pull);
     }
 
     private void pull() {
         cloudState = CloudState.PULLING;
         requireActivity().invalidateOptionsMenu();
 
-        Request.enableLazyAsyncLogin("philippletschka", "S4T2x9F@yEKYnA3");
-        api = DrinksMenuAPI.simple("philippletschka", "S4T2x9F@yEKYnA3", getContext());
+        Request.enableLazyAsyncLogin(credentials.getUsername(), credentials.getPassword());
+        api = DrinksMenuAPI.simple(credentials.getUsername(), credentials.getPassword(), getContext());
 //        binding.swipeRefresh.setEnabled(false);
         api.asynchronous.getAllDrinks(list -> {
 //            binding.swipeRefresh.setEnabled(true);

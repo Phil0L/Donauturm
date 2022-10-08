@@ -3,6 +3,8 @@ package com.pl.donauturm.drinksmenu.controller.pisignage;
 import android.annotation.SuppressLint;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,7 +24,9 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.material.tabs.TabLayout;
 import com.pl.donauturm.drinksmenu.R;
+import com.pl.donauturm.drinksmenu.controller.util.api.DMCredentials;
 import com.pl.donauturm.drinksmenu.databinding.FragmentPisignageBinding;
+import com.pl.donauturm.drinksmenu.view.dialogs.SetEditDMCDialog;
 import com.pl.donauturm.pisignageapi.model.session.messages.LoginMessage;
 import com.pl.donauturm.pisignageapi.requests.SessionRequest;
 
@@ -36,6 +40,7 @@ public class MainFragmentPisignage extends Fragment implements TabLayout.OnTabSe
     private final String playlistsUrl = "https://philippletschka.pisignage.com/playlists";
     private final String groupsUrl = "https://philippletschka.pisignage.com/groups";
     private final String playersUrl = "https://philippletschka.pisignage.com/players";
+    private DMCredentials credentials;
     private String startUrl = assetsUrl;
     private boolean isLoaded = false;
     private boolean showOriginal = false;
@@ -51,6 +56,16 @@ public class MainFragmentPisignage extends Fragment implements TabLayout.OnTabSe
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        credentials = DMCredentials.getCredentials(requireContext());
+        if (credentials == null) {
+            SetEditDMCDialog.newInstance(requireContext()).setOnSavedListener((u, p) -> {
+                DMCredentials creds = new DMCredentials(u, p);
+                creds.save(requireContext());
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(() -> onViewCreated(view, savedInstanceState));
+            }).show(getParentFragmentManager(), "SetEditDMCDialog");
+            return;
+        }
         setHasOptionsMenu(true);
         if (savedInstanceState != null) {
             showOriginal = savedInstanceState.getBoolean("showOriginal");
@@ -85,7 +100,7 @@ public class MainFragmentPisignage extends Fragment implements TabLayout.OnTabSe
             ((AnimatedVectorDrawable) binding.loadingSpinner.getDrawable()).start();
         binding.webview.setWebViewClient(client);
         binding.webview.getSettings().setJavaScriptEnabled(true);
-        SessionRequest sessionRequest = new SessionRequest(new LoginMessage("philippletschka", "S4T2x9F@yEKYnA3"));
+        SessionRequest sessionRequest = new SessionRequest(null);
         binding.webview.postUrl(sessionRequest.uri(), "Replace this with the bodyPublisher()".getBytes());
     }
 
@@ -147,14 +162,21 @@ public class MainFragmentPisignage extends Fragment implements TabLayout.OnTabSe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getTitle().toString().equals("Original")) {
-            showOriginal = !item.isChecked();
-            item.setChecked(showOriginal);
-            if (isLoaded){
-                if (showOriginal) showUgliness();
-                else hideUgliness();
-            }
-            return true;
+        switch (item.getTitle().toString()) {
+            case "Original view":
+                showOriginal = !item.isChecked();
+                item.setChecked(showOriginal);
+                if (isLoaded) {
+                    if (showOriginal) showUgliness();
+                    else hideUgliness();
+                }
+                return true;
+            case "Edit credentials":
+                SetEditDMCDialog.newInstance(getContext()).setOnSavedListener((u, p) -> {
+                    DMCredentials credentials = new DMCredentials(u, p);
+                    credentials.save(requireContext());
+                }).show(getChildFragmentManager(), "SetEditDMCDialog");
+                return true;
         }
         return false;
     }
@@ -167,10 +189,9 @@ public class MainFragmentPisignage extends Fragment implements TabLayout.OnTabSe
     }
 
     private final WebViewClient client = new WebViewClient() {
-        private final SessionRequest sessionRequest = new SessionRequest(new LoginMessage("philippletschka", "S4T2x9F@yEKYnA3"));
-
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest wrr) {
+            SessionRequest sessionRequest = new SessionRequest(new LoginMessage(credentials.getUsername(), credentials.getPassword()));
             if (wrr.getUrl().toString().equals(sessionRequest.uri())) {
                 WebkitCookieManagerProxy wcmp = new WebkitCookieManagerProxy();
                 sessionRequest.requestResponse(wcmp);
@@ -181,6 +202,7 @@ public class MainFragmentPisignage extends Fragment implements TabLayout.OnTabSe
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
+            SessionRequest sessionRequest = new SessionRequest(new LoginMessage(credentials.getUsername(), credentials.getPassword()));
             if (url.equals(sessionRequest.uri()))
                 onSession();
             if (url.equals(startUrl) && !isLoaded)

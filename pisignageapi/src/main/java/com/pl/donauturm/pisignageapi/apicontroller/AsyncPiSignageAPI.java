@@ -34,6 +34,10 @@ public class AsyncPiSignageAPI {
             new SessionRequest(new LoginMessage(synchronous.username, synchronous.password)).requestAsync(rm -> cb.onData(null));
     }
 
+    public void testConnection(APICallback<Integer> cb) {
+        new SessionRequest(new LoginMessage(synchronous.username, synchronous.password)).testConnection(cb::onData);
+    }
+
     public boolean isLoggedIn() {
         return ConnectionManager.single().hasToken();
     }
