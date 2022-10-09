@@ -21,6 +21,7 @@ import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinkMenuRegistry;
 import com.pl.donauturm.drinksmenu.controller.util.AreYouSure;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState;
+import com.pl.donauturm.drinksmenu.controller.util.ListDifference;
 import com.pl.donauturm.drinksmenu.controller.util.api.DMCredentials;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksBinding;
@@ -37,8 +38,10 @@ import com.pl.donauturm.pisignageapi.requests.Request;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActionListener, MapObservable.MapObserver<String, Drink> {
 
@@ -69,23 +72,27 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
             }).show(getParentFragmentManager(), "SetEditDMCDialog");
             return;
         }
+
         setHasOptionsMenu(true);
+
+        binding.refresh.setOnRefreshListener(this::pullAgain);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         binding.recyclerDrinks.setLayoutManager(layoutManager);
-
         adapter = new DrinksAdapter(binding.recyclerDrinks, new ArrayList<>(DrinkRegistry.getInstance().values()));
         adapter.addOnActionListener(this);
         binding.recyclerDrinks.setAdapter(adapter);
         if (binding.recyclerDrinks.getItemAnimator() instanceof SimpleItemAnimator) {
             ((SimpleItemAnimator) binding.recyclerDrinks.getItemAnimator()).setSupportsChangeAnimations(false);
         }
+
         DrinkRegistry.getInstance().observe(this);
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(this::pull);
     }
 
     private void pull() {
+        binding.refresh.setRefreshing(true);
         cloudState = CloudState.PULLING;
         requireActivity().invalidateOptionsMenu();
 
@@ -94,27 +101,33 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
 //        binding.swipeRefresh.setEnabled(false);
         api.asynchronous.getAllDrinks(list -> {
 //            binding.swipeRefresh.setEnabled(true);
-            if (list != null) {
-                for (Drink drink : list) {
-                    DrinkRegistry.getInstance().put(drink);
-                }
+            if (list == null) return;
+            List<String> listBefore = new ArrayList<>(DrinkRegistry.getInstance().keySet());
+            List<String> listAfter = list.stream().map(Drink::getId).distinct().collect(Collectors.toList());
+            ListDifference<String> difference = new ListDifference<>(listBefore, listAfter);
+            for (String id : difference.getList1Standalone()) {
+                DrinkRegistry.getInstance().remove(id);
             }
+            for (Drink drink : list) {
+                DrinkRegistry.getInstance().put(drink);
+            }
+
             onFinishedPulling();
         });
     }
 
-    private void pullAgain(){
+    private void pullAgain() {
         pull();
-        // TODO: check for deleted (and added) items on the cloud
     }
 
-    private void onFinishedPulling(){
+    private void onFinishedPulling() {
+        binding.refresh.setRefreshing(false);
         cloudState = CloudState.UP_TO_DATE;
         inSync = true;
         requireActivity().invalidateOptionsMenu();
     }
 
-    private void onErrorPulling(){
+    private void onErrorPulling() {
         cloudState = CloudState.NO_CONNECTION;
         requireActivity().invalidateOptionsMenu();
         new NoConnectionInfo(getActivity(), v -> pullAgain()).show(requireActivity().findViewById(R.id.cloud));
@@ -203,7 +216,7 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
 
     private void prepareMenuUpdate() {
         if (editedDrinks.isEmpty()) return;
-        if (DrinkMenuRegistry.getInstance().isEmpty()){
+        if (DrinkMenuRegistry.getInstance().isEmpty()) {
             api.asynchronous.getAllDrinkMenusIteratedWithoutImages(dm -> DrinkMenuRegistry.getInstance().put(dm), list -> prepareMenuUpdate());
             return;
         }
@@ -225,7 +238,6 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
         addEditDrinkDialog.setOnSavedListener((n, d, p) -> {
             Drink drink = new Drink(n, d, p);
             DrinkRegistry.getInstance().put(drink);
-            adapter.addItem(drink);
             somethingChangedFromUser(drink);
         });
         addEditDrinkDialog.show(getChildFragmentManager(), "AddEditDrinkDialog");
@@ -236,7 +248,6 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
         AreYouSure areYouSure = AreYouSure.newInstance();
         areYouSure.setOnYesListener(() -> {
             DrinkRegistry.getInstance().remove(drink.getId());
-            adapter.removeItem(position);
             somethingChangedFromUser(drink);
         });
         areYouSure.show(getChildFragmentManager(), "AreYouSure");
@@ -253,7 +264,6 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
                 actual.setPrice(p);
                 DrinkRegistry.getInstance().replace(actual);
             }
-            adapter.updateItem(drink, position);
             somethingChangedFromUser(drink);
         });
         addEditDrinkDialog.show(getChildFragmentManager(), "AddEditDrinkDialog");
@@ -266,7 +276,6 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
             actual.setHidden(!drink.isHidden());
             DrinkRegistry.getInstance().replace(actual);
         }
-        adapter.updateItem(drink, position);
         somethingChangedFromUser(drink);
     }
 
@@ -277,7 +286,6 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
             actual.setCrossedOut(!drink.isCrossedOut());
             DrinkRegistry.getInstance().replace(actual);
         }
-        adapter.updateItem(drink, position);
         somethingChangedFromUser(drink);
     }
 
