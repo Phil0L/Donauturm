@@ -150,6 +150,7 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
             DrinksMenuLocal local = new DrinksMenuLocal(getDrinksMenu());
             local.setCloudVersion(getDrinksMenu().getVersion());
             LocalDrinksMenuManager.saveLocalSaveAsync(getContext(), local);
+            DrinkMenuRegistry.getInstance().put(local);
         });
     }
 
@@ -191,9 +192,10 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
     }, result -> {
         if (result != null) {
             mMenuView.post(() -> {
-                DrinkMenuRegistry.getInstance().put(result.getName(), result);
+                DrinksMenuLocal dmLocal = new DrinksMenuLocal(result);
+                DrinkMenuRegistry.getInstance().put(result.getName(), dmLocal);
                 LocalDrinksMenuManager.saveLocalSaveAsync(getContext(), result);
-                drinksMenu = result;
+                drinksMenu = dmLocal;
                 drinksMenu.setCloudState(CloudState.READY_FOR_PUSH);
                 drinksMenu.provideBackGround(drinksMenu.getBackGround()); //hack to set loading to false
                 reloadImage(null);

@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
+import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuLocal;
 
 import java.io.File;
@@ -57,7 +58,7 @@ public class LocalDrinksMenuManager {
 
                 // add the menu to the list
                 LOCAL_DRINKS_MENU_FILES.add(dm.getName());
-                DrinkMenuRegistry.getInstance().put(dm.getName(), dm);
+                DrinkMenuRegistry.getInstance().put(dm);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -102,7 +103,7 @@ public class LocalDrinksMenuManager {
                     // add the menu to the list
                     new Handler(Looper.getMainLooper()).post(() -> {
                         LOCAL_DRINKS_MENU_FILES.add(dm.getName());
-                        DrinkMenuRegistry.getInstance().put(dm.getName(), dm);
+                        DrinkMenuRegistry.getInstance().put(dm);
                     });
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -143,7 +144,7 @@ public class LocalDrinksMenuManager {
 
             // add the menu to the list
             LOCAL_DRINKS_MENU_FILES.add(dm.getName());
-            DrinkMenuRegistry.getInstance().put(dm.getName(), dm);
+            DrinkMenuRegistry.getInstance().put(dm);
         } catch (IOException e) {
             e.printStackTrace();
             dmDirFile.delete();
@@ -184,17 +185,36 @@ public class LocalDrinksMenuManager {
         return dmDirFile.exists();
     }
 
-    public static void saveLocalSave(Context context, DrinksMenu drinksMenu) {
-        if (context == null || drinksMenu == null) return;
+    public static DrinksMenuLocal saveLocalSave(Context context, DrinksMenu drinksMenu) {
+        if (context == null || drinksMenu == null) return null;
         if (drinksMenu instanceof DrinksMenuLocal) {
             ((DrinksMenuLocal) drinksMenu).save(context);
-            return;
+            return (DrinksMenuLocal) drinksMenu;
         }
-        new DrinksMenuLocal(drinksMenu).save(context);
+        if (drinksMenu instanceof DrinksMenuCloud) {
+            DrinksMenuLocal drinksMenuLocal = new DrinksMenuLocal(drinksMenu);
+            drinksMenuLocal.setCloudVersion(drinksMenu.getVersion());
+            drinksMenuLocal.save(context);
+            return drinksMenuLocal;
+        }
+        DrinksMenuLocal drinksMenuLocal = new DrinksMenuLocal(drinksMenu);
+        drinksMenuLocal.save(context);
+        return drinksMenuLocal;
     }
 
-    public static void saveLocalSaveAsync(Context context, DrinksMenu drinksMenu) {
-        new Thread(() -> saveLocalSave(context, drinksMenu)).start();
+    public static DrinksMenuLocal saveLocalSaveAsync(Context context, DrinksMenu drinksMenu) {
+        if (context == null || drinksMenu == null) return null;
+        DrinksMenuLocal drinksMenuLocal;
+        if (drinksMenu instanceof DrinksMenuLocal) {
+            drinksMenuLocal = (DrinksMenuLocal) drinksMenu;
+        }else if (drinksMenu instanceof DrinksMenuCloud) {
+            drinksMenuLocal = new DrinksMenuLocal(drinksMenu);
+            drinksMenuLocal.setCloudVersion(drinksMenu.getVersion());
+        }else {
+            drinksMenuLocal = new DrinksMenuLocal(drinksMenu);
+        }
+        new Thread(() -> saveLocalSave(context, drinksMenuLocal)).start();
+        return drinksMenuLocal;
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

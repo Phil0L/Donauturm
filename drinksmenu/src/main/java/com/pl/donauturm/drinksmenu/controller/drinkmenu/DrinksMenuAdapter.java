@@ -120,7 +120,7 @@ public class DrinksMenuAdapter extends FragmentStateAdapter {
         DrinksMenu item = items.get(position);
         if (item == null)
             return null;
-        DrinksMenuFragment drinksMenuFragment = DrinksMenuFragment.newInstance(items.get(position));
+        DrinksMenuFragment drinksMenuFragment = DrinksMenuFragment.newInstance(item);
         fragmentCache.put(position, drinksMenuFragment);
         return drinksMenuFragment;
     }

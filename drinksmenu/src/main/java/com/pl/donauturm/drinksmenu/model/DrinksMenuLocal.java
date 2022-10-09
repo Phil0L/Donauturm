@@ -40,6 +40,8 @@ public class DrinksMenuLocal extends DrinksMenu implements Serializable {
     }
 
     public void setCloudVersion(String cloudVersion) {
+        if (cloudVersion == null)
+            return;
         this.cloudVersion = cloudVersion;
     }
 
@@ -100,8 +102,8 @@ public class DrinksMenuLocal extends DrinksMenu implements Serializable {
      * @return true if own cloud version is greater, false if other cloud version is greater or equal
      */
     public boolean hasGreaterCloudVersionThan(String other) {
-        if (cloudVersion == null || cloudVersion.isEmpty()) return true;
-        if (other == null || other.isEmpty()) return false;
+        if (cloudVersion == null || cloudVersion.isEmpty()) return false;
+        if (other == null || other.isEmpty()) return true;
         String[] self = cloudVersion.split("\\.");
         String[] some = other.split("\\.");
         if (Integer.parseInt(self[0]) > Integer.parseInt(some[0])) return true;
