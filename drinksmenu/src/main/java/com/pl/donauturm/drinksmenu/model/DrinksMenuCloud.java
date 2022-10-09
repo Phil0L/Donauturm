@@ -104,7 +104,11 @@ public class DrinksMenuCloud extends DrinksMenu implements Serializable {
         uploadBackGround(context);
         File f = bitmapToFile(bitmap, context, friendly(name) + ".png");
         api.uploadAsset(f).withLabels("generated", "drinksmenu", "data:" + serializer().toJson(this)).upload();
+    }
 
+    public void delete() {
+        api.deleteAsset(friendly(name) + "Background.png");
+        api.deleteAsset(friendly(name) + ".png");
     }
 
     public void provideApi(DrinksMenuAPI api) {

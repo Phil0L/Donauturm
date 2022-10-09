@@ -24,8 +24,10 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.pl.donauturm.drinksmenu.R;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
+import com.pl.donauturm.drinksmenu.controller.util.AreYouSure;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState.OnCloudStateChangedListener;
+import com.pl.donauturm.drinksmenu.controller.util.ListDifference;
 import com.pl.donauturm.drinksmenu.controller.util.api.DMCredentials;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksMenuBinding;
@@ -40,7 +42,9 @@ import com.pl.donauturm.pisignageapi.requests.Request;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 //TODO: some todos: editor:
 // change background
@@ -104,16 +108,20 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
 
     private void pull() {
         Request.enableLazyAsyncLogin(credentials.getUsername(), credentials.getPassword());
-        api = DrinksMenuAPI.simple(credentials.getUsername(), credentials.getPassword(), getContext());
+        if (api == null)
+            api = DrinksMenuAPI.simple(credentials.getUsername(), credentials.getPassword(), getContext());
         DrinksMenuEditorActivity.provideApi(api);
-//        if (drinksMenuAdapter.getItems().isEmpty())
-//            drinksMenuAdapter.showALoadingFragment(true);
         binding.swipeRefresh.setEnabled(false);
+        List<String> listBefore = new ArrayList<>(DrinkMenuRegistry.getInstance().keySet());
         api.asynchronous.getAllDrinkMenusIteratedWithoutImages(this, list -> {
-//            drinksMenuAdapter.showALoadingFragment(false);
+            List<String> listAfter = list.stream().map(DrinksMenu::getId).distinct().collect(Collectors.toList());
+            ListDifference<String> difference = new ListDifference<>(listBefore, listAfter);
+            for (String id : difference.getList1Standalone()) {
+                DrinkMenuRegistry.getInstance().remove(id);
+            }
             binding.swipeRefresh.setEnabled(true);
+            binding.swipeRefresh.setRefreshing(false);
         });
-        // TODO: check for deleted (and added) items on the cloud
     }
 
     private void pullAgain() {
@@ -122,9 +130,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
             if (dm.getCloudState().isAbleToOverwrite())
                 dm.setCloudState(CloudState.PULLING);
         });
-        api.asynchronous.getAllDrinkMenusIterated(this, list -> {
-            binding.swipeRefresh.setRefreshing(false);
-        });
+        pull();
     }
 
     @Override
@@ -145,7 +151,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     public void onData(DrinksMenu data) {
         if (data == null) return;
         DrinksMenu drinksMenu = DrinkMenuRegistry.getInstance().put(data.getName(), data);
-        if (drinksMenu == data && drinksMenu instanceof DrinksMenuCloud) {
+        if (drinksMenu instanceof DrinksMenuCloud) {
             DrinksMenuCloud menu = ((DrinksMenuCloud) drinksMenu);
             // drinks menu is accepted
             if (drinksMenu.getBackGround() == null) {
@@ -156,13 +162,10 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
                     drinksMenu.setCloudState(CloudState.UP_TO_DATE);
                     requireActivity().invalidateOptionsMenu();
                 });
-            }else {
+            } else {
                 drinksMenu.setCloudState(CloudState.UP_TO_DATE);
                 requireActivity().invalidateOptionsMenu();
             }
-        }else if (drinksMenu != null){
-            drinksMenu.setCloudState(CloudState.UP_TO_DATE);
-            requireActivity().invalidateOptionsMenu();
         }
     }
 
@@ -170,7 +173,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     public void onAddition(int index, String source, DrinksMenu element, Map<String, DrinksMenu> map) {
         element.onCloudStateChanged(this);
         drinksMenuAdapter.addItem(element);
-        if (element.isLoading()){
+        if (element.isLoading()) {
             element.onLoaded(el -> LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), element));
             return;
         }
@@ -187,7 +190,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     public void onUpdate(int index, String source, DrinksMenu oldElement, DrinksMenu newElement, Map<String, DrinksMenu> map) {
         newElement.onCloudStateChanged(this);
         drinksMenuAdapter.updateItemAt(index, newElement);
-        if (newElement.isLoading()){
+        if (newElement.isLoading()) {
             newElement.onLoaded(el -> LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), newElement));
             return;
         }
@@ -205,15 +208,18 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         MenuItem cloudItem = menu.findItem(R.id.cloud);
         MenuItem addItem = menu.findItem(R.id.add_menu);
         MenuItem cloneItem = menu.findItem(R.id.clone_menu);
+        MenuItem deleteItem = menu.findItem(R.id.delete_menu);
         DrinksMenuFragment currentFragment = getCurrentDrinksMenuFragment();
         if (currentFragment == null) {
             cloudItem.setVisible(false);
             addItem.setVisible(true);
             cloneItem.setVisible(false);
+            deleteItem.setVisible(false);
         } else {
             cloudItem.setVisible(true);
             addItem.setVisible(true);
             cloneItem.setVisible(true);
+            deleteItem.setVisible(true);
             if (currentFragment.getDrinksMenu() != null && currentFragment.getDrinksMenu().getCloudState() != null) {
                 cloudItem.setIcon(currentFragment.getDrinksMenu().getCloudState().getIconResource());
             }
@@ -237,9 +243,25 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
             case "Clone drink menu":
                 cloneClicked();
                 return true;
+            case "Delete drink menu":
+                deleteClicked();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void deleteClicked() {
+        AreYouSure areYouSure = new AreYouSure();
+        areYouSure.setOnYesListener(() -> {
+            DrinksMenuFragment currentFragment = getCurrentDrinksMenuFragment();
+            if (currentFragment == null) return;
+            DrinksMenu drinksMenu = currentFragment.getDrinksMenu();
+            if (drinksMenu == null) return;
+            DrinkMenuRegistry.getInstance().remove(drinksMenu.getId());
+            api.asynchronous.deleteDrinkMenu(drinksMenu, null);
+        });
+        areYouSure.show(getChildFragmentManager(), "AreYouSure");
     }
 
     @Override
@@ -249,11 +271,9 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     }
 
     private void cloudClicked(View v) {
-        int pageIndex = binding.drinksMenuPager.getCurrentItem();
-        Fragment fragment = drinksMenuAdapter.getFragmentAt(pageIndex);
-        if (fragment instanceof DrinksMenuFragment) {
-            ((DrinksMenuFragment) fragment).cloudClicked(api, v);
-        }
+        DrinksMenuFragment currentFragment = getCurrentDrinksMenuFragment();
+        if (currentFragment == null) return;
+        currentFragment.cloudClicked(api, v);
     }
 
     private void addClicked() {
@@ -268,10 +288,9 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     }
 
     private void cloneClicked() {
-        int pageIndex = binding.drinksMenuPager.getCurrentItem();
-        Fragment fragment = drinksMenuAdapter.getFragmentAt(pageIndex);
-        if (!(fragment instanceof DrinksMenuFragment)) return;
-        DrinksMenu cDrinksMenu = ((DrinksMenuFragment) fragment).getDrinksMenu();
+        DrinksMenuFragment currentFragment = getCurrentDrinksMenuFragment();
+        if (currentFragment == null) return;
+        DrinksMenu cDrinksMenu = currentFragment.getDrinksMenu();
         NewDrinksmenuDialog dialog = NewDrinksmenuDialog.newInstance();
         dialog.setOnTextSelectedListener(name -> {
             DrinksMenu drinksMenu = cDrinksMenu.clone(name);

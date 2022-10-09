@@ -138,7 +138,16 @@ public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
                 if (cb != null) cb.onData(null);
             });
         }).start();
+    }
 
+    public void deleteDrinkMenu(DrinksMenu drinksMenu, AsyncPiSignageAPI.APICallback<Void> cb) {
+        new Thread(() -> {
+            DrinksMenuCloud cloudDrinksMenu = new DrinksMenuCloud(drinksMenu, synchronous);
+            cloudDrinksMenu.delete();
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (cb != null) cb.onData(null);
+            });
+        }).start();
     }
 
     public void getAllDrinks(APICallback<List<Drink>> cb) {

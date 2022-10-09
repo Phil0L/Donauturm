@@ -3,18 +3,27 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/delete_menu"
+        android:icon="@drawable/ic_delete"
+        android:orderInCategory="2"
+        android:title="Delete drink menu"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/clone_menu"
         android:icon="@drawable/ic_copy"
+        android:orderInCategory="3"
         android:title="Clone drink menu"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/add_menu"
         android:icon="@drawable/ic_add"
+        android:orderInCategory="1"
         android:title="Add drink menu"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/cloud"
         android:icon="@drawable/ic_cloud"
+        android:orderInCategory="10"
         android:title="Cloud"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

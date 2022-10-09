@@ -101,7 +101,10 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
 //        binding.swipeRefresh.setEnabled(false);
         api.asynchronous.getAllDrinks(list -> {
 //            binding.swipeRefresh.setEnabled(true);
-            if (list == null) return;
+            if (list == null) {
+                onFinishedPulling();
+                return;
+            }
             List<String> listBefore = new ArrayList<>(DrinkRegistry.getInstance().keySet());
             List<String> listAfter = list.stream().map(Drink::getId).distinct().collect(Collectors.toList());
             ListDifference<String> difference = new ListDifference<>(listBefore, listAfter);
