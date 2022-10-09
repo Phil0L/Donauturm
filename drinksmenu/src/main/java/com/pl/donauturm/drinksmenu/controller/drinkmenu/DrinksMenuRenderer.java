@@ -3,7 +3,6 @@ package com.pl.donauturm.drinksmenu.controller.drinkmenu;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
@@ -20,9 +19,9 @@ import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.Dri
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.ShapeGenerator;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator.TextGenerator;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
-import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
-import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
+import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.content.ShapeItem;
 import com.pl.donauturm.drinksmenu.model.content.TextItem;
 import com.pl.donauturm.drinksmenu.util.DrinksMenuCanvas;
@@ -32,29 +31,7 @@ import com.pl.donauturm.drinksmenu.view.views.DrinkView;
 import com.pl.donauturm.drinksmenu.view.views.ShapeView;
 import com.pl.donauturm.drinksmenu.view.views.TextView;
 
-
 public class DrinksMenuRenderer {
-
-    @Deprecated
-    public Bitmap renderSyncFromMenu(Context context, @NonNull DrinksMenu menu) {
-        FrameLayout rootLayout = ((AppCompatActivity) context).findViewById(android.R.id.content);
-        PreviewHolder frameLayout = new PreviewHolder(context);
-        frameLayout.setLayoutParams(new ConstraintLayout.LayoutParams(menu.getWidth(), menu.getHeight()));
-        frameLayout.forceLayout();
-        frameLayout.requestLayout();
-        frameLayout.invalidate();
-        rootLayout.addView(frameLayout, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        ImageView bg = addBackground(frameLayout, menu.getBackGround());
-        addContent(frameLayout, menu, bg);
-        frameLayout.forceLayout();
-        frameLayout.requestLayout();
-        frameLayout.invalidate();
-        frameLayout.setVisibility(View.VISIBLE);
-        Bitmap image = renderFromView(frameLayout, menu.getWidth(), menu.getHeight());
-
-        menu.provideMenuImage(image);
-        return image;
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     public void renderFromMenu(Context context, @NonNull DrinksMenu menu, Rendered rendered) {
@@ -93,24 +70,10 @@ public class DrinksMenuRenderer {
         });
     }
 
-    @SuppressWarnings("unused")
-    public void renderAsyncFromMenu(Context context, @NonNull DrinksMenu menu, Rendered rendered) {
-        //TODO implement async
-    }
-
     public Bitmap renderFromView(@NonNull PreviewHolder frame) {
         Bitmap b = Bitmap.createBitmap(frame.getWidth(), frame.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas c = new DrinksMenuCanvas(b);
+        DrinksMenuCanvas c = new DrinksMenuCanvas(b);
         frame.draw(c);
-        return b;
-    }
-
-    @Deprecated
-    public Bitmap renderFromView(@NonNull PreviewHolder frame, int width, int height) {
-        Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        frame.drawNoGuides(c);
-        c.save();
         return b;
     }
 

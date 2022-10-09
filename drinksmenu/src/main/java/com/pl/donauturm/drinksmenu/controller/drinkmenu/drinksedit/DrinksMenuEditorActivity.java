@@ -5,6 +5,7 @@ import static com.pl.donauturm.drinksmenu.model.DrinksMenu.serializer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -581,6 +582,8 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         }
 
         private ValueScale(Context context) {
+            if (context instanceof ContextWrapper)
+                context = ((ContextWrapper) context).getBaseContext();
             if (context instanceof DrinksMenuEditorActivity)
                 this.context = (DrinksMenuEditorActivity) context;
             else this.context = null;
