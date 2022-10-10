@@ -111,7 +111,8 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         if (api == null)
             api = DrinksMenuAPI.simple(credentials.getUsername(), credentials.getPassword(), getContext());
         DrinksMenuEditorActivity.provideApi(api);
-        binding.swipeRefresh.setEnabled(false);
+        if (!binding.swipeRefresh.isRefreshing())
+            binding.swipeRefresh.setEnabled(false);
         List<String> listBefore = new ArrayList<>(DrinkMenuRegistry.getInstance().keySet());
         api.asynchronous.getAllDrinkMenusIteratedWithoutImages(this, list -> {
             List<String> listAfter = list.stream().map(DrinksMenu::getId).distinct().collect(Collectors.toList());

@@ -42,8 +42,8 @@ public class DrinksMenuCloud extends DrinksMenu implements Serializable {
         super.version = drinksMenu.version;
         super.backGround = drinksMenu.backGround;
         super.menuImage = drinksMenu.menuImage;
-        this.backgroundUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + api.getUsername() + "/" + friendly(drinksMenu.name) + "Background.png";
-        this.imageUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + api.getUsername() + "/" + friendly(name) + ".png";
+        this.backgroundUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + api.getUsername() + "/" + friendly(drinksMenu.id) + "bg.png";
+        this.imageUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + api.getUsername() + "/" + friendly(id) + ".png";
     }
 
     @TestOnly
@@ -58,8 +58,8 @@ public class DrinksMenuCloud extends DrinksMenu implements Serializable {
         super.version = drinksMenu.version;
         super.backGround = drinksMenu.backGround;
         super.menuImage = drinksMenu.menuImage;
-        this.backgroundUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + username + "/" + friendly(drinksMenu.name) + "Background.png";
-        this.imageUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + username + "/" + friendly(name) + ".png";
+        this.backgroundUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + username + "/" + friendly(drinksMenu.id) + "bg.png";
+        this.imageUrl = Request.PROTOCOL + "://" + Request.HOST + "/media/" + username + "/" + friendly(id) + ".png";
     }
 
     public String getBackgroundUrl() {
@@ -94,21 +94,21 @@ public class DrinksMenuCloud extends DrinksMenu implements Serializable {
     }
 
     public void uploadBackGround(Context context) {
-        File f = bitmapToFile(original.getBackGround(), context, friendly(name) + "Background.png");
-        api.uploadAsset(f).withLabels("generated", "background", "belongs to: " + name).upload();
+        File f = bitmapToFile(original.getBackGround(), context, friendly(id) + "bg.png");
+        api.uploadAsset(f).withLabels("generated", "background").upload();
     }
 
     public void upload(Context context) {
         Bitmap bitmap = original.getMenuImage();
         if (bitmap == null) return;
         uploadBackGround(context);
-        File f = bitmapToFile(bitmap, context, friendly(name) + ".png");
+        File f = bitmapToFile(bitmap, context, friendly(id) + ".png");
         api.uploadAsset(f).withLabels("generated", "drinksmenu", "data:" + serializer().toJson(this)).upload();
     }
 
     public void delete() {
-        api.deleteAsset(friendly(name) + "Background.png");
-        api.deleteAsset(friendly(name) + ".png");
+        api.deleteAsset(friendly(id) + "bg.png");
+        api.deleteAsset(friendly(id) + ".png");
     }
 
     public void provideApi(DrinksMenuAPI api) {
