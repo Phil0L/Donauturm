@@ -3,4 +3,4 @@ rootProject.name = "Donauturm"
 include ':drinksmenu'
 include ':fonts'
 include ':pisignageapi'
-include ':app:dtwhatsapp'
+include ':dtwhatsapp'
