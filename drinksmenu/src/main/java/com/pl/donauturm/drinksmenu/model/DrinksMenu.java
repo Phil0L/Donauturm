@@ -116,6 +116,10 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         this.name = name;
     }
 
+    public void rename(String newName){
+        setName(newName);
+    }
+
     public List<DrinksMenuItem> getItems() {
         return items;
     }
@@ -202,6 +206,7 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     }
 
     public void provideBackGround(Bitmap bitmap) {
+        if (bitmap == null) return;
         if (bitmap.getWidth() == 1920) {
             this.backGround = bitmap;
             if (loading) setLoading(false);

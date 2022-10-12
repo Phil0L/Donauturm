@@ -56,6 +56,7 @@ import com.pl.donauturm.drinksmenu.util.KeyboardListener;
 import com.pl.donauturm.drinksmenu.view.dialogs.AddDrinkDialog;
 import com.pl.donauturm.drinksmenu.view.dialogs.AddDrinkGroupDialog;
 import com.pl.donauturm.drinksmenu.view.dialogs.AddTextDialog;
+import com.pl.donauturm.drinksmenu.view.dialogs.EditNameDialog;
 import com.pl.donauturm.drinksmenu.view.dialogs.ItemSelectorDialog;
 import com.pl.donauturm.drinksmenu.view.views.DrinkGroupView;
 import com.pl.donauturm.drinksmenu.view.views.DrinkView;
@@ -75,6 +76,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
     private static DrinksMenuAPI api;
 
     private DrinksMenu drinksMenu;
+    private String drinksMenuName;
     private ItemView selectedView;
     private BottomSheetBehavior<?> sheetBehavior;
     private ItemEventHandler eventHandler;
@@ -156,11 +158,12 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
 
         this.drinksMenu = deserializer().fromJson(getIntent().getStringExtra("menu"), DrinksMenu.class);
         this.drinksMenu.provideBackGround(DMEBitmapStorage.getInstance().getBackground());
+        this.drinksMenuName = drinksMenu.getName();
 
         // action bar
         super.setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) {
-            super.getSupportActionBar().setTitle(drinksMenu.getName());
+            super.getSupportActionBar().setTitle(drinksMenuName);
             super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             super.getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -370,7 +373,12 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
     }
 
     private void onChangeNameClicked() {
-
+        EditNameDialog editNameDialog = EditNameDialog.newInstance(drinksMenuName);
+        editNameDialog.setListener(name -> {
+            drinksMenuName = name;
+            updateInfo();
+        });
+        editNameDialog.show(getSupportFragmentManager(), "EditNameDialog");
     }
 
     @SuppressLint("DefaultLocale")
@@ -381,6 +389,15 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         size.setText(String.format("%s x %s", drinksMenu.getWidth(), drinksMenu.getHeight()));
         created.setText(String.format("Version %s", drinksMenu.getVersion()));
         elements.setText(String.format("Elements: %d", drinksMenu.getItems().size()));
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(drinksMenuName);
+            if (!drinksMenu.getName().equals(drinksMenuName)) {
+                getSupportActionBar().setSubtitle("(" + drinksMenu.getName() + ")");
+            } else {
+                getSupportActionBar().setSubtitle(null);
+            }
+
+        }
     }
 
     private boolean onAddItemClicked() {
@@ -487,6 +504,10 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         Intent intent = new Intent();
         String menuString = serializer().toJson(drinksMenu);
         intent.putExtra("menu", menuString);
+        intent.putExtra("isNameChanged", !drinksMenuName.equals(drinksMenu.getName()));
+        if (!drinksMenuName.equals(drinksMenu.getName())) {
+            intent.putExtra("newName", drinksMenuName);
+        }
         DMEBitmapStorage.getInstance().setBackground(drinksMenu.getBackGround());
         setResult(RESULT_OK, intent);
         finish();

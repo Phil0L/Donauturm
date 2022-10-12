@@ -183,8 +183,13 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
             if (resultCode == DrinksMenuEditorActivity.RESULT_CANCELED || intent == null)
                 return drinksMenu;
             String menuString = intent.getStringExtra("menu");
+            boolean isNameChanged = intent.getBooleanExtra("isNameChanged", false);
             Bitmap background = DMEBitmapStorage.getInstance().getBackground();
             DrinksMenu drinksMenu = deserializer().fromJson(menuString, DrinksMenu.class);
+            if (isNameChanged) {
+                String newName = intent.getStringExtra("newName");
+                drinksMenu.rename(newName);
+            }
             drinksMenu.provideBackGround(background);
             DMEBitmapStorage.getInstance().clear();
             return drinksMenu;
