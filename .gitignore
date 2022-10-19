@@ -27,3 +27,8 @@
 /fonts/src/androidTest/
 /fonts/src/test/
 
+/dtwhatsapp/consumer-rules.pro
+/dtwhatsapp/proguard-rules.pro
+/dtwhatsapp/src/androidTest/
+/dtwhatsapp/src/test/
+
