@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">DT WhatsApp</string>
+    <string name="app_name" translatable="false">TurmsApp</string>
 
     <string name="appversion_semantic" translatable="false">1.7.3</string>
     <string name="versionInfoText" translatable="false">Thanks for updating!\nNew in version 1.7.3:\n&#8211;Use built-in tools for darkmode if supported\n&#8211;Fix punctuation, capitalization, app name, spelling (thanks @MicaelJarniac)\n&#8211;Add Indonesian Localization (thanks @the7thNightmare)\n&#8211;Add safety popup for logout action\n&#8211;Reorder hamburger menu\n&#8211;Fix view broken on tablets</string>
