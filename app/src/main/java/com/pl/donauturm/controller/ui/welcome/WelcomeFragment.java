@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +15,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.pl.donauturm.R;
+import com.pl.donauturm.calendar.CalendarCredentials;
+import com.pl.donauturm.calendar.CalenderDownloader;
 import com.pl.donauturm.controller.DonauturmActivity;
 import com.pl.donauturm.databinding.FragmentWelcomeBinding;
+
+import net.fortuna.ical4j.model.component.VEvent;
+
+import java.util.List;
 
 public class WelcomeFragment extends Fragment implements DrawerLayout.DrawerListener {
 
@@ -24,6 +32,9 @@ public class WelcomeFragment extends Fragment implements DrawerLayout.DrawerList
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentWelcomeBinding.inflate(inflater, container, false);
         binding.welcomeText.setText(getWelcomeText());
+        CalendarCredentials credentials = CalendarCredentials.getCredentials(requireContext());
+        if (credentials != null && credentials.getUsername() != null && credentials.getPassword() != null)
+            getVEvent(credentials.getUsername(), credentials.getPassword(), this::onVEventsLoaded);
         Activity activity = getActivity();
         if (activity instanceof DonauturmActivity) {
             DonauturmActivity donauturmActivity = (DonauturmActivity) activity;
@@ -44,6 +55,23 @@ public class WelcomeFragment extends Fragment implements DrawerLayout.DrawerList
         return getResources().getString(R.string.welcome_text_evening);
     }
 
+    private void getVEvent(String username, String password, CalenderDownloader.VEventProvider callback) {
+        new CalenderDownloader().tryGetAllAheadEvents(username, password, Calendar.getInstance().getTime(), callback);
+    }
+
+    private void onVEventsLoaded(List<VEvent> list){
+        if (list == null || list.isEmpty()) {
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (binding != null)
+                    binding.event.setError();
+            });
+            return;
+        }
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (binding != null)
+                binding.event.setVEvent(list.get(0));
+        });
+    }
 
     @Override
     public void onDestroyView() {

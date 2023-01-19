@@ -3,12 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/menu_home"
+        android:checkableBehavior="single">
+
         <item
             android:id="@+id/nav_welcome"
             android:icon="@drawable/ic_delete"
             android:title="@string/menu_welcome"
-            android:visible="false"/>
+            android:visible="false" />
+
+    </group>
+
+    <group
+        android:id="@+id/menu_calendar"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_calendar"
+            android:icon="@drawable/ic_calendar"
+            android:title="@string/menu_calendar" />
+
+    </group>
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/menu_drinkmenu">
+
         <item
             android:id="@+id/nav_drinksmenu"
             android:icon="@drawable/ic_menu"
@@ -23,5 +44,7 @@
             android:id="@+id/nav_pisignage"
             android:icon="@drawable/ic_web"
             android:title="@string/menu_pisignage" />
+
     </group>
+
 </menu>

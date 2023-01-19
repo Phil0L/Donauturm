@@ -11,6 +11,7 @@
     <string name="menu_drinksmenu">DrinkMenu</string>
     <string name="menu_welcome">Welcome</string>
     <string name="menu_drinks">Drinks</string>
+    <string name="menu_calendar">Calendar</string>
 
     // Lorem Ipsum
     <string name="lorem_ipsum_title">Lorem Ipsum"</string>
