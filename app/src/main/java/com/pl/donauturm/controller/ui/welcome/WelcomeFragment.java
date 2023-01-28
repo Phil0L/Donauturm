@@ -1,5 +1,7 @@
 package com.pl.donauturm.controller.ui.welcome;
 
+import static com.pl.donauturm.calendar.ui.calendar.MainFragmentCalendar.getReOccurrences;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.icu.util.Calendar;
@@ -17,12 +19,16 @@ import androidx.fragment.app.Fragment;
 import com.pl.donauturm.R;
 import com.pl.donauturm.calendar.CalendarCredentials;
 import com.pl.donauturm.calendar.CalenderDownloader;
+import com.pl.donauturm.calendar.ROVEvent;
 import com.pl.donauturm.controller.DonauturmActivity;
 import com.pl.donauturm.databinding.FragmentWelcomeBinding;
 
 import net.fortuna.ical4j.model.component.VEvent;
 
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WelcomeFragment extends Fragment implements DrawerLayout.DrawerListener {
 
@@ -56,7 +62,7 @@ public class WelcomeFragment extends Fragment implements DrawerLayout.DrawerList
     }
 
     private void getVEvent(String username, String password, CalenderDownloader.VEventProvider callback) {
-        new CalenderDownloader().tryGetAllAheadEvents(username, password, Calendar.getInstance().getTime(), callback);
+        new CalenderDownloader().tryGetAllEvents(username, password, callback);
     }
 
     private void onVEventsLoaded(List<VEvent> list){
@@ -67,9 +73,22 @@ public class WelcomeFragment extends Fragment implements DrawerLayout.DrawerList
             });
             return;
         }
+        Calendar calendar = Calendar.getInstance();
+        Date now = calendar.getTime();
+        List<VEvent> sortedEvents = list.stream().sorted(Comparator.comparing(VEvent::getStartDate)).collect(Collectors.toList());
+        VEvent nextScheduled = sortedEvents.stream().filter(ve -> ve.getStartDate().getDate().compareTo(now) > 0).findFirst().orElseGet(() -> sortedEvents.get(sortedEvents.size()-1));
+        calendar.add(Calendar.YEAR, 1);
+        Date inAYear = calendar.getTime();
+        List<ROVEvent> reOccurrences = getReOccurrences(list, inAYear);
+        if (!reOccurrences.isEmpty()){
+            reOccurrences = reOccurrences.stream().sorted(Comparator.comparing(ROVEvent::getOccurrenceStartDate)).collect(Collectors.toList());
+            if (nextScheduled.getStartDate().getDate().compareTo(reOccurrences.get(0).getOccurrenceStartDate()) < 0)
+                nextScheduled = reOccurrences.get(0);
+        }
+        VEvent finalNextScheduled = nextScheduled;
         new Handler(Looper.getMainLooper()).post(() -> {
             if (binding != null)
-                binding.event.setVEvent(list.get(0));
+                binding.event.setVEvent(finalNextScheduled);
         });
     }
 

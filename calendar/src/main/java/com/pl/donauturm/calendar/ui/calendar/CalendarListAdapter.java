@@ -24,7 +24,7 @@ public class CalendarListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private boolean isAtEnd = false;
     private boolean isAtStart = false;
 
-    private static final int DEFAULT_AMOUNT = 8;
+    private static final int DEFAULT_AMOUNT = 10;
     private static final int ADDING_AMOUNT = 3;
 
     @NonNull

@@ -16,12 +16,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pl.donauturm.calendar.CalendarCredentials;
 import com.pl.donauturm.calendar.CalenderDownloader;
+import com.pl.donauturm.calendar.ROVEvent;
 import com.pl.donauturm.calendar.databinding.FragmentCalendarBinding;
 import com.pl.donauturm.calendar.view.SetEditCalendarCredDialog;
 
+import net.fortuna.ical4j.model.DateTime;
+import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.PeriodList;
 import net.fortuna.ical4j.model.component.VEvent;
 
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,12 +66,26 @@ public class MainFragmentCalendar extends Fragment {
         this.getVEvent(this::calendarLoadComplete);
     }
 
+    private void getVEvent(CalenderDownloader.VEventProvider callback) {
+        new CalenderDownloader().tryGetAllEvents(credentials.getUsername(), credentials.getPassword(), callback);
+    }
+
     private void calendarLoadComplete(@Nullable List<VEvent> events){
         if (events == null || events.isEmpty()){
             return;
         }
-        List<VEvent> sortedEvents = events.stream().sorted(Comparator.comparing(VEvent::getStartDate)).collect(Collectors.toList());
-        Date now = Calendar.getInstance().getTime();
+        Calendar calendar = Calendar.getInstance();
+        Date now = calendar.getTime();
+        calendar.add(Calendar.YEAR, 1);
+        Date inAYear = calendar.getTime();
+        List<ROVEvent> reOccurrences = getReOccurrences(events, inAYear);
+        events.addAll(reOccurrences);
+        List<VEvent> sortedEvents = events.stream().sorted((ve1, ve2) -> {
+            if (ve1 instanceof ROVEvent && ve2 instanceof ROVEvent) return ((ROVEvent) ve1).getOccurrenceStartDate().compareTo(((ROVEvent) ve2).getOccurrenceStartDate());
+            if (ve1 instanceof ROVEvent) return ((ROVEvent) ve1).getOccurrenceStartDate().compareTo(ve2.getStartDate().getDate());
+            if (ve2 instanceof ROVEvent) return ve1.getStartDate().getDate().compareTo(((ROVEvent) ve2).getOccurrenceStartDate());
+            return ve1.getStartDate().compareTo(ve2.getStartDate());
+        }).collect(Collectors.toList());
         VEvent fistAhead = sortedEvents.stream().filter(ve -> ve.getStartDate().getDate().compareTo(now) > 0).findFirst().orElseGet(() -> sortedEvents.get(sortedEvents.size()-1));
         new Handler(Looper.getMainLooper()).post(() -> {
             this.binding.refresh.setRefreshing(false);
@@ -80,7 +98,31 @@ public class MainFragmentCalendar extends Fragment {
         });
     }
 
-    private void getVEvent(CalenderDownloader.VEventProvider callback) {
-        new CalenderDownloader().tryGetAllEvents(credentials.getUsername(), credentials.getPassword(), callback);
+    @NonNull
+    public static List<ROVEvent> getReOccurrences(List<VEvent> events, Date endDate){
+        List<ROVEvent> reOccurrences = new ArrayList<>();
+        for (VEvent event : events){
+            if (event.getProperty("Rrule") != null){
+                PeriodList periods = event.calculateRecurrenceSet(new Period(new DateTime(event.getStartDate().getDate()), new DateTime(endDate)));
+                for (Period period : periods){
+                    VEvent occurrence = tryGetOccurrence(event, period.getStart());
+                    if (occurrence != null){
+                        ROVEvent reOccurrence = new ROVEvent(event, period.getStart(), period.getEnd());
+                        if (!reOccurrences.contains(reOccurrence) && !new ROVEvent(event, event.getStartDate().getDate(), event.getEndDate().getDate()).equals(reOccurrence))
+                            reOccurrences.add(reOccurrence);
+                    }
+                }
+            }
+        }
+        return reOccurrences;
+    }
+
+    @Nullable
+    private static VEvent tryGetOccurrence(VEvent event, net.fortuna.ical4j.model.Date start){
+        try {
+            return event.getOccurrence(start);
+        }catch (Exception e){
+            return null;
+        }
     }
 }

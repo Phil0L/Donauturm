@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.card.MaterialCardView;
 import com.pl.donauturm.calendar.R;
+import com.pl.donauturm.calendar.ROVEvent;
 
 import net.fortuna.ical4j.model.component.VEvent;
 import net.fortuna.ical4j.util.Strings;
@@ -45,6 +46,7 @@ public class VEventView extends MaterialCardView {
         super(context, attrs, defStyleAttr);
         name = "Loading...";
         offsetDateTime = "Now";
+        dateMode = 0;
         View view = inflate(getContext(), R.layout.view_vevent, this);
         offsetDateTimeView = view.findViewById(R.id.offsetDT);
         offsetDateTimeView.setOnClickListener(v -> this.switchDateMode());
@@ -64,10 +66,11 @@ public class VEventView extends MaterialCardView {
             return;
         }
         this.vEvent = event;
+        this.dateMode = 0;
         this.name = event.getSummary().getValue();
-        this.offsetDateTime = getDateString(event.getStartDate().getDate());
-        this.startDate = event.getStartDate().getDate();
-        this.endDate = event.getEndDate().getDate();
+        this.startDate = event instanceof ROVEvent ? ((ROVEvent) event).getOccurrenceStartDate() : event.getStartDate().getDate();
+        this.offsetDateTime = getDateString(startDate);
+        this.endDate = event instanceof ROVEvent ? ((ROVEvent) event).getOccurrenceEndDate() : event.getEndDate().getDate();
         this.notifyDataChanged();
     }
 
