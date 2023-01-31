@@ -25,6 +25,7 @@ public abstract class Request<Q, S>{
 
   public static final String PROTOCOL = "https";
   public static       String HOST = "philippletschka.pisignage.com";
+  public static final String SUBDOMAIN = "philippletschka";
   public static final List<String> PATH = Collections.singletonList("api");
   public static       boolean LAZY_ASYNC_LOGIN = false;
   public static       String lazyLoginUsername, lazyLoginPassword;
@@ -121,6 +122,7 @@ public abstract class Request<Q, S>{
         throw new IOException("Response body is null");
       S re = parseResult(body);
       Request.this.onResponse(re);
+      body.close();
       return re;
     } catch (IOException ioException) {
       ioException.printStackTrace();
@@ -151,6 +153,7 @@ public abstract class Request<Q, S>{
           throw new IOException("Response body is null");
         S re = parseResult(body);
         Request.this.onResponse(re);
+        body.close();
         if (callback != null)
           callback.onResponse(re);
       }
