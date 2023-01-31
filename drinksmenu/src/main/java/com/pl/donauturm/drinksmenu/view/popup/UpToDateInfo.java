@@ -5,13 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.pl.donauturm.drinksmenu.R;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuRegistry;
 import com.pl.donauturm.drinksmenu.util.popupbubble.BubbleLayout;
 import com.pl.donauturm.drinksmenu.util.popupbubble.BubblePopup;
+
+import java.util.stream.Collectors;
 
 public class UpToDateInfo extends BubblePopup {
 
@@ -57,5 +61,11 @@ public class UpToDateInfo extends BubblePopup {
             onUpload.onClicked(null);
             dismiss();
         }
+    }
+
+    @Override
+    public void show(View anchor) {
+        super.show(anchor);
+        Toast.makeText(anchor.getContext(), DrinksMenuRegistry.getInstance().values().stream().map(dm -> dm.getClass().getSimpleName()).collect(Collectors.joining(", ")), Toast.LENGTH_LONG).show();
     }
 }

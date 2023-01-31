@@ -12,6 +12,7 @@ import com.pl.donauturm.pisignageapi.requests.FileDownloadRequest;
 import com.pl.donauturm.pisignageapi.requests.FileInfoRequest;
 import com.pl.donauturm.pisignageapi.requests.FileListRequest;
 import com.pl.donauturm.pisignageapi.requests.NoticeDeleteRequest;
+import com.pl.donauturm.pisignageapi.requests.NoticeEditRequest;
 import com.pl.donauturm.pisignageapi.requests.NoticeInfoRequest;
 import com.pl.donauturm.pisignageapi.requests.NoticeRenameRequest;
 import com.pl.donauturm.pisignageapi.requests.NoticeUploadRequest;
@@ -94,7 +95,7 @@ public class PiSignageAPI {
   }
 
   public void createNotice(NoticeUploadMessage notice){
-    new NoticeUploadRequest(notice).request();
+    new NoticeEditRequest(notice.getFormdata().getTitle(), notice).request();
   }
 
   public String createNoticeReturnName(NoticeUploadMessage notice){
@@ -112,6 +113,10 @@ public class PiSignageAPI {
   public Notice getNotice(String noticeName){
     NoticeInfoMessage infoMessage = new NoticeInfoRequest(noticeName).request();
     return infoMessage.getData().getData();
+  }
+
+  public void editNotice(String noticeName, NoticeUploadMessage noticeData){
+    new NoticeEditRequest(noticeName, noticeData).request();
   }
 
   public void renameNotice(String noticeName, String newNoticeName){

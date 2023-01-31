@@ -32,11 +32,9 @@ import com.pl.donauturm.drinksmenu.controller.util.api.DMCredentials;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.FragmentDrinksMenuBinding;
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
-import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
 import com.pl.donauturm.drinksmenu.util.MapObservable;
 import com.pl.donauturm.drinksmenu.view.dialogs.NewDrinksmenuDialog;
 import com.pl.donauturm.drinksmenu.view.dialogs.SetEditDMCDialog;
-import com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI;
 import com.pl.donauturm.pisignageapi.requests.Request;
 
 import org.jetbrains.annotations.NotNull;
@@ -51,9 +49,8 @@ import java.util.stream.Collectors;
 // change name
 // add image view
 
-public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI.APICallback<DrinksMenu>,
-        MapObservable.MapObserver<String, DrinksMenu>, TabLayoutMediator.TabConfigurationStrategy,
-        SwipeRefreshLayout.OnRefreshListener, OnCloudStateChangedListener {
+public class MainFragmentDrinksMenu extends Fragment implements MapObservable.MapObserver<String, DrinksMenu>,
+        TabLayoutMediator.TabConfigurationStrategy, SwipeRefreshLayout.OnRefreshListener, OnCloudStateChangedListener {
 
     private FragmentDrinksMenuBinding binding;
     private DrinksMenuAdapter drinksMenuAdapter;
@@ -69,7 +66,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
 
     @Override
     public void onDestroyView() {
-        DrinkMenuRegistry.getInstance().observers.remove(this);
+        DrinksMenuRegistry.getInstance().observers.remove(this);
         super.onDestroyView();
     }
 
@@ -87,11 +84,11 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         }
         setHasOptionsMenu(true);
         drinksMenuAdapter = new DrinksMenuAdapter(getChildFragmentManager(), getLifecycle());
-        drinksMenuAdapter.setItems(new ArrayList<>(DrinkMenuRegistry.getInstance().values()));
+        drinksMenuAdapter.setItems(new ArrayList<>(DrinksMenuRegistry.getInstance().values()));
         binding.drinksMenuPager.setAdapter(drinksMenuAdapter);
         binding.drinksMenuPager.registerOnPageChangeCallback(new PageChangeListener());
         binding.swipeRefresh.setOnRefreshListener(this);
-        DrinkMenuRegistry.getInstance().observe(this);
+        DrinksMenuRegistry.getInstance().observe(this);
         TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(binding.drinksMenuTabs, binding.drinksMenuPager, this);
         tabLayoutMediator.attach();
         Handler handler = new Handler(Looper.getMainLooper());
@@ -113,12 +110,12 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         DrinksMenuEditorActivity.provideApi(api);
         if (!binding.swipeRefresh.isRefreshing())
             binding.swipeRefresh.setEnabled(false);
-        List<String> listBefore = new ArrayList<>(DrinkMenuRegistry.getInstance().keySet());
-        api.asynchronous.getAllDrinkMenusIteratedWithoutImages(this, list -> {
+        List<String> listBefore = new ArrayList<>(DrinksMenuRegistry.getInstance().keySet());
+        api.asynchronous.getAllDrinkMenus(this::onData, list -> {
             List<String> listAfter = list.stream().map(DrinksMenu::getId).distinct().collect(Collectors.toList());
             ListDifference<String> difference = new ListDifference<>(listBefore, listAfter);
             for (String id : difference.getList1Standalone()) {
-                DrinkMenuRegistry.getInstance().remove(id);
+                DrinksMenuRegistry.getInstance().remove(id);
             }
             binding.swipeRefresh.setEnabled(true);
             binding.swipeRefresh.setRefreshing(false);
@@ -127,7 +124,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
 
     private void pullAgain() {
         binding.swipeRefresh.setRefreshing(true);
-        DrinkMenuRegistry.getInstance().values().forEach(dm -> {
+        DrinksMenuRegistry.getInstance().values().forEach(dm -> {
             if (dm.getCloudState().isAbleToOverwrite())
                 dm.setCloudState(CloudState.PULLING);
         });
@@ -148,37 +145,25 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         }
     }
 
-    @Override
     public void onData(DrinksMenu data) {
         if (data == null) return;
-        DrinksMenu drinksMenu = DrinkMenuRegistry.getInstance().put(data.getName(), data);
-        if (drinksMenu instanceof DrinksMenuCloud) {
-            DrinksMenuCloud menu = ((DrinksMenuCloud) drinksMenu);
-            // drinks menu is accepted
-            if (drinksMenu.getBackGround() == null) {
-                // image is not yet loaded
-                menu.setLoading();
-                api.asynchronous.getBitmap(menu.getBackgroundUrl(), bitmap -> {
-                    menu.provideBackGround(bitmap);
-                    drinksMenu.setCloudState(CloudState.UP_TO_DATE);
-                    requireActivity().invalidateOptionsMenu();
-                });
-            } else {
-                drinksMenu.setCloudState(CloudState.UP_TO_DATE);
-                requireActivity().invalidateOptionsMenu();
-            }
-        }
+        DrinksMenu drinksMenu = DrinksMenuRegistry.getInstance().put(data.getName(), data);
+        if (drinksMenu == null) return;
+        // drinks menu is accepted
+        drinksMenu.setCloudState(CloudState.UP_TO_DATE);
+        requireActivity().invalidateOptionsMenu();
+
     }
 
     @Override
     public void onAddition(int index, String source, DrinksMenu element, Map<String, DrinksMenu> map) {
-        element.onCloudStateChanged(this);
+        element.addOnCloudStateChangedListener(this);
         drinksMenuAdapter.addItem(element);
         if (element.isLoading()) {
-            element.onLoaded(el -> LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), element));
+            element.addOnLoadedListener(el -> LocalDrinksMenuManager.saveLocalAsync(requireContext(), element));
             return;
         }
-        LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), element);
+        LocalDrinksMenuManager.saveLocalAsync(requireContext(), element);
     }
 
     @Override
@@ -189,13 +174,13 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
 
     @Override
     public void onUpdate(int index, String source, DrinksMenu oldElement, DrinksMenu newElement, Map<String, DrinksMenu> map) {
-        newElement.onCloudStateChanged(this);
+        newElement.addOnCloudStateChangedListener(this);
         drinksMenuAdapter.updateItemAt(index, newElement);
         if (newElement.isLoading()) {
-            newElement.onLoaded(el -> LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), newElement));
+            newElement.addOnLoadedListener(el -> LocalDrinksMenuManager.saveLocalAsync(requireContext(), newElement));
             return;
         }
-        LocalDrinksMenuManager.saveLocalSaveAsync(requireContext(), newElement);
+        LocalDrinksMenuManager.saveLocalAsync(requireContext(), newElement);
     }
 
     @Override
@@ -259,7 +244,7 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
             if (currentFragment == null) return;
             DrinksMenu drinksMenu = currentFragment.getDrinksMenu();
             if (drinksMenu == null) return;
-            DrinkMenuRegistry.getInstance().remove(drinksMenu.getId());
+            DrinksMenuRegistry.getInstance().remove(drinksMenu.getId());
             api.asynchronous.deleteDrinkMenu(drinksMenu, null);
         });
         areYouSure.show(getChildFragmentManager(), "AreYouSure");
@@ -280,10 +265,10 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
     private void addClicked() {
         NewDrinksmenuDialog dialog = NewDrinksmenuDialog.newInstance();
         dialog.setOnTextSelectedListener(name -> {
-            DrinksMenu drinksMenu = new DrinksMenu(name, requireContext()).createNewId();
-            drinksMenu.onCloudStateChanged(this);
+            DrinksMenu drinksMenu = DrinksMenu.createNew(requireContext(), name).createNewId();
+            drinksMenu.addOnCloudStateChangedListener(this);
             drinksMenu.setCloudState(CloudState.READY_FOR_PUSH);
-            DrinkMenuRegistry.getInstance().put(name, drinksMenu);
+            DrinksMenuRegistry.getInstance().put(name, drinksMenu);
         });
         dialog.show(getChildFragmentManager(), "NewDrinksmenuDialog");
     }
@@ -295,9 +280,9 @@ public class MainFragmentDrinkMenu extends Fragment implements AsyncPiSignageAPI
         NewDrinksmenuDialog dialog = NewDrinksmenuDialog.newInstance();
         dialog.setOnTextSelectedListener(name -> {
             DrinksMenu drinksMenu = cDrinksMenu.clone(name);
-            drinksMenu.onCloudStateChanged(this);
+            drinksMenu.addOnCloudStateChangedListener(this);
             drinksMenu.setCloudState(CloudState.READY_FOR_PUSH);
-            DrinkMenuRegistry.getInstance().put(name, drinksMenu);
+            DrinksMenuRegistry.getInstance().put(name, drinksMenu);
         });
         dialog.show(getChildFragmentManager(), "NewDrinksmenuDialog");
     }

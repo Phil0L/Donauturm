@@ -53,6 +53,15 @@ public class PiSignageAPITest {
         api.deleteNotice(filename);
     }
 
+    @Test
+    void editNotice() {
+        String filename = api.createNoticeReturnName(new NoticeUploadMessage("Test Notice", "This is a test notice", "This is a test notice footer", "generated"));
+        assertNotNull(filename);
+        assertFalse(filename.isEmpty());
+        System.out.println(filename);
+        api.editNotice(filename, new NoticeUploadMessage("Test Notice v2", "This is a test notice", "This is a test notice footer", "generated"));
+        api.deleteNotice(filename);
+    }
 
     @AfterEach
     void tearDown() {

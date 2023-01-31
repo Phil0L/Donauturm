@@ -1,14 +1,15 @@
 package com.pl.donauturm.drinksmenu.controller.drinkmenu;
 
 import static com.pl.donauturm.drinksmenu.model.DrinksMenuLocal.deserializer;
-import static com.pl.donauturm.drinksmenu.model.DrinksMenuLocal.friendly;
+import static com.pl.donauturm.drinksmenu.model.DrinksMenuLocal.directory;
 import static com.pl.donauturm.drinksmenu.model.DrinksMenuLocal.mainDir;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
@@ -24,134 +25,48 @@ public class LocalDrinksMenuManager {
 
     private static final Set<String> LOCAL_DRINKS_MENU_FILES = new HashSet<>();
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void loadAllLocalSaves(Context context) {
         File dmDir = new File(context.getFilesDir(), mainDir());
         if (!dmDir.exists()) return;
         String[] dmDirs = dmDir.list();
         if (dmDirs == null) return;
         for (String dmDirName : dmDirs) {
-            File dmDirFile = new File(dmDir, dmDirName);
-            if (!dmDirFile.exists()) continue;
-            try {
-                // load the data
-                File dataFile = new File(dmDirFile, friendly(dmDirName) + ".json");
-                if (!dataFile.exists()) throw new IOException("data file not found");
-                String json = new String(Files.readAllBytes(dataFile.toPath()));
-                if (json.isEmpty()) throw new IOException("data file empty");
-                DrinksMenuLocal dm = deserializer().fromJson(json, DrinksMenuLocal.class);
-                if (dm == null) throw new IOException("data file empty");
-
-                // load the background
-                File bgFile = new File(dmDirFile, friendly(dmDirName) + "Background.png");
-                if (!bgFile.exists()) throw new IOException("background file not found");
-                Bitmap bg = BitmapFactory.decodeFile(bgFile.getAbsolutePath());
-                if (bg == null) throw new IOException("background file empty");
-                dm.provideBackGround(bg);
-
-                // load the image
-                File imgFile = new File(dmDirFile, friendly(dmDirName) + ".png");
-                if (imgFile.exists()) {
-                    Bitmap img = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                    if (img != null) dm.provideMenuImage(img);
-                }
-
-                // add the menu to the list
-                LOCAL_DRINKS_MENU_FILES.add(dm.getName());
-                DrinkMenuRegistry.getInstance().put(dm);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                dmDirFile.delete();
-            }
+            loadLocalSave(context, dmDirName);
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void loadAllLocalSavesAsync(Context context) {
-        new Thread(() -> {
-            File dmDir = new File(context.getFilesDir(), mainDir());
-            if (!dmDir.exists()) return;
-            String[] dmDirs = dmDir.list();
-            if (dmDirs == null) return;
-            for (String dmDirName : dmDirs) {
-                File dmDirFile = new File(dmDir, dmDirName);
-                if (!dmDirFile.exists()) continue;
-                try {
-                    // load the data
-                    File dataFile = new File(dmDirFile, friendly(dmDirName) + ".json");
-                    if (!dataFile.exists()) throw new IOException("data file not found");
-                    String json = new String(Files.readAllBytes(dataFile.toPath()));
-                    if (json.isEmpty()) throw new IOException("data file empty");
-                    DrinksMenuLocal dm = deserializer().fromJson(json, DrinksMenuLocal.class);
-                    if (dm == null) throw new IOException("data file empty");
-
-                    // load the background
-                    File bgFile = new File(dmDirFile, friendly(dmDirName) + "Background.png");
-                    if (!bgFile.exists()) throw new IOException("background file not found");
-                    Bitmap bg = BitmapFactory.decodeFile(bgFile.getAbsolutePath());
-                    if (bg == null) throw new IOException("background file empty");
-                    dm.provideBackGround(bg);
-
-                    // load the image
-                    File imgFile = new File(dmDirFile, friendly(dmDirName) + ".png");
-                    if (imgFile.exists()) {
-                        Bitmap img = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                        if (img != null) dm.provideMenuImage(img);
-                    }
-
-                    // add the menu to the list
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        LOCAL_DRINKS_MENU_FILES.add(dm.getName());
-                        DrinkMenuRegistry.getInstance().put(dm);
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    dmDirFile.delete();
-                }
-            }
-        }).start();
+        new Thread(() -> loadAllLocalSaves(context)).start();
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void loadLocalSave(Context context, String name) {
-        File dmDir = new File(context.getFilesDir(), mainDir());
+        File dmDir = new File(context.getFilesDir(), directory(name));
         if (!dmDir.exists()) return;
-        File dmDirFile = new File(dmDir, name);
-        if (!dmDirFile.exists()) return;
         try {
             // load the data
-            File dataFile = new File(dmDirFile, friendly(name) + ".json");
-            if (!dataFile.exists()) throw new IOException("data file not found");
+            File dataFile = DrinksMenuLocal.findDataFileInDir(dmDir);
+            if (dataFile == null || !dataFile.exists()) throw new IOException("data file not found");
             String json = new String(Files.readAllBytes(dataFile.toPath()));
             if (json.isEmpty()) throw new IOException("data file empty");
             DrinksMenuLocal dm = deserializer().fromJson(json, DrinksMenuLocal.class);
-            if (dm == null) throw new IOException("data file empty");
+            if (dm == null) throw new IOException("data file not parsable");
 
-            // load the background
-            File bgFile = new File(dmDirFile, friendly(name) + "Background.png");
-            if (!bgFile.exists()) throw new IOException("background file not found");
-            Bitmap bg = BitmapFactory.decodeFile(bgFile.getAbsolutePath());
-            if (bg == null) throw new IOException("background file empty");
-            dm.provideBackGround(bg);
-
-            // load the image
-            File imgFile = new File(dmDirFile, friendly(name) + ".png");
-            if (imgFile.exists()) {
-                Bitmap img = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                if (img != null) dm.provideMenuImage(img);
-            }
+            // load the images
+            dm.requireBackGround(context);
+            dm.requireMenuImage(context);
 
             // add the menu to the list
             LOCAL_DRINKS_MENU_FILES.add(dm.getName());
-            DrinkMenuRegistry.getInstance().put(dm);
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(() -> DrinksMenuRegistry.getInstance().put(dm));
         } catch (IOException e) {
             e.printStackTrace();
-            dmDirFile.delete();
+            deleteDirectory(dmDir);
         }
 
     }
 
+    @Deprecated
     public static void deleteAllLocalSaves(Context context) {
         File dmDir = new File(context.getFilesDir(), mainDir());
         if (!dmDir.exists()) return;
@@ -172,7 +87,7 @@ public class LocalDrinksMenuManager {
         deleteDirectory(dmDirFile);
     }
 
-    public static Set<String> getLoadedLocalDrinksMenuNames() {
+    public static Set<String> getLoadedLocalSaves() {
         return LOCAL_DRINKS_MENU_FILES;
     }
 
@@ -185,25 +100,22 @@ public class LocalDrinksMenuManager {
         return dmDirFile.exists();
     }
 
-    public static DrinksMenuLocal saveLocalSave(Context context, DrinksMenu drinksMenu) {
-        if (context == null || drinksMenu == null) return null;
+    public static void saveLocalSave(@NonNull Context context, @NonNull DrinksMenu drinksMenu) {
         if (drinksMenu instanceof DrinksMenuLocal) {
-            ((DrinksMenuLocal) drinksMenu).save(context);
-            return (DrinksMenuLocal) drinksMenu;
+            drinksMenu.save(context);
+            return;
         }
         if (drinksMenu instanceof DrinksMenuCloud) {
             DrinksMenuLocal drinksMenuLocal = new DrinksMenuLocal(drinksMenu);
             drinksMenuLocal.setCloudVersion(drinksMenu.getVersion());
             drinksMenuLocal.save(context);
-            return drinksMenuLocal;
+            return;
         }
         DrinksMenuLocal drinksMenuLocal = new DrinksMenuLocal(drinksMenu);
         drinksMenuLocal.save(context);
-        return drinksMenuLocal;
     }
 
-    public static DrinksMenuLocal saveLocalSaveAsync(Context context, DrinksMenu drinksMenu) {
-        if (context == null || drinksMenu == null) return null;
+    public static void saveLocalAsync(@NonNull Context context, @NonNull DrinksMenu drinksMenu){
         DrinksMenuLocal drinksMenuLocal;
         if (drinksMenu instanceof DrinksMenuLocal) {
             drinksMenuLocal = (DrinksMenuLocal) drinksMenu;
@@ -214,10 +126,8 @@ public class LocalDrinksMenuManager {
             drinksMenuLocal = new DrinksMenuLocal(drinksMenu);
         }
         new Thread(() -> saveLocalSave(context, drinksMenuLocal)).start();
-        return drinksMenuLocal;
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private static void deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
@@ -225,6 +135,9 @@ public class LocalDrinksMenuManager {
                 deleteDirectory(file);
             }
         }
-        directoryToBeDeleted.delete();
+        if (!directoryToBeDeleted.delete())
+            Log.d(LocalDrinksMenuManager.class.getSimpleName(),
+                "Tried to delete local save, but it is non-existent already: "
+                        + directoryToBeDeleted.getPath());
     }
 }

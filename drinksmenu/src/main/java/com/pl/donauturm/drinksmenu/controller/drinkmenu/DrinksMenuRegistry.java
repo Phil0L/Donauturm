@@ -8,16 +8,16 @@ import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuLocal;
 import com.pl.donauturm.drinksmenu.util.RegistryMap;
 
-public class DrinkMenuRegistry extends RegistryMap<DrinksMenu> {
+public class DrinksMenuRegistry extends RegistryMap<DrinksMenu> {
 
-    private static final DrinkMenuRegistry instance = new DrinkMenuRegistry();
+    private static final DrinksMenuRegistry instance = new DrinksMenuRegistry();
 
-    private DrinkMenuRegistry() {
+    private DrinksMenuRegistry() {
     }
 
-    public static DrinkMenuRegistry getInstance() {
+    public static DrinksMenuRegistry getInstance() {
         if (instance != null) return instance;
-        else return new DrinkMenuRegistry();
+        else return new DrinksMenuRegistry();
     }
 
 

@@ -16,10 +16,8 @@ import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
 import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
 import com.pl.donauturm.drinksmenu.model.interfaces.Id;
-import com.pl.donauturm.drinksmenu.util.json.BitmapDeSerializer;
+import com.pl.donauturm.drinksmenu.model.interfaces.NotYetImplemented;
 import com.pl.donauturm.drinksmenu.util.json.PolymorphicDeserializer;
-
-import org.jetbrains.annotations.TestOnly;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -30,8 +28,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-@SuppressWarnings("unused")
-public class DrinksMenu implements Serializable, Cloneable, Id {
+public abstract class DrinksMenu implements Serializable, Cloneable, Id {
+
+    // ATTRIBUTES //
 
     protected String id;
     protected String name;
@@ -43,70 +42,68 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
     protected transient Bitmap backGround;
     protected transient Bitmap menuImage;
 
-    private transient boolean loading = false;
     private transient CloudState cloudState = CloudState.UNKNOWN;
     private transient List<OnMenuLoadedListener> onMenuLoadedListeners = new ArrayList<>();
     private transient List<OnCloudStateChangedListener> onCloudStateChangedListeners = new ArrayList<>();
 
+    // CONSTRUCTORS //
+
     public DrinksMenu() {
         this.createNewIdIfNull(id);
-        setLoading(true);
     }
 
-    @CreatorConstructor
-    public DrinksMenu(String name, Context context) {
-        this();
-        this.createNewIdIfNull(id);
-        this.name = name;
-        this.items = new ArrayList<>();
-        this.backGround = BitmapFactory.decodeResource(context.getResources(), R.drawable.png_background);
-        this.width = 1920;
-        this.height = (int) (backGround.getHeight() * (1920f / backGround.getWidth())); // keep aspect ratio
-        this.backGround = Bitmap.createScaledBitmap(backGround, width, height, true);
-        this.version = getVersionNow();
-        this.setLoading(false);
+    protected DrinksMenu(DrinksMenu source){
+        this.id = source.id;
+        this.name = source.name;
+        this.items = new ArrayList<>(source.items);
+        this.width = source.width;
+        this.height = source.height;
+        this.version = source.version;
+
+        this.cloudState = source.cloudState;
+
+        if (source.hasBackGroundLoaded())
+            this.backGround = source.backGround;
+        if (source.hasMenuImageLoaded())
+            this.menuImage = source.menuImage;
     }
 
-    @TestOnly
-    public DrinksMenu(String name) {
-        this.name = name;
-        this.items = new ArrayList<>();
-        this.backGround = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888, true);
-        this.width = 1920;
-        this.height = 1080;
-        this.version = getVersionNow();
+    public static DrinksMenu createNew(Context context, String name){
+        DrinksMenu drinksMenu = new DrinksMenuCreator();
+        drinksMenu.createNewId();
+        drinksMenu.name = name;
+        drinksMenu.items = new ArrayList<>();
+        drinksMenu.backGround = BitmapFactory.decodeResource(context.getResources(), R.drawable.png_background);
+        drinksMenu.width = 1920;
+        drinksMenu.height = (int) (drinksMenu.backGround.getHeight() * (1920f / drinksMenu.backGround.getWidth())); // keep aspect ratio
+        drinksMenu.backGround = Bitmap.createScaledBitmap(drinksMenu.backGround, drinksMenu.width, drinksMenu.height, true);
+        drinksMenu.version = drinksMenu.getVersionNow();
+        return drinksMenu;
     }
 
-    @TestOnly
-    public DrinksMenu(String name, List<DrinksMenuItem> items) {
-        this.name = name;
-        this.items = new ArrayList<>(items);
-        this.backGround = Bitmap.createBitmap(1920, 1080, Bitmap.Config.ARGB_8888, true);
-        this.width = 1920;
-        this.height = 1080;
-        this.version = getVersionNow();
+    public static class DrinksMenuCreator extends DrinksMenu{
+        @Override
+        public void save(Context context) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void delete(Context context) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void requireMenuImage(Context context, OnBitmapLoadedListener callback) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void requireBackGround(@NonNull Context context, OnBitmapLoadedListener callback) {
+            throw new UnsupportedOperationException();
+        }
     }
 
-    @TestOnly
-    public DrinksMenu(String name, Context context, List<DrinksMenuItem> items) {
-        this.name = name;
-        this.items = new ArrayList<>(items);
-        this.backGround = BitmapFactory.decodeResource(context.getResources(), R.drawable.png_background);
-        this.width = 1920;
-        this.height = (int) (backGround.getHeight() * (1920f / backGround.getWidth())); // keep aspect ratio
-        this.backGround = Bitmap.createScaledBitmap(backGround, width, height, true);
-        this.version = getVersionNow();
-    }
-
-    @TestOnly
-    public DrinksMenu(String name, List<DrinksMenuItem> items, Bitmap backGround) {
-        this.name = name;
-        this.items = new ArrayList<>(items);
-        this.width = 1920;
-        this.height = (int) (backGround.getHeight() * (1920f / backGround.getWidth())); // keep aspect ratio
-        this.backGround = Bitmap.createScaledBitmap(backGround, width, height, true);
-        this.version = getVersionNow();
-    }
+    // GETTERS & SETTERS //
 
     public String getName() {
         return name;
@@ -140,34 +137,44 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         this.items.remove(item);
     }
 
-    public Bitmap getBackGround() {
-        return backGround;
-    }
+    // LOADING //
 
-    public boolean isLoading() {
-        return loading;
-    }
-
-    public void setLoading() {
-        this.loading = true;
-    }
-
-    private void setLoading(boolean loading) {
-        this.loading = loading;
-        if (!loading) {
-            if (onMenuLoadedListeners != null) {
-                for (OnMenuLoadedListener onMenuLoadedListener : onMenuLoadedListeners) {
-                    onMenuLoadedListener.onMenuLoaded(this);
-                }
-            }
+    public void invalidateLoadedState(){
+        if (!isLoading()){
+            fireLoadedListeners();
         }
     }
 
-    public void onLoaded(OnMenuLoadedListener listener) {
+    private void fireLoadedListeners() {
+        if (onMenuLoadedListeners != null) {
+            for (OnMenuLoadedListener onMenuLoadedListener : onMenuLoadedListeners) {
+                onMenuLoadedListener.onMenuLoaded(this);
+            }
+        }
+        onMenuLoadedListeners = new ArrayList<>();
+    }
+
+    public boolean isLoading() {
+        return !(hasBackGroundLoaded() && hasMenuImageLoaded());
+    }
+
+    public void addOnLoadedListener(OnMenuLoadedListener listener) {
+        if (!isLoading()){
+            listener.onMenuLoaded(this);
+            return;
+        }
         if (onMenuLoadedListeners == null)
             this.onMenuLoadedListeners = new ArrayList<>();
         this.onMenuLoadedListeners.add(listener);
     }
+
+    // SAVING //
+
+    public abstract void save(Context context);
+
+    public abstract void delete(Context context);
+
+    // CLOUD STATE //
 
     public CloudState getCloudState() {
         return cloudState;
@@ -182,49 +189,70 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         }
     }
 
-    public void onCloudStateChanged(OnCloudStateChangedListener listener) {
+    public void addOnCloudStateChangedListener(OnCloudStateChangedListener listener) {
         if (onCloudStateChangedListeners == null)
             this.onCloudStateChangedListeners = new ArrayList<>();
         this.onCloudStateChangedListeners.add(listener);
         listener.onCloudStateChanged(getCloudState());
     }
 
+    // IMAGES //
+
     @Nullable
     public Bitmap getMenuImage() {
         return menuImage;
     }
 
+    public boolean hasMenuImageLoaded(){
+        return menuImage != null;
+    }
+
+    public abstract void requireMenuImage(Context context, OnBitmapLoadedListener callback);
+
     public void provideMenuImage(Bitmap bitmap) {
         if (bitmap.getWidth() == 1920) {
             this.menuImage = bitmap;
+            this.invalidateLoadedState();
             return;
         }
-        if (!testAspectRation(bitmap)) return;
+        if (aspectRatioSucks(bitmap)) return;
         this.width = 1920;
         this.height = (int) (bitmap.getHeight() * (1920f / bitmap.getWidth())); // keep aspect ratio
         this.menuImage = Bitmap.createScaledBitmap(bitmap, width, height, true);
+        this.invalidateLoadedState();
     }
+
+    @Nullable
+    public Bitmap getBackGround() {
+        return backGround;
+    }
+
+    public boolean hasBackGroundLoaded(){
+        return backGround != null;
+    }
+
+    public abstract void requireBackGround(@NonNull Context context, OnBitmapLoadedListener callback);
 
     public void provideBackGround(Bitmap bitmap) {
         if (bitmap == null) return;
         if (bitmap.getWidth() == 1920) {
             this.backGround = bitmap;
-            if (loading) setLoading(false);
+            this.invalidateLoadedState();
             return;
         }
-        if (!testAspectRation(bitmap)) return;
+        if (aspectRatioSucks(bitmap)) return;
         this.width = 1920;
         this.height = (int) (bitmap.getHeight() * (1920f / bitmap.getWidth())); // keep aspect ratio
         this.backGround = Bitmap.createScaledBitmap(bitmap, width, height, true);
-        if (loading) setLoading(false);
+        this.invalidateLoadedState();
     }
 
-    private boolean testAspectRation(Bitmap bitmap) {
-        if (bitmap.getWidth() == 1920) return true;
-        if (bitmap.getHeight() > bitmap.getWidth()) return false;
+    private boolean aspectRatioSucks(Bitmap bitmap) {
+        if (bitmap.getWidth() == 1920) return false;
+        if (bitmap.getHeight() > bitmap.getWidth()) return true;
         int width = 1920;
         int height = (int) (bitmap.getHeight() * (1920f / bitmap.getWidth()));
-        return width / height < 3;
+        return width / height >= 3;
     }
 
     public List<DrinkItem> getAllDrinks() {
@@ -236,6 +264,8 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         return drinks;
     }
 
+    @SuppressWarnings("unused")
+    @NotYetImplemented(cause = "No images in DMs yet")
     public List<Bitmap> getAllBitmaps() {
         List<Bitmap> bitmaps = new ArrayList<>(List.of(menuImage, backGround));
         items.forEach(i -> {
@@ -243,6 +273,8 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         });
         return bitmaps;
     }
+
+    // VERSION //
 
     public String getVersion() {
         return version;
@@ -294,52 +326,8 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         return Integer.parseInt(self[2]) > Integer.parseInt(some[2]);
     }
 
-    @Override
-    public boolean equals(Object o) {
-        return o instanceof DrinksMenu && ((DrinksMenu) o).getIdLong() == getIdLong();
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, items);
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "DrinksMenu{" +
-                "name='" + name + '\'' +
-                "version='" + version + '\'' +
-                ", items=" + items +
-                ",width=" + width +
-                ",height=" + height +
-                '}';
-    }
-
-    @Deprecated
-    public static Gson serializer(Context context) {
-        return new GsonBuilder()
-                .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toLocalFile(context))
-                .create();
-    }
-
-    @Deprecated
-    public static Gson deserializer(Context context) {
-        return new GsonBuilder()
-                .registerTypeAdapter(DrinksMenuItem.class, new PolymorphicDeserializer<DrinksMenuItem>())
-                .registerTypeAdapter(Bitmap.class, BitmapDeSerializer.toLocalFile(context))
-                .create();
-    }
-
-    public static Gson serializer() {
-        return new GsonBuilder().create();
-    }
-
-    public static Gson deserializer() {
-        return new GsonBuilder()
-                .registerTypeAdapter(DrinksMenuItem.class, new PolymorphicDeserializer<DrinksMenuItem>())
-                .create();
-    }
+    // CLONING //
 
     @Override
     @NonNull
@@ -374,6 +362,8 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         }
     }
 
+    // IDS //
+
     @Override
     public String getId() {
         return id;
@@ -390,12 +380,50 @@ public class DrinksMenu implements Serializable, Cloneable, Id {
         return this;
     }
 
-    public void loadBackground(Context context, OnMenuLoadedListener cb) {
-        cb.onMenuLoaded(this);
+    // DEFAULT METHODS //
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof DrinksMenu && ((DrinksMenu) o).getIdLong() == getIdLong();
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, items);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "DrinksMenu{" +
+                "name='" + name + '\'' +
+                "version='" + version + '\'' +
+                ", items=" + items +
+                ",width=" + width +
+                ",height=" + height +
+                '}';
+    }
+
+    // PARCELABLE //
+
+    public static Gson serializer() {
+        return new GsonBuilder().create();
+    }
+
+    public static Gson deserializer() {
+        return new GsonBuilder()
+                .registerTypeAdapter(DrinksMenuItem.class, new PolymorphicDeserializer<DrinksMenuItem>())
+                .create();
+    }
+
+    // INTERFACES //
 
     public interface OnMenuLoadedListener {
         void onMenuLoaded(DrinksMenu menu);
+    }
+
+    public interface OnBitmapLoadedListener {
+        void onBitmapLoaded(Bitmap... bitmaps);
     }
 
 

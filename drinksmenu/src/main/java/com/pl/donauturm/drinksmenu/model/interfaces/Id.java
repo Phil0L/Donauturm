@@ -18,7 +18,7 @@ public interface Id {
     Id createNewId();
 
     default void createNewIdIfNull(String id){
-        if (id == null) {
+        if (id == null || id.isEmpty()){
             createNewId();
         }
     }

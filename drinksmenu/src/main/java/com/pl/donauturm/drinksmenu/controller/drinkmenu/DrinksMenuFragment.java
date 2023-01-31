@@ -21,6 +21,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContract;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 
 import com.pl.donauturm.drinksmenu.R;
@@ -44,8 +45,8 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
     private TextView mVersionTextView;
     private TextView mIdTextView;
     private ImageView mMenuView;
-    private DrinksMenu drinksMenu;
 
+    private DrinksMenu drinksMenu;
 
     public DrinksMenuFragment() {
         // Required empty public constructor
@@ -86,14 +87,24 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
             Log.e("DrinksMenuFragment", "DrinksMenu is null");
             return;
         }
-        this.mEditButton.setOnClickListener(this::edit);
-        this.mMenuView.setOnClickListener(this::reloadImage);
+        this.mEditButton.setOnClickListener(v -> edit());
+        this.mMenuView.setOnClickListener(v -> reloadImage());
+        this.mMenuView.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.png_background, null));
         if (drinksMenu.isLoading()) {
             this.mMenuView.setAlpha(0.8f);
             this.mEditButton.setVisibility(View.GONE);
-            this.drinksMenu.onLoaded(this);
-        } else
-            this.mMenuView.post(() -> this.reloadImage(null));
+        }
+        this.drinksMenu.addOnLoadedListener(this);
+    }
+
+    @Override
+    public void onMenuLoaded(DrinksMenu menu) {
+        this.drinksMenu = menu;
+        this.mMenuView.post(() -> {
+            this.mEditButton.setVisibility(View.VISIBLE);
+            this.mMenuView.setAlpha(1f);
+            this.reloadImage();
+        });
     }
 
     @Override
@@ -102,18 +113,21 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
         outState.putSerializable("drinksMenu", drinksMenu);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
     public DrinksMenu getDrinksMenu() {
         return drinksMenu;
     }
 
     @SuppressLint("SetTextI18n")
-    public void reloadImage(View v) {
-        if (drinksMenu.isLoading()) return;
+    public void reloadImage() {
+        this.mVersionTextView.setText("v." + drinksMenu.getVersion());
+        this.mIdTextView.setText("id." + drinksMenu.getId());
+        if (drinksMenu.getMenuImage() == null) return;
+        this.mMenuView.setImageBitmap(drinksMenu.getMenuImage());
+        this.mMenuView.invalidate();
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void reRenderImage(){
         this.mVersionTextView.setText("v." + drinksMenu.getVersion());
         this.mIdTextView.setText("id." + drinksMenu.getId());
         new DrinksMenuRenderer().renderFromMenu(getContext(), drinksMenu, bm -> {
@@ -122,7 +136,7 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
         });
     }
 
-    public void edit(View v) {
+    public void edit() {
         this.editor.launch(drinksMenu);
     }
 
@@ -134,7 +148,7 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
             case READY_FOR_PULL:
                 break;
             case UP_TO_DATE:
-                new UpToDateInfo(getActivity()).show(v);
+                new UpToDateInfo(getActivity(), u -> uploadDrinksMenu(api)).show(v);
                 break;
             case READY_FOR_PUSH:
                 uploadDrinksMenu(api);
@@ -149,20 +163,9 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
             getDrinksMenu().setCloudState(CloudState.UP_TO_DATE);
             DrinksMenuLocal local = new DrinksMenuLocal(getDrinksMenu());
             local.setCloudVersion(getDrinksMenu().getVersion());
-            LocalDrinksMenuManager.saveLocalSaveAsync(getContext(), local);
-            DrinkMenuRegistry.getInstance().put(local);
+            LocalDrinksMenuManager.saveLocalAsync(requireContext(), local);
+            DrinksMenuRegistry.getInstance().put(local);
         });
-    }
-
-    @Override
-    public void onMenuLoaded(DrinksMenu menu) {
-        this.drinksMenu = menu;
-        this.mMenuView.post(() -> {
-            this.mEditButton.setVisibility(View.VISIBLE);
-            this.mMenuView.setAlpha(1f);
-            this.reloadImage(null);
-        });
-
     }
 
     final ActivityResultLauncher<DrinksMenu> editor = registerForActivityResult(new ActivityResultContract<DrinksMenu, DrinksMenu>() {
@@ -198,12 +201,12 @@ public class DrinksMenuFragment extends Fragment implements DrinksMenu.OnMenuLoa
         if (result != null) {
             mMenuView.post(() -> {
                 DrinksMenuLocal dmLocal = new DrinksMenuLocal(result);
-                DrinkMenuRegistry.getInstance().put(result.getName(), dmLocal);
-                LocalDrinksMenuManager.saveLocalSaveAsync(getContext(), result);
+                DrinksMenuRegistry.getInstance().put(result.getName(), dmLocal);
+                LocalDrinksMenuManager.saveLocalAsync(requireContext(), result);
                 drinksMenu = dmLocal;
                 drinksMenu.setCloudState(CloudState.READY_FOR_PUSH);
                 drinksMenu.provideBackGround(drinksMenu.getBackGround()); //hack to set loading to false
-                reloadImage(null);
+                reRenderImage();
             });
 
         }

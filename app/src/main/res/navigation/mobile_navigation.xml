@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/nav_drinksmenu"
-        android:name="com.pl.donauturm.drinksmenu.controller.drinkmenu.MainFragmentDrinkMenu"
+        android:name="com.pl.donauturm.drinksmenu.controller.drinkmenu.MainFragmentDrinksMenu"
         android:label="@string/menu_drinksmenu"
         tools:layout="@layout/fragment_drinks_menu" />
 

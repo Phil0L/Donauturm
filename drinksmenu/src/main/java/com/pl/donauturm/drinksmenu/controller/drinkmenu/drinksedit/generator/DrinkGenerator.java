@@ -3,7 +3,7 @@ package com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.generator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.MainFragmentDrinkMenu;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.MainFragmentDrinksMenu;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.DrinksMenuEditorActivity;
 import com.pl.donauturm.drinksmenu.view.views.DrinkView;
 import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
@@ -23,10 +23,10 @@ public class DrinkGenerator {
 
     public DrinkView generateNewImageDrink(FrameLayout parent, DrinkItem drinkItem, ImageView bg){
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) drinkItem.getWidth(), bg),
-                MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) drinkItem.getHeight(), bg));
-        layoutParams.leftMargin = MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) drinkItem.getLeft(), bg);
-        layoutParams.topMargin = MainFragmentDrinkMenu.ValueScale.scalePositionToView((int) drinkItem.getTop(), bg);
+                MainFragmentDrinksMenu.ValueScale.scalePositionToView((int) drinkItem.getWidth(), bg),
+                MainFragmentDrinksMenu.ValueScale.scalePositionToView((int) drinkItem.getHeight(), bg));
+        layoutParams.leftMargin = MainFragmentDrinksMenu.ValueScale.scalePositionToView((int) drinkItem.getLeft(), bg);
+        layoutParams.topMargin = MainFragmentDrinksMenu.ValueScale.scalePositionToView((int) drinkItem.getTop(), bg);
         DrinkView drinkView = new DrinkView(parent.getContext());
         drinkView.deactivateDrag();
         drinkView.deactivateResize();

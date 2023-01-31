@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinkMenuRegistry;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuRegistry;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuRenderer;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.DialogAutomaticMenuUpdateBinding;
@@ -40,7 +40,7 @@ public class AutomaticMenuUpdateDialog extends BottomSheetDialogFragment {
         AutomaticMenuUpdateDialog fragment = new AutomaticMenuUpdateDialog();
         fragment.context = context;
         fragment.editedDrinks = editedDrinks;
-        fragment.editedMenus = editedMenus.stream().map(id -> DrinkMenuRegistry.getInstance().get(id)).collect(Collectors.toSet());
+        fragment.editedMenus = editedMenus.stream().map(id -> DrinksMenuRegistry.getInstance().get(id)).collect(Collectors.toSet());
         fragment.api = api;
         return fragment;
     }
@@ -74,14 +74,13 @@ public class AutomaticMenuUpdateDialog extends BottomSheetDialogFragment {
                 if (menu.getBackGround() == null) {
                     if (menu instanceof DrinksMenuCloud)
                         ((DrinksMenuCloud) menu).provideApi(api);
-                    menu.loadBackground(context, dm -> {
-                        new DrinksMenuRenderer().renderFromMenu(context, menu, bitmap -> {
-                            int completed = count.incrementAndGet();
-                            if (completed == editedMenus.size()) {
-                                showUpload();
-                            }
-                        });
-                    });
+                    menu.requireBackGround(context, dm ->
+                            new DrinksMenuRenderer().renderFromMenu(context, menu, bitmap -> {
+                                int completed = count.incrementAndGet();
+                                if (completed == editedMenus.size()) {
+                                    showUpload();
+                                }
+                            }));
                     continue;
                 }
                 new DrinksMenuRenderer().renderFromMenu(context, menu, bitmap -> {

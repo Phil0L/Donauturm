@@ -9,6 +9,7 @@ import com.pl.donauturm.pisignageapi.requests.FileDownloadRequest;
 import com.pl.donauturm.pisignageapi.requests.FileInfoRequest;
 import com.pl.donauturm.pisignageapi.requests.FileListRequest;
 import com.pl.donauturm.pisignageapi.requests.NoticeDeleteRequest;
+import com.pl.donauturm.pisignageapi.requests.NoticeEditRequest;
 import com.pl.donauturm.pisignageapi.requests.NoticeInfoRequest;
 import com.pl.donauturm.pisignageapi.requests.NoticeRenameRequest;
 import com.pl.donauturm.pisignageapi.requests.NoticeUploadRequest;
@@ -73,6 +74,10 @@ public class AsyncPiSignageAPI {
         new FileDeleteRequest(assetName).requestAsync(null);
     }
 
+    public void deleteAsset(String assetName, APICallback<Void> cb) {
+        new FileDeleteRequest(assetName).requestAsync(v -> cb.onData(null));
+    }
+
     public void getAssetImage(String assetName, File destination, APICallback<File> cb) {
         String url = Request.PROTOCOL + "://" + Request.HOST + "/media/" + synchronous.getUsername() + "/" + assetName;
         new FileDownloadRequest(url, destination).requestAsync((v) -> cb.onData(destination));
@@ -106,6 +111,10 @@ public class AsyncPiSignageAPI {
                     cb.onData(null);
             }
         });
+    }
+
+    public void editNotice(String noticeName, NoticeUploadMessage noticeData, APICallback<Void> cb){
+        new NoticeEditRequest(noticeName, noticeData).requestAsync(v -> cb.onData(null));
     }
 
     public void renameNotice(String noticeName, String newNoticeName, APICallback<Void> cb) {

@@ -33,7 +33,15 @@ public class SaveAllDrinksRoutine extends AsyncRoutine<Void> {
                 if (o instanceof List) {
                     List<?> nn = (List<?>) o;
                     List<String> noticeNames = nn.stream().filter(s -> s instanceof String).map(s -> (String) s).collect(Collectors.toList());
-                    String oldName = noticeNames.stream().filter(s -> s.startsWith(DRINKS_FILENAME)).findFirst().orElse(DRINKS_FILENAME);
+                    if (noticeNames.contains(DRINKS_FILENAME + ".html")) {
+                        nextTask();
+                        break;
+                    }
+                    String oldName = noticeNames.stream().filter(s -> s.startsWith(DRINKS_FILENAME)).findFirst().orElse(null);
+                    if (oldName == null){
+                        nextTask();
+                        break;
+                    }
                     api.deleteNotice(oldName);
                     nextTask();
                 } else {
@@ -44,8 +52,8 @@ public class SaveAllDrinksRoutine extends AsyncRoutine<Void> {
                 Gson gson = new Gson();
                 DrinkList drinkList = new DrinkList(drinks);
                 String json = gson.toJson(drinkList);
-                NoticeUploadMessage num = new NoticeUploadMessage(DRINKS_FILENAME, json, "This is a list of all drinks as a database", "generated");
-                api.createNotice(num);
+                NoticeUploadMessage num = new NoticeUploadMessage(DRINKS_FILENAME, json, "This is a list of all drinks as a database", "generated", "drink-list");
+                api.editNotice(DRINKS_FILENAME + ".html", num);
                 finish(null);
                 break;
             default:

@@ -28,6 +28,12 @@ public abstract class AsyncRoutine<R> {
     }
 
     @AnyThread
+    protected void runTask(int task, Object... args){
+        taskIndex = task;
+        executor.execute(() -> startTask(taskIndex, args));
+    }
+
+    @AnyThread
     protected void finish(R result) {
         running = false;
         if (callback != null)

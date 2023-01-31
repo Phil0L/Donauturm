@@ -12,12 +12,9 @@ import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.DrinksMenuCloud;
 import com.pl.donauturm.drinksmenu.util.BitmapDownloadRequest;
 import com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI;
-import com.pl.donauturm.pisignageapi.model.Asset;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
 
@@ -30,110 +27,31 @@ public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
         this.context = context;
     }
 
-    public void getAllDrinkMenusIterated(APICallback<DrinksMenu> cb) {
-        super.getAllAssets(data -> {
-            List<Asset> assets = data.stream().filter(a -> a.getLabels().contains("generated")).collect(Collectors.toList());
-            for (Asset asset : assets) {
-                AtomicReference<String> gsonData = new AtomicReference<>();
-                asset.getLabels().forEach(l -> {
-                    if (l.startsWith("data:")) {
-                        gsonData.set(l.substring(5));
-                    }
-                });
-                if (gsonData.get() == null) continue;
-                DrinksMenuCloud drinksMenuCloud = DrinksMenuCloud.deserializer().fromJson(gsonData.get(), DrinksMenuCloud.class);
-                if (drinksMenuCloud == null) continue;
-                Bitmap background = synchronous.getBitmap(drinksMenuCloud.getBackgroundUrl());
-                Bitmap image = synchronous.getBitmap(drinksMenuCloud.getImageUrl());
-                drinksMenuCloud.provideMenuImage(image);
-                drinksMenuCloud.provideBackGround(background);
-                if (cb != null) cb.onData(drinksMenuCloud);
-            }
-        });
-    }
-
-    public void getAllDrinkMenusIterated(APICallback<DrinksMenu> cb, APICallback<List<DrinksMenu>> cdf) {
+    public void getAllDrinkMenus(APICallback<DrinksMenu> cb, APICallback<List<DrinksMenu>> cdf) {
         Handler handler = new Handler(Looper.getMainLooper());
-        super.getAllAssets(data -> {
-            List<Asset> assets = data.stream().filter(a -> a.getLabels().contains("generated")).collect(Collectors.toList());
+        super.getAllAssets(assets -> {
+            List<String> jsonList = DrinksMenuCloud.findDMJsonInAssets(assets, synchronous);
             List<DrinksMenu> drinksMenus = new ArrayList<>();
-            for (Asset asset : assets) {
-                AtomicReference<String> gsonData = new AtomicReference<>();
-                asset.getLabels().forEach(l -> {
-                    if (l.startsWith("data:")) {
-                        gsonData.set(l.substring(5));
-                    }
-                });
-                if (gsonData.get() == null) continue;
-                DrinksMenuCloud drinksMenuCloud = DrinksMenuCloud.deserializer().fromJson(gsonData.get(), DrinksMenuCloud.class);
-                if (drinksMenuCloud == null) continue;
-                Bitmap background = synchronous.getBitmap(drinksMenuCloud.getBackgroundUrl());
-                Bitmap image = synchronous.getBitmap(drinksMenuCloud.getImageUrl());
-                drinksMenuCloud.provideMenuImage(image);
-                drinksMenuCloud.provideBackGround(background);
-                drinksMenus.add(drinksMenuCloud);
+            for (String json : jsonList) {
+                if (json == null) continue;
+                DrinksMenuCloud drinksMenu = DrinksMenuCloud.deserializer().fromJson(json, DrinksMenuCloud.class);
+                if (drinksMenu == null) continue;
+                drinksMenu.provideApi(synchronous);
+                drinksMenu.requireBackGround(context, null);
+                drinksMenu.requireMenuImage(context, null);
+                drinksMenus.add(drinksMenu);
                 if (cb != null)
-                    handler.post(() -> cb.onData(drinksMenuCloud));
-
+                    handler.post(() -> cb.onData(drinksMenu));
             }
             if (cdf != null)
                 handler.post(() -> cdf.onData(drinksMenus));
-        });
-    }
-
-    public void getAllDrinkMenusIteratedWithoutImages(APICallback<DrinksMenu> cb, APICallback<List<DrinksMenu>> cdf) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        super.getAllAssets(data -> {
-            List<Asset> assets = data.stream().filter(a -> a.getLabels().contains("generated")).collect(Collectors.toList());
-            List<DrinksMenu> drinksMenus = new ArrayList<>();
-            for (Asset asset : assets) {
-                AtomicReference<String> gsonData = new AtomicReference<>();
-                asset.getLabels().forEach(l -> {
-                    if (l.startsWith("data:")) {
-                        gsonData.set(l.substring(5));
-                    }
-                });
-                String jsonData = gsonData.get();
-                if (jsonData == null) continue;
-                DrinksMenuCloud drinksMenuCloud = DrinksMenuCloud.deserializer().fromJson(jsonData, DrinksMenuCloud.class);
-                if (drinksMenuCloud == null) continue;
-                drinksMenus.add(drinksMenuCloud);
-                if (cb != null)
-                    handler.post(() -> cb.onData(drinksMenuCloud));
-            }
-            if (cdf != null)
-                handler.post(() -> cdf.onData(drinksMenus));
-        });
-    }
-
-    public void getAllDrinkMenus(APICallback<List<DrinksMenu>> cb) {
-        super.getAllAssets(data -> {
-            List<Asset> assets = data.stream().filter(a -> a.getLabels().contains("generated")).collect(Collectors.toList());
-            List<DrinksMenu> drinksMenus = new ArrayList<>();
-            for (Asset asset : assets) {
-                AtomicReference<String> gsonData = new AtomicReference<>();
-                asset.getLabels().forEach(l -> {
-                    if (l.startsWith("data:")) {
-                        gsonData.set(l.substring(5));
-                    }
-                });
-                if (gsonData.get() == null) continue;
-                DrinksMenuCloud drinksMenuCloud = DrinksMenuCloud.deserializer().fromJson(gsonData.get(), DrinksMenuCloud.class);
-                if (drinksMenuCloud == null) continue;
-                Bitmap background = synchronous.getBitmap(drinksMenuCloud.getBackgroundUrl());
-                Bitmap image = synchronous.getBitmap(drinksMenuCloud.getImageUrl());
-                drinksMenuCloud.provideMenuImage(image);
-                drinksMenuCloud.provideBackGround(background);
-                drinksMenus.add(drinksMenuCloud);
-            }
-            if (cb != null) cb.onData(drinksMenus);
         });
     }
 
     public void uploadDrinkMenu(DrinksMenu drinksMenu, AsyncPiSignageAPI.APICallback<Void> cb) {
         new Thread(() -> {
             DrinksMenuCloud cloudDrinksMenu = new DrinksMenuCloud(drinksMenu, synchronous);
-            cloudDrinksMenu.upload(context);
+            cloudDrinksMenu.save(context);
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (cb != null) cb.onData(null);
             });
@@ -143,7 +61,7 @@ public class AsynchronousDrinksMenuAPI extends AsyncPiSignageAPI {
     public void deleteDrinkMenu(DrinksMenu drinksMenu, AsyncPiSignageAPI.APICallback<Void> cb) {
         new Thread(() -> {
             DrinksMenuCloud cloudDrinksMenu = new DrinksMenuCloud(drinksMenu, synchronous);
-            cloudDrinksMenu.delete();
+            cloudDrinksMenu.delete(null);
             new Handler(Looper.getMainLooper()).post(() -> {
                 if (cb != null) cb.onData(null);
             });

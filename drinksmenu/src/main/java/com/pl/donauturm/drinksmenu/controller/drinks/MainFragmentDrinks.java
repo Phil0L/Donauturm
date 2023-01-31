@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinkMenuRegistry;
+import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuRegistry;
 import com.pl.donauturm.drinksmenu.controller.util.AreYouSure;
 import com.pl.donauturm.drinksmenu.controller.util.CloudState;
 import com.pl.donauturm.drinksmenu.controller.util.ListDifference;
@@ -219,13 +219,13 @@ public class MainFragmentDrinks extends Fragment implements DrinksAdapter.OnActi
 
     private void prepareMenuUpdate() {
         if (editedDrinks.isEmpty()) return;
-        if (DrinkMenuRegistry.getInstance().isEmpty()) {
-            api.asynchronous.getAllDrinkMenusIteratedWithoutImages(dm -> DrinkMenuRegistry.getInstance().put(dm), list -> prepareMenuUpdate());
+        if (DrinksMenuRegistry.getInstance().isEmpty()) {
+            api.asynchronous.getAllDrinkMenus(dm -> DrinksMenuRegistry.getInstance().put(dm), list -> prepareMenuUpdate());
             return;
         }
         Set<String> editedMenus = new ArraySet<>();
         for (String id : editedDrinks) {
-            DrinkMenuRegistry.getInstance().values().stream()
+            DrinksMenuRegistry.getInstance().values().stream()
                     .filter(menu -> menu.getAllDrinks().stream().anyMatch(drink -> drink.getDrinkId().equals(id)))
                     .forEach(menu -> editedMenus.add(menu.getId()));
         }
