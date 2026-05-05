@@ -8,7 +8,7 @@
     android:fitsSystemWindows="true"
     android:theme="@style/Theme.Donauturm.AppLayout">
 
-    <com.google.android.material.navigation.NavigationView
+    <com.pl.donauturm.controller.util.NavigationViewWrapper
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/navigation_drawer">
 
-    </com.google.android.material.navigation.NavigationView>
+    </com.pl.donauturm.controller.util.NavigationViewWrapper>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"

@@ -34,4 +34,23 @@
         android:name="com.pl.donauturm.drinksmenu.controller.pisignage.MainFragmentPisignage"
         android:label="@string/menu_pisignage"
         tools:layout="@layout/fragment_pisignage" />
+
+    <fragment
+        android:id="@+id/nav_spotify"
+        android:name="com.pl.donauturm.spotify.MainFragmentSpotify"
+        android:label="@string/menu_spotify"
+        tools:layout="@layout/fragment_main_spotify" />
+
+    <fragment
+        android:id="@+id/nav_bingo"
+        android:name="com.pl.donauturm.bingo.MainFragmentBingo"
+        android:label="@string/menu_bingo"
+        tools:layout="@layout/fragment_bingo" />
+
+    <fragment
+        android:id="@+id/nav_checklist"
+        android:name="com.pl.donauturm.checklist.MainFragmentChecklist"
+        android:label="@string/menu_checklist"
+        tools:layout="@layout/fragment_checklist" />
+
 </navigation>

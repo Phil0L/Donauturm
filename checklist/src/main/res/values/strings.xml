@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reset">Reset</string>
+    <string name="lists">Lists</string>
+    <string name="print">Print</string>
+    <string name="delete">Delete</string>
+</resources>

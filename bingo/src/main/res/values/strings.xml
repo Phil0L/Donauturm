@@ -1,0 +1,48 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    // App
+    <string name="app_name">Donauturm</string>
+    <string name="title_activity_donauturm">Donauturm</string>
+
+    // Navigation
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Jugend- und Kulturplattform Donauturm e.V.</string>
+    <string name="menu_drinksmenu">DrinkMenu</string>
+    <string name="menu_welcome">Welcome</string>
+    <string name="menu_drinks">Drinks</string>
+    <string name="menu_calendar">Calendar</string>
+    <string name="menu_spotify">Spotify</string>
+    <string name="menu_scanner">Scanner</string>
+    <string name="menu_bingo">Bingo</string>
+    <string name="menu_checklist">Checklist</string>
+    <string name="menu_cameras">CCTV</string>
+
+    // Lorem Ipsum
+    <string name="lorem_ipsum_title">Lorem Ipsum"</string>
+    <string name="lorem_ipsum">Lorem Ipsum is simply placeholder text of the printing and
+        typesetting industry. Lorem Ipsum has been the industry\'s standard placeholder text ever
+        since the 1500s, when an unknown printer took a galley of type and scrambled it to make a
+        type specimen book"
+    </string>
+
+    // Content description
+    <string name="fab_content_description">Represents a view to invoke an action</string>
+    <string name="image_view_item_transform_content_description">Represents an image view in the
+        item
+    </string>
+    <string name="nav_header_desc">Represents a design-only header in the drawer</string>
+    <string name="design_only">This is only for design. There is no information nor functionality</string>
+
+    // Welcome fragment
+    <string name="welcome_text">Welcome!</string>
+    <string name="welcome_text_morning">Good morning!</string>
+    <string name="welcome_text_afternoon">Good afternoon!</string>
+    <string name="welcome_text_evening">Good evening!</string>
+    <string name="start_working_text">Start</string>
+    <string name="menu_pisignage">PiSignage</string>
+    <string name="subheader_app_links">App links</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_alarm_system">Alarm</string>
+
+</resources>

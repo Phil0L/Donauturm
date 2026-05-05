@@ -1,8 +1,12 @@
 rootProject.name = "Donauturm"
+include ':commons'
 include ':app'
 include ':drinksmenu'
 include ':fonts'
 include ':pisignageapi'
 include ':dtwhatsapp'
 include ':calendar'
-include ':vision'
+include ':spotify'
+include ':bingo'
+include ':checklist'
+include ':dtspotify'

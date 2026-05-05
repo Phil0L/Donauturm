@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".controller.ui.welcome.WelcomeFragment">
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="Die App ist abgestürzt...😭"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:fadeScrollbars="true"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <TextView
+            android:id="@+id/error_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="64dp"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            tools:text="E/AndroidRuntime: FATAL EXCEPTION: OkHttp Dispatcher\n
+                 Process: com.pl.donauturm, PID: 18235\n
+                      java.lang.NullPointerException: Attempt to invoke interface method 'void com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI$APICallback.onData(java.lang.Object)' on a null object reference\n
+                      at com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI.lambda$createNotice$8$com-pl-donauturm-pisignageapi-apicontroller-AsyncPiSignageAPI(AsyncPiSignageAPI.java:98)\n
+                      at com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI$$ExternalSyntheticLambda4.onData(Unknown Source:8)\n
+                      at com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI.lambda$getAllNoticeNames$7(AsyncPiSignageAPI.java:89)\n
+                      at com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI$$ExternalSyntheticLambda12.onData(Unknown Source:4)\n
+                      at com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI.lambda$getAllAssets$2(AsyncPiSignageAPI.java:54)\n
+                      at com.pl.donauturm.pisignageapi.apicontroller.AsyncPiSignageAPI$$ExternalSyntheticLambda11.onResponse(Unknown Source:4)\n
+                      at com.pl.donauturm.pisignageapi.requests.Request$1.onResponse(Request.java:158)\n
+                      at okhttp3.internal.connection.RealCall$AsyncCall.run(RealCall.kt:519)\n
+                      at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1167)\n
+                      at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:641)\n
+                      at java.lang.Thread.run(Thread.java:929)" />
+    </HorizontalScrollView>
+
+    <Button
+        android:id="@+id/button_left"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_right"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button_right"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/button_left" />
+</androidx.constraintlayout.widget.ConstraintLayout>

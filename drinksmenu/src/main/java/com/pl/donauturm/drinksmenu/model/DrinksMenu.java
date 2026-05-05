@@ -129,14 +129,6 @@ public abstract class DrinksMenu implements Serializable, Cloneable, Id {
         return height;
     }
 
-    public void addItem(DrinksMenuItem item) {
-        this.items.add(item);
-    }
-
-    public void removeItem(DrinksMenuItem item) {
-        this.items.remove(item);
-    }
-
     // LOADING //
 
     public void invalidateLoadedState(){

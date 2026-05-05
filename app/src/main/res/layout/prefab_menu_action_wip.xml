@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:layout_width="wrap_content">
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        app:cardCornerRadius="5dp"
+        app:strokeColor="?attr/strokeColor"
+        app:strokeWidth="1dp">
+
+        <TextView
+            android:id="@+id/counter"
+            android:layout_width="32dp"
+            android:layout_height="24dp"
+            android:layout_centerInParent="true"
+            android:background="#80F98018"
+            android:gravity="center"
+            android:text="WIP"
+            android:textSize="8sp"
+            android:textStyle="bold" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

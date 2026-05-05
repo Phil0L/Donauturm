@@ -14,7 +14,6 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -40,7 +39,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -143,7 +141,6 @@ public class MainFragmentWhatsApp extends Fragment {
 
         mWhatsAppView.getSettings().setDomStorageEnabled(true); //for html5 app
         mWhatsAppView.getSettings().setDatabaseEnabled(true);
-        mWhatsAppView.getSettings().setAppCacheEnabled(false); // deprecated
         mWhatsAppView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
 
         mWhatsAppView.getSettings().setLoadWithOverviewMode(true);
@@ -153,7 +150,6 @@ public class MainFragmentWhatsApp extends Fragment {
         mWhatsAppView.getSettings().setBuiltInZoomControls(true);
         mWhatsAppView.getSettings().setDisplayZoomControls(false);
 
-        mWhatsAppView.getSettings().setSaveFormData(true);
         mWhatsAppView.getSettings().setLoadsImagesAutomatically(true);
         mWhatsAppView.getSettings().setBlockNetworkImage(false);
         mWhatsAppView.getSettings().setBlockNetworkLoads(false);
@@ -272,7 +268,6 @@ public class MainFragmentWhatsApp extends Fragment {
                 }
             }
 
-            @RequiresApi(api = Build.VERSION_CODES.M)
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 String msg = String.format("Error: %s - %s", error.getErrorCode(), error.getDescription());
                 Log.d(DEBUG_TAG, msg);

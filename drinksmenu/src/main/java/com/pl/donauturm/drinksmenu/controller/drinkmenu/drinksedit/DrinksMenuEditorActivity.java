@@ -12,8 +12,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,7 +29,6 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.pl.donauturm.drinksmenu.R;
-import com.pl.donauturm.drinksmenu.controller.drinkmenu.DrinksMenuRenderer;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.BottomSheetViewHolder;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.DrinkBottomSheet;
 import com.pl.donauturm.drinksmenu.controller.drinkmenu.drinksedit.bottomsheet.DrinkGroupBottomSheet;
@@ -46,7 +43,6 @@ import com.pl.donauturm.drinksmenu.controller.drinks.DrinkRegistry;
 import com.pl.donauturm.drinksmenu.controller.util.api.DrinksMenuAPI;
 import com.pl.donauturm.drinksmenu.databinding.ActivityDrinksMenuEditorBinding;
 import com.pl.donauturm.drinksmenu.model.Drink;
-import com.pl.donauturm.drinksmenu.model.DrinksMenu;
 import com.pl.donauturm.drinksmenu.model.content.DrinkGroupItem;
 import com.pl.donauturm.drinksmenu.model.content.DrinkItem;
 import com.pl.donauturm.drinksmenu.model.content.DrinksMenuItem;
@@ -75,7 +71,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
 
     private static DrinksMenuAPI api;
 
-    private DrinksMenu drinksMenu;
+    private DrinksMenuEditor drinksMenu;
     private String drinksMenuName;
     private ItemView selectedView;
     private BottomSheetBehavior<?> sheetBehavior;
@@ -156,7 +152,7 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
         this.binding = ActivityDrinksMenuEditorBinding.inflate(getLayoutInflater());
         super.setContentView(binding.getRoot());
 
-        this.drinksMenu = deserializer().fromJson(getIntent().getStringExtra("menu"), DrinksMenu.class);
+        this.drinksMenu = deserializer().fromJson(getIntent().getStringExtra("menu"), DrinksMenuEditor.class);
         this.drinksMenu.provideBackGround(DMEBitmapStorage.getInstance().getBackground());
         this.drinksMenuName = drinksMenu.getName();
 
@@ -489,14 +485,9 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
 
     @Override
     public void generateImage() {
-        Handler handler = new Handler(Looper.getMainLooper());
         updateInfo();
         binding.generatedMenu.setImageBitmap(drinksMenu.getBackGround());
-        new DrinksMenuRenderer().renderAsyncFromView(binding.previewHolder, bm -> {
-            drinksMenu.provideMenuImage(bm);
-            if (drinksMenu.getMenuImage() != null)
-                handler.post(() -> binding.generatedMenu.setImageBitmap(drinksMenu.getMenuImage()));
-        });
+        drinksMenu.requireMenuImage(this, dm -> binding.generatedMenu.setImageBitmap(dm[0]));
     }
 
     public void save() {
@@ -517,6 +508,10 @@ public class DrinksMenuEditorActivity extends AppCompatActivity implements
     public void cancel() {
         setResult(RESULT_CANCELED);
         finish();
+    }
+
+    public ActivityDrinksMenuEditorBinding getBinding(){
+        return binding;
     }
 
     private class PreviewRenderer {

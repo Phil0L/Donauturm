@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
     <group
-        android:id="@+id/menu_home"
+        android:id="@+id/group_home"
         android:checkableBehavior="single">
 
         <item
@@ -16,7 +17,7 @@
     </group>
 
     <group
-        android:id="@+id/menu_calendar"
+        android:id="@+id/group_calendar"
         android:checkableBehavior="single">
 
         <item
@@ -27,13 +28,14 @@
     </group>
 
     <group
-        android:checkableBehavior="single"
-        android:id="@+id/menu_drinkmenu">
+        android:id="@+id/group_drinkmenu"
+        android:checkableBehavior="single">
 
         <item
             android:id="@+id/nav_drinksmenu"
             android:icon="@drawable/ic_menu"
-            android:title="@string/menu_drinksmenu" />
+            android:title="@string/menu_drinksmenu"
+            app:actionLayout="@layout/prefab_menu_action_wip" />
 
         <item
             android:id="@+id/nav_drinks"
@@ -44,6 +46,86 @@
             android:id="@+id/nav_pisignage"
             android:icon="@drawable/ic_web"
             android:title="@string/menu_pisignage" />
+
+    </group>
+
+    <group
+        android:id="@+id/group_spotify"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_spotify"
+            android:icon="@drawable/ic_spotify"
+            android:title="@string/menu_spotify"
+            app:actionLayout="@layout/prefab_menu_action_wip" />
+
+    </group>
+
+    <group
+        android:id="@+id/group_guards"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_scanner"
+            android:icon="@drawable/ic_scanner"
+            android:title="@string/menu_scanner"
+            app:actionLayout="@layout/prefab_menu_action_todo" />
+
+    </group>
+
+    <group
+        android:id="@+id/group_event"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_bingo"
+            android:icon="@drawable/ic_bingo"
+            android:title="@string/menu_bingo" />
+
+        <item
+            android:id="@+id/nav_checklist"
+            android:icon="@drawable/ic_checklist"
+            android:title="@string/menu_checklist" />
+
+    </group>
+
+    <group
+        android:id="@+id/group_intents"
+        android:checkableBehavior="none">
+
+        <item android:title="@string/subheader_app_links">
+
+            <menu>
+
+                <item
+                    android:id="@+id/nav_cameras"
+                    android:icon="@drawable/ic_camera"
+                    android:title="@string/menu_cameras"
+                    app:actionLayout="@layout/prefab_menu_action_external" />
+
+                <item
+                    android:id="@+id/nav_alarm"
+                    android:icon="@drawable/ic_alarm_system"
+                    android:title="@string/menu_alarm_system"
+                    app:actionLayout="@layout/prefab_menu_action_external" />
+
+                <!--TODO: add more links: (website, (wordpress)), instagram, (gema), (mail)-->
+
+            </menu>
+
+        </item>
+
+    </group>
+
+    <group
+        android:id="@+id/group_settings"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_settings"
+            android:title="@string/menu_settings"
+            app:actionLayout="@layout/prefab_menu_action_todo"/>
 
     </group>
 

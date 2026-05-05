@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">DT Spotify</string>
+    <string name="tab_text_1">OBar</string>
+    <string name="tab_text_2">Unten</string>
+    <string name="no_connection_message">Dieser Account spielt aktuell keine Musik ab</string>
+    <string name="copy_logs"><u>Copy logs</u></string>
+    <string name="clear_logs"><u>Clear logs</u></string>
+</resources>

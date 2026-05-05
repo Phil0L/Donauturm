@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/checkbox"
+    android:layout_width="24dip"
+    android:layout_height="32dip"
+    android:layout_marginHorizontal="12dp"
+    android:tint="@android:color/tab_indicator_text"
+    app:srcCompat="@drawable/ic_share" />

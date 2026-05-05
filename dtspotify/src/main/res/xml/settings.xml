@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:defaultValue="false"
+        android:title="Swipe accounts"
+        app:iconSpaceReserved="false"
+        app:key="spotify_swipe"
+        app:summary="For ultimate swiping in all directions"
+        app:widgetLayout="@layout/preference_widget_switch" />
+
+    <SwitchPreference
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:defaultValue="false"
+        android:title="Dark mode"
+        app:iconSpaceReserved="false"
+        app:key="spotify_dark"
+        app:summaryOff="For all light allergy sufferers"
+        app:summaryOn="Welcome to the dark side"
+        app:widgetLayout="@layout/preference_widget_switch" />
+    <Preference
+        app:iconSpaceReserved="false"
+        app:key="spotify_share"
+        app:summary="Wait, this app can send itself?"
+        app:title="Share app"
+        app:widgetLayout="@layout/preference_widget_share" />
+</PreferenceScreen>

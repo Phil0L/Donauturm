@@ -1,0 +1,59 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.pl.donauturm.dtspotify'
+    compileSdk project.targetSdkVersion as int
+
+    defaultConfig {
+        applicationId "com.pl.donauturm.dtspotify"
+        minSdk project.minSdkVersion as int
+        targetSdk project.targetSdkVersion as int
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders = [redirectSchemeName: "spotify", redirectHostName: "auth"]
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    packagingOptions {
+        jniLibs {
+            pickFirsts += ['**']
+        }
+        resources {
+            pickFirsts += ['**']
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.toVersion(project.java_verison as int)
+        targetCompatibility JavaVersion.toVersion(project.java_verison as int)
+    }
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+}
+
+dependencies {
+    implementation project(path: ':commons')
+    implementation project(path: ':spotify')
+
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.2'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+//    implementation "com.spotify.android:auth:2.0.2"
+//    implementation "net.sourceforge.htmlunit:htmlunit:2.14"
+    implementation 'se.michaelthelin.spotify:spotify-web-api-java:7.3.0'
+//    implementation group: 'com.sachinhandiekar', name: 'jMusixMatch', version: '1.1.4'
+//    implementation fileTree(dir: 'libs', include: ['*.aar'])
+}

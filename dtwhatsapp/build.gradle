@@ -4,15 +4,14 @@ plugins {
 
 android {
     namespace 'com.pl.donauturm.dtwhatsapp'
-    compileSdk 32
+    compileSdk project.targetSdkVersion as int
 
     defaultConfig {
         applicationId "com.pl.donauturm.dtwhatsapp"
-        minSdk 21
-        targetSdk 32
+        minSdkVersion project.minSdkVersion as int
+        targetSdkVersion project.targetSdkVersion as int
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -23,9 +22,10 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.toVersion(project.java_verison as int)
+        targetCompatibility JavaVersion.toVersion(project.java_verison as int)
     }
+
     sourceSets {
         main {
             assets {
@@ -33,15 +33,14 @@ android {
             }
         }
     }
+
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
+    implementation project(path: ':commons')
 
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.6.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.webkit:webkit:1.5.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'androidx.webkit:webkit:1.6.0'
 }
